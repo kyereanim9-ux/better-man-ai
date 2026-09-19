@@ -220,6 +220,43 @@ Intimité (Phase 6) ne remontait jamais dans le domaine "intime"**. Même
 correctif appliqué aux deux endroits, même test de bout en bout (score à 0
 avant activité, positif après, plus de fausse alerte "domaine négligé").
 
+## Refonte visuelle complète de l'accueil (Phase 8)
+Refonte demandée par l'utilisateur : interface premium, chaleureuse, avec
+progression visible immédiatement. Réalisée en gardant la stack vanilla
+JS/HTML/CSS (pas de React) pour ne pas complexifier le déploiement — un
+système de variables CSS assure la même flexibilité de personnalisation.
+
+- **Système de design** : variables CSS pour thème (sombre premium par
+  défaut / clair) et couleur d'accent (bleu, violet, vert, orange),
+  changeables depuis Compte → Apparence, mémorisées en `localStorage`,
+  appliquées instantanément sans rechargement.
+- **Nouvel accueil (tableau de bord)** : carte XP/Niveau en haut (niveau,
+  nom du niveau, barre de progression, série de jours), grande carte
+  "Mission du jour" avec habitudes/objectifs/versets cochables
+  directement (déclenche les vrais endpoints `/habits/:id/done`,
+  `/goals/:id` PATCH, `/bible/memorization/:id/advance`), toast animé
+  "+XP Mission terminée 🎉" à chaque case cochée.
+- **Carte Coach IA** et **carte Bible** (verset du jour) mises en avant,
+  au-dessus du reste.
+- **Navigation par catégories** (Moi / Coaching / Apprendre / Corps &
+  Style / Vie) sous forme de cartes avec icône, description et, quand
+  disponible, le score du domaine cette semaine — remplace l'ancienne
+  grille plate de boutons identiques. Aucune fonctionnalité retirée :
+  les 23 vues existantes restent toutes accessibles, juste réorganisées.
+- **Mini-graphique de progression** sur l'accueil (top 4 domaines de la
+  semaine, réutilise `/domains/scores`).
+- **En-tête repensé** : salutation avec prénom + phrase du jour (change
+  chaque jour, choisie par hash de la date), avatar avec initiale,
+  menu déroulant profil (Mon profil / Apparence / Nouveautés / Admin si
+  applicable / Déconnexion) à la place du bouton "Déconnexion" brut.
+- **Navigation basse fixe (mobile)** : Accueil / Missions / Coach /
+  Apprendre / Profil, visible uniquement sous 900px de large.
+- Testé de bout en bout : structure de `/daily` vérifiée compatible
+  avec le rendu des missions, tous les endpoints utilisés par le nouveau
+  tableau de bord répondent 200, non-régression sur les autres vues
+  (habitudes, objectifs, finance, physique, style, teach, bibliothèque,
+  vidéos, intimité, progression) confirmée après la refonte.
+
 ## Automatisations / nouvelles intégrations — non construites
 Ces deux points du cahier des charges restent volontairement hors scope :
 une app 100% gratuite et auto-hébergée n'a pas de serveur toujours actif pour

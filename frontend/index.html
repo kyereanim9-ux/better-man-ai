@@ -8,6 +8,8 @@
 </head>
 <body>
 
+<div id="toast-layer"></div>
+
 <div id="lock-screen" class="screen hidden" style="max-width:320px;margin:80px auto;text-align:center;">
   <h1>🔒 Verrouillé</h1>
   <form id="lock-unlock-form">
@@ -45,12 +47,25 @@
 
   <!-- ÉCRAN PRINCIPAL -->
   <section id="main-screen" class="screen hidden">
-    <header>
-      <h1>Better Man AI</h1>
-      <div id="gami-bar" class="gami-bar"></div>
-      <div>
-        <span id="user-name"></span>
-        <button id="logout-btn">Déconnexion</button>
+    <header class="app-header">
+      <div class="greeting">
+        <div class="brand-line"><span class="brand">Better Man AI</span></div>
+        <h1 id="greeting-text">Bonjour 👋</h1>
+        <div class="quote" id="greeting-quote"></div>
+      </div>
+      <div class="profile-menu-wrap">
+        <button class="avatar-btn" id="avatar-btn">?</button>
+        <div class="profile-dropdown hidden" id="profile-dropdown">
+          <div class="who">
+            <div class="name" id="pd-name"></div>
+            <div class="role" id="pd-role"></div>
+          </div>
+          <button class="menu-item" data-view="account">⚙️ Mon profil</button>
+          <button class="menu-item" data-pd-action="theme">🎨 Apparence</button>
+          <button class="menu-item" data-view="whats-new">🆕 Nouveautés</button>
+          <button class="menu-item hidden" id="pd-admin" data-view="admin">🛠️ Admin</button>
+          <button class="menu-item danger" id="pd-logout">🚪 Déconnexion</button>
+        </div>
       </div>
     </header>
 
@@ -80,10 +95,63 @@
       <button data-view="admin" class="nav-btn hidden" id="nav-admin">🛠️ Admin</button>
     </nav>
 
-    <!-- DAILY -->
+    <!-- DAILY : tableau de bord d'accueil -->
     <div class="view" id="view-daily">
-      <h2>Ta mission du jour</h2>
-      <div id="daily-content">Chargement...</div>
+      <div class="xp-hero" id="xp-hero">
+        <div class="xp-hero-top">
+          <span class="level-badge"><span class="num" id="xp-level-num">1</span> <span id="xp-level-name">Chargement...</span></span>
+          <span class="streak" id="xp-streak"></span>
+        </div>
+        <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+        <div class="xp-label"><span id="xp-current">0 XP</span><span id="xp-next"></span></div>
+      </div>
+
+      <div class="mission-card" id="mission-card">
+        <div class="mission-title">🎯 Ta mission du jour</div>
+        <div class="mission-sub" id="mission-sub">Construis ta journée autour d'une petite victoire.</div>
+        <div class="mission-count" id="mission-count">0 / 0 missions terminées</div>
+        <div class="mission-progress-track"><div class="mission-progress-fill" id="mission-progress-fill" style="width:0%"></div></div>
+        <div id="mission-list"></div>
+      </div>
+
+      <div class="feature-card coach">
+        <div class="fc-title">🤖 Better Man Coach</div>
+        <div class="fc-sub">Parle-moi de ce que tu vis — une décision, une difficulté, un objectif.</div>
+        <button data-view="coach">Parler au Coach</button>
+      </div>
+
+      <div class="feature-card bible" id="daily-bible-card">
+        <div class="fc-title">📖 Bible</div>
+        <div class="fc-sub">Apprends, mémorise et applique.</div>
+        <div id="daily-bible-verse" style="margin-bottom:12px;font-size:14px;"></div>
+        <button data-view="bible">Lire aujourd'hui</button>
+      </div>
+
+      <div class="category-block">
+        <div class="cat-title">Moi</div>
+        <div class="category-grid" id="cat-moi"></div>
+      </div>
+      <div class="category-block">
+        <div class="cat-title">Coaching</div>
+        <div class="category-grid" id="cat-coaching"></div>
+      </div>
+      <div class="category-block">
+        <div class="cat-title">Apprendre</div>
+        <div class="category-grid" id="cat-apprendre"></div>
+      </div>
+      <div class="category-block">
+        <div class="cat-title">Corps &amp; Style</div>
+        <div class="category-grid" id="cat-corps"></div>
+      </div>
+      <div class="category-block">
+        <div class="cat-title">Vie</div>
+        <div class="category-grid" id="cat-vie"></div>
+      </div>
+
+      <div class="card-block">
+        <h3>Ta progression cette semaine</h3>
+        <div id="home-domains-dashboard">Chargement...</div>
+      </div>
     </div>
 
     <!-- COACH -->
@@ -552,6 +620,22 @@
     <div class="view hidden" id="view-account">
       <h2>⚙️ Mon compte</h2>
 
+      <div class="card-block" id="appearance-card">
+        <h3>🎨 Apparence</h3>
+        <p class="meta">Thème et couleur d'accent — appliqués immédiatement, mémorisés sur cet appareil.</p>
+        <div class="theme-toggle-row" id="theme-toggle-row">
+          <button type="button" data-theme-choice="dark">🌙 Sombre</button>
+          <button type="button" data-theme-choice="light">☀️ Clair</button>
+        </div>
+        <p class="meta" style="margin-top:14px;">Couleur</p>
+        <div class="accent-picker-row" id="accent-picker-row">
+          <button type="button" class="accent-dot" data-accent-choice="bleu" title="Bleu"></button>
+          <button type="button" class="accent-dot" data-accent-choice="violet" title="Violet"></button>
+          <button type="button" class="accent-dot" data-accent-choice="vert" title="Vert"></button>
+          <button type="button" class="accent-dot" data-accent-choice="orange" title="Orange"></button>
+        </div>
+      </div>
+
       <div class="card-block">
         <h3>Mon profil</h3>
         <form id="account-name-form">
@@ -594,6 +678,14 @@
       <div id="admin-users-list"></div>
     </div>
   </section>
+
+  <nav class="bottom-nav hidden" id="bottom-nav">
+    <button data-view="daily" class="bn-btn active"><span class="bn-icon">🏠</span>Accueil</button>
+    <button data-view="daily" class="bn-btn" data-scroll-mission="1"><span class="bn-icon">🎯</span>Missions</button>
+    <button data-view="coach" class="bn-btn"><span class="bn-icon">🤖</span>Coach</button>
+    <button data-view="bible" class="bn-btn"><span class="bn-icon">📖</span>Apprendre</button>
+    <button data-view="account" class="bn-btn"><span class="bn-icon">👤</span>Profil</button>
+  </nav>
 
 </div>
 

@@ -73,20 +73,106 @@ function onAuthSuccess(data) {
   showMain();
 }
 
-document.getElementById('logout-btn').onclick = () => {
+function doLogout() {
   state.token = null;
   state.user = null;
   localStorage.removeItem('bm_token');
   localStorage.removeItem('bm_user');
   authScreen.classList.remove('hidden');
   mainScreen.classList.add('hidden');
+  document.getElementById('bottom-nav').classList.add('hidden');
+}
+document.getElementById('pd-logout').onclick = doLogout;
+
+// --- Thème et couleur d'accent ---
+function applyTheme(theme) {
+  document.body.setAttribute('data-theme', theme);
+  localStorage.setItem('bm_theme', theme);
+  document.querySelectorAll('[data-theme-choice]').forEach(b => {
+    b.classList.toggle('active-choice', b.dataset.themeChoice === theme);
+  });
+}
+function applyAccent(accent) {
+  document.body.setAttribute('data-accent', accent);
+  localStorage.setItem('bm_accent', accent);
+  document.querySelectorAll('[data-accent-choice]').forEach(b => {
+    b.classList.toggle('active-choice', b.dataset.accentChoice === accent);
+  });
+}
+function initAppearance() {
+  applyTheme(localStorage.getItem('bm_theme') || 'dark');
+  applyAccent(localStorage.getItem('bm_accent') || 'bleu');
+}
+document.querySelectorAll('[data-theme-choice]').forEach(b => {
+  b.onclick = () => applyTheme(b.dataset.themeChoice);
+});
+document.querySelectorAll('[data-accent-choice]').forEach(b => {
+  b.onclick = () => applyAccent(b.dataset.accentChoice);
+});
+initAppearance();
+
+// --- Toasts (XP gagné, mission terminée) ---
+function showToast(html) {
+  const layer = document.getElementById('toast-layer');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = html;
+  layer.appendChild(el);
+  setTimeout(() => el.remove(), 2200);
+}
+
+// --- Menu profil ---
+const profileDropdown = document.getElementById('profile-dropdown');
+document.getElementById('avatar-btn').onclick = (e) => {
+  e.stopPropagation();
+  profileDropdown.classList.toggle('hidden');
 };
+document.addEventListener('click', (e) => {
+  if (!profileDropdown.classList.contains('hidden') && !e.target.closest('.profile-menu-wrap')) {
+    profileDropdown.classList.add('hidden');
+  }
+});
+profileDropdown.querySelectorAll('[data-view]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    profileDropdown.classList.add('hidden');
+    switchView(btn.dataset.view);
+  });
+});
+document.querySelector('[data-pd-action="theme"]').addEventListener('click', () => {
+  profileDropdown.classList.add('hidden');
+  switchView('account');
+  document.getElementById('appearance-card').scrollIntoView({ behavior: 'smooth' });
+});
+
+const GREETING_QUOTES = [
+  "Prêt à travailler sur toi aujourd'hui ?",
+  "Une petite victoire aujourd'hui peut changer ta semaine.",
+  "Quel domaine veux-tu améliorer aujourd'hui ?",
+  "Chaque jour compte. Commence par une chose simple.",
+  "La discipline d'aujourd'hui, c'est la force de demain.",
+  "Un pas à la fois — c'est suffisant."
+];
+function pickDailyQuote() {
+  const today = new Date().toISOString().slice(0, 10);
+  let hash = 0;
+  for (const ch of today) hash = (hash * 31 + ch.charCodeAt(0)) % 100000;
+  return GREETING_QUOTES[hash % GREETING_QUOTES.length];
+}
 
 function showMain() {
   authScreen.classList.add('hidden');
   mainScreen.classList.remove('hidden');
-  document.getElementById('user-name').textContent = `${state.user.name} (${state.user.role})`;
+  document.getElementById('bottom-nav').classList.remove('hidden');
+
+  const first = state.user.name.trim().split(' ')[0] || state.user.name;
+  document.getElementById('greeting-text').textContent = `Bonjour ${first} 👋`;
+  document.getElementById('greeting-quote').textContent = pickDailyQuote();
+  document.getElementById('avatar-btn').textContent = state.user.name.trim().slice(0, 1).toUpperCase() || '?';
+  document.getElementById('pd-name').textContent = state.user.name;
+  document.getElementById('pd-role').textContent = state.user.role === 'admin' ? 'Administrateur' : 'Membre';
+  document.getElementById('pd-admin').classList.toggle('hidden', state.user.role !== 'admin');
   document.getElementById('nav-admin').classList.toggle('hidden', state.user.role !== 'admin');
+
   switchView('daily');
 }
 
@@ -94,14 +180,22 @@ function showMain() {
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.onclick = () => switchView(btn.dataset.view);
 });
+document.querySelectorAll('.bn-btn').forEach(btn => {
+  btn.onclick = () => {
+    switchView(btn.dataset.view);
+    if (btn.dataset.scrollMission) {
+      setTimeout(() => document.getElementById('mission-card')?.scrollIntoView({ behavior: 'smooth' }), 50);
+    }
+  };
+});
 
 function switchView(view) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  document.querySelectorAll('.bn-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view && !b.dataset.scrollMission));
   document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
   document.getElementById('view-' + view).classList.remove('hidden');
-  loadGamiBar();
 
-  if (view === 'daily') loadDaily();
+  if (view === 'daily') loadDailyDashboard();
   if (view === 'coach') loadConversations();
   if (view === 'journal') loadJournal();
   if (view === 'habits') loadHabits();
@@ -126,23 +220,140 @@ function switchView(view) {
   if (view === 'admin') loadAdmin();
 }
 
-// --- DAILY ---
-async function loadDaily() {
-  const el = document.getElementById('daily-content');
-  el.textContent = 'Chargement...';
-  try {
-    const data = await api('/daily');
-    el.innerHTML = `
-      <p>${data.suggestion}</p>
-      <p class="meta">${data.habitsDoneToday}/${data.habitsTotal} habitudes faites aujourd'hui</p>
-      ${data.mission.map(m => `<div class="card"><span>${m.type === 'habit' ? '✅' : '🎯'} ${m.title}</span></div>`).join('')}
-    `;
-  } catch (err) {
-    el.textContent = 'Erreur : ' + err.message;
+// --- CATÉGORIES (accueil) ---
+const CATEGORIES = {
+  'cat-moi': [
+    { view: 'profile-setup', icon: '👤', name: 'Profil', desc: 'Ce que tu es, ce que tu vises' },
+    { view: 'journal', icon: '📔', name: 'Journal', desc: 'Écris librement' },
+    { view: 'goals', icon: '🎯', name: 'Objectifs', desc: 'Ce que tu veux atteindre' },
+    { view: 'habits', icon: '✅', name: 'Habitudes', desc: 'Ce que tu répètes chaque jour' },
+    { view: 'progress', icon: '📈', name: 'Progression', desc: 'Ton évolution dans le temps' }
+  ],
+  'cat-coaching': [
+    { view: 'coach', icon: '🤖', name: 'Coach IA', desc: 'Réfléchis avant d\'agir' },
+    { view: 'situation', icon: '🆘', name: 'Situation', desc: 'Analyse un moment précis' },
+    { view: 'communication', icon: '💬', name: 'Communication', desc: 'Mieux te faire comprendre' },
+    { view: 'adaptation', icon: '⚙️', name: 'Adaptation', desc: 'Ajuste ton rythme' },
+    { view: 'domains', icon: '🧠', name: 'Domaines', desc: 'Vue d\'ensemble de ta vie' }
+  ],
+  'cat-apprendre': [
+    { view: 'bible', icon: '📖', name: 'Bible', desc: 'Lire, mémoriser, appliquer' },
+    { view: 'library', icon: '📚', name: 'Bibliothèque', desc: 'Tes livres et lectures' },
+    { view: 'teach', icon: '🎓', name: 'Teach Me', desc: 'Apprends un sujet en 5 niveaux' },
+    { view: 'videos', icon: '🎬', name: 'Vidéos', desc: 'Résumés de tes vidéos' },
+    { view: 'search', icon: '🌐', name: 'Recherche', desc: 'Chercher sur le web' }
+  ],
+  'cat-corps': [
+    { view: 'physique', icon: '💪', name: 'Physique', desc: 'Construis un corps plus fort' },
+    { view: 'style', icon: '👔', name: 'Style', desc: 'Présentation et image' },
+    { view: 'intimacy', icon: '🔞', name: 'Intimité', desc: 'Réservé aux adultes' }
+  ],
+  'cat-vie': [
+    { view: 'finance', icon: '💰', name: 'Finance', desc: 'Dépenses et épargne' }
+  ]
+};
+function renderCategories(domainScores) {
+  const DOMAIN_MAP = { physique: 'physique', finance: 'financier', bible: 'spirituel', communication: 'communication', intimacy: 'intime' };
+  for (const [gridId, items] of Object.entries(CATEGORIES)) {
+    const el = document.getElementById(gridId);
+    if (!el) continue;
+    el.innerHTML = items.map(it => {
+      const domainKey = DOMAIN_MAP[it.view];
+      const score = domainScores && domainKey ? domainScores[domainKey] : null;
+      return `
+        <button class="nav-card" data-view="${it.view}">
+          <span class="nav-icon">${it.icon}</span>
+          <span class="nav-name">${escapeHtml(it.name)}</span>
+          <span class="nav-desc">${escapeHtml(it.desc)}</span>
+          ${score != null ? `<span class="nav-progress">${score}% cette semaine</span>` : ''}
+        </button>
+      `;
+    }).join('');
+    el.querySelectorAll('[data-view]').forEach(btn => { btn.onclick = () => switchView(btn.dataset.view); });
   }
 }
 
-// --- COACH ---
+// --- DAILY : tableau de bord d'accueil ---
+async function loadDailyDashboard() {
+  try {
+    const [daily, gami, domains, verseOfDay] = await Promise.all([
+      api('/daily'),
+      api('/gamification/status'),
+      api('/domains/scores').catch(() => null),
+      api('/bible/verse-of-day').catch(() => null)
+    ]);
+
+    document.getElementById('xp-level-num').textContent = gami.level;
+    document.getElementById('xp-level-name').textContent = gami.levelName;
+    document.getElementById('xp-fill').style.width = gami.progressToNext + '%';
+    document.getElementById('xp-current').textContent = `${gami.xp} XP`;
+    document.getElementById('xp-next').textContent = gami.nextLevel ? `${gami.nextLevel.xpNeeded} XP avant le niveau ${gami.nextLevel.level}` : 'Niveau maximum';
+    document.getElementById('xp-streak').textContent = `🔥 ${gami.streak} jour${gami.streak > 1 ? 's' : ''} de série`;
+
+    document.getElementById('mission-sub').textContent = daily.suggestion;
+    const total = daily.mission.length;
+    document.getElementById('mission-count').textContent = `0 / ${total} missions terminées`;
+    document.getElementById('mission-progress-fill').style.width = '0%';
+    document.getElementById('mission-list').innerHTML = daily.mission.length
+      ? daily.mission.map(m => `
+          <div class="mission-item" data-mission-type="${m.type}" data-mission-id="${m.id}">
+            <span class="check">✓</span>
+            <span class="label">${m.type === 'habit' ? '✅' : m.type === 'goal' ? '🎯' : '📖'} ${escapeHtml(m.title)}</span>
+          </div>
+        `).join('')
+      : '<p class="meta" style="color:rgba(255,255,255,0.85);">Aucune mission pour l\'instant — ajoute une habitude ou un objectif pour démarrer.</p>';
+    bindMissionItems();
+
+    if (verseOfDay) {
+      document.getElementById('daily-bible-verse').innerHTML = `"${escapeHtml(verseOfDay.verse.text)}" <span class="verse-ref">— ${escapeHtml(verseOfDay.verse.ref)}</span>`;
+    }
+
+    const weekScores = domains ? domains.week : null;
+    renderCategories(weekScores);
+
+    const homeDash = document.getElementById('home-domains-dashboard');
+    if (weekScores) {
+      const top = Object.entries(weekScores).sort((a, b) => b[1] - a[1]).slice(0, 4);
+      homeDash.innerHTML = top.map(([d, score]) => `
+        <div class="domain-row">
+          <span>${DOMAIN_LABELS[d] || d}</span>
+          <div class="domain-bar-track"><div class="domain-bar-fill" style="width:${score}%"></div></div>
+          <span>${score}</span>
+        </div>
+      `).join('') || '<p class="meta">Pas encore de données cette semaine.</p>';
+    } else {
+      homeDash.innerHTML = '<p class="meta">Indisponible pour l\'instant.</p>';
+    }
+  } catch (err) {
+    document.getElementById('mission-sub').textContent = 'Erreur : ' + err.message;
+  }
+}
+
+function bindMissionItems() {
+  document.querySelectorAll('.mission-item').forEach(item => {
+    item.onclick = async () => {
+      if (item.classList.contains('done')) return;
+      const type = item.dataset.missionType;
+      const id = item.dataset.missionId;
+      try {
+        if (type === 'habit') await api(`/habits/${id}/done`, { method: 'POST' });
+        else if (type === 'goal') await api(`/goals/${id}`, { method: 'PATCH', body: { status: 'done' } });
+        else if (type === 'bible') await api(`/bible/memorization/${id}/advance`, { method: 'POST' });
+
+        item.classList.add('done');
+        const done = document.querySelectorAll('.mission-item.done').length;
+        const total = document.querySelectorAll('.mission-item').length;
+        document.getElementById('mission-count').textContent = `${done} / ${total} missions terminées`;
+        document.getElementById('mission-progress-fill').style.width = Math.round((done / total) * 100) + '%';
+        showToast(`<span class="xp-amount">+XP</span> Mission terminée 🎉`);
+      } catch (err) {
+        showToast(err.message);
+      }
+    };
+  });
+}
+
+
 async function loadConversations() {
   const list = await api('/chat/conversations');
   const el = document.getElementById('conversation-list');
@@ -616,16 +827,16 @@ function renderBarChart(el, data) {
   `;
 }
 
-// --- GAMIFICATION (barre d'en-tête) ---
+// --- GAMIFICATION (mise à jour légère de la carte XP après une action) ---
 async function loadGamiBar() {
   try {
     const g = await api('/gamification/status');
-    document.getElementById('gami-bar').innerHTML = `
-      <span>Niveau ${g.level} — ${escapeHtml(g.levelName)}</span>
-      <div class="xp-track"><div class="xp-fill" style="width:${g.progressToNext}%"></div></div>
-      <span>${g.xp} XP</span>
-      <span>🔥 ${g.streak}j</span>
-    `;
+    document.getElementById('xp-level-num').textContent = g.level;
+    document.getElementById('xp-level-name').textContent = g.levelName;
+    document.getElementById('xp-fill').style.width = g.progressToNext + '%';
+    document.getElementById('xp-current').textContent = `${g.xp} XP`;
+    document.getElementById('xp-next').textContent = g.nextLevel ? `${g.nextLevel.xpNeeded} XP avant le niveau ${g.nextLevel.level}` : 'Niveau maximum';
+    document.getElementById('xp-streak').textContent = `🔥 ${g.streak} jour${g.streak > 1 ? 's' : ''} de série`;
   } catch { /* pas connecté ou erreur réseau : on ignore silencieusement */ }
 }
 
@@ -908,7 +1119,10 @@ document.getElementById('account-name-form').addEventListener('submit', async (e
     const updated = await api('/users/me', { method: 'PATCH', body: { name } });
     state.user.name = updated.name;
     localStorage.setItem('bm_user', JSON.stringify(state.user));
-    document.getElementById('user-name').textContent = `${state.user.name} (${state.user.role})`;
+    const first = state.user.name.trim().split(' ')[0] || state.user.name;
+    document.getElementById('greeting-text').textContent = `Bonjour ${first} 👋`;
+    document.getElementById('avatar-btn').textContent = state.user.name.trim().slice(0, 1).toUpperCase() || '?';
+    document.getElementById('pd-name').textContent = state.user.name;
     status.textContent = 'Nom mis à jour ✅';
   } catch (err) {
     status.textContent = err.message;
@@ -921,7 +1135,7 @@ document.getElementById('delete-account-form').addEventListener('submit', async 
   if (!confirm('Cette action est définitive et supprime toutes tes données. Continuer ?')) return;
   try {
     await api('/privacy/delete-account', { method: 'POST', body: { password } });
-    document.getElementById('logout-btn').click();
+    doLogout();
   } catch (err) {
     document.getElementById('delete-account-status').textContent = err.message;
   }
