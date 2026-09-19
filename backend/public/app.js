@@ -1877,6 +1877,11 @@ async function loadPhysique() {
   ]);
   loadProgressPhotos();
 
+  try {
+    const { vision } = await api('/physique/vision');
+    document.getElementById('physique-vision-input').value = vision;
+  } catch { /* pas bloquant */ }
+
   document.getElementById('physique-summary').innerHTML = `
     <div class="badge-row">
       ${summary.latest?.weight ? `<span class="badge">Poids : ${summary.latest.weight} kg${summary.weightTrend30d != null ? ` (${summary.weightTrend30d >= 0 ? '+' : ''}${summary.weightTrend30d} sur 30j)` : ''}</span>` : ''}
@@ -1953,6 +1958,18 @@ document.getElementById('workout-form').addEventListener('submit', async (e) => 
   document.getElementById('workout-sets').value = '';
   document.getElementById('workout-reps').value = '';
   loadPhysique();
+});
+
+document.getElementById('physique-vision-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const status = document.getElementById('physique-vision-status');
+  try {
+    await api('/physique/vision', { method: 'PUT', body: { vision: document.getElementById('physique-vision-input').value } });
+    status.textContent = 'Enregistré ✅';
+    showToast('Vision mise à jour ✅');
+  } catch (err) {
+    status.textContent = err.message;
+  }
 });
 
 document.getElementById('physique-goal-form').addEventListener('submit', async (e) => {

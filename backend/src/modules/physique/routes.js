@@ -246,4 +246,23 @@ router.delete('/progress-photos/:id', async (req, res) => {
   res.json({ ok: true });
 });
 
+// Vision corporelle : une description libre de ce vers quoi l'utilisateur
+// travaille physiquement ("dream body"), à sa propre initiative — jamais
+// générée ni jugée par l'IA, juste un repère qu'il écrit et modifie lui-même.
+router.get('/vision', async (req, res) => {
+  await db.read();
+  const user = db.data.users.find(u => u.id === req.user.id);
+  res.json({ vision: user?.physiqueVision || '' });
+});
+
+router.put('/vision', async (req, res) => {
+  const { vision } = req.body;
+  await db.read();
+  const user = db.data.users.find(u => u.id === req.user.id);
+  if (!user) return res.status(404).json({ error: 'Utilisateur introuvable.' });
+  user.physiqueVision = vision || '';
+  await db.write();
+  res.json({ vision: user.physiqueVision });
+});
+
 export default router;
