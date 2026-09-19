@@ -513,6 +513,26 @@
         </form>
         <div id="savings-list"></div>
       </div>
+
+      <div class="card-block">
+        <h3>💹 Investissements</h3>
+        <p class="meta">Suivi personnel + projection mathématique (intérêts composés) — <strong>toi seul</strong> choisis le taux, l'app ne recommande rien. Pense à vérifier tes chiffres ailleurs : ceci n'est pas un conseil financier.</p>
+        <form id="investment-form">
+          <input type="text" id="investment-name" placeholder="Nom (ex: Assurance-vie, PEA, Livret A...)" />
+          <select id="investment-type">
+            <option value="epargne">Épargne réglementée</option>
+            <option value="bourse">Bourse / ETF</option>
+            <option value="immobilier">Immobilier</option>
+            <option value="crypto">Crypto</option>
+            <option value="autre">Autre</option>
+          </select>
+          <input type="number" step="0.01" id="investment-amount" placeholder="Montant placé (€)" />
+          <input type="number" step="0.1" id="investment-rate" placeholder="Taux annuel estimé (%)" />
+          <input type="number" id="investment-months" placeholder="Horizon (en mois)" />
+          <button type="submit">Ajouter et projeter</button>
+        </form>
+        <div id="investment-list"></div>
+      </div>
     </div>
 
     <!-- PHYSIQUE -->

@@ -26,6 +26,7 @@ router.get('/export', async (req, res) => {
     situations: db.data.situations.filter(s => s.userId === uid),
     financeTransactions: db.data.financeTransactions.filter(t => t.userId === uid),
     financeSavingsGoals: db.data.financeSavingsGoals.filter(g => g.userId === uid),
+    financeInvestments: db.data.financeInvestments.filter(i => i.userId === uid),
     libraryItems: db.data.libraryItems.filter(b => b.userId === uid),
     videos: db.data.videos.filter(v => v.userId === uid),
     teachTopics: db.data.teachTopics.filter(t => t.userId === uid),

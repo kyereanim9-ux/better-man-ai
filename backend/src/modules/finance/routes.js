@@ -113,4 +113,53 @@ router.delete('/savings-goals/:id', async (req, res) => {
   res.json({ ok: true });
 });
 
+// Investissements : simple suivi + projection par intérêts composés à partir
+// d'un taux ANNUEL QUE L'UTILISATEUR RENSEIGNE LUI-MÊME. L'app ne recommande
+// aucun taux, aucun produit financier — c'est un calculateur, pas un conseil.
+function compoundProjection(amount, annualRatePercent, months) {
+  const monthlyRate = annualRatePercent / 100 / 12;
+  const projected = amount * Math.pow(1 + monthlyRate, months);
+  return Math.round(projected * 100) / 100;
+}
+
+router.get('/investments', async (req, res) => {
+  await db.read();
+  const list = db.data.financeInvestments
+    .filter(i => i.userId === req.user.id)
+    .map(i => ({ ...i, projectedValue: compoundProjection(i.amount, i.annualRatePercent, i.horizonMonths) }));
+  res.json(list);
+});
+
+router.post('/investments', async (req, res) => {
+  const { name, type, amount, annualRatePercent, horizonMonths, note } = req.body;
+  if (!name?.trim()) return res.status(400).json({ error: 'Nom requis.' });
+  const numAmount = Number(amount);
+  if (!numAmount || numAmount <= 0) return res.status(400).json({ error: 'Montant invalide.' });
+  const numRate = Number(annualRatePercent);
+  if (isNaN(numRate)) return res.status(400).json({ error: 'Taux annuel invalide.' });
+  const numMonths = Number(horizonMonths);
+  if (!numMonths || numMonths <= 0) return res.status(400).json({ error: 'Horizon (en mois) invalide.' });
+
+  await db.read();
+  const investment = {
+    id: nanoid(), userId: req.user.id, name, type: type || 'autre',
+    amount: numAmount, annualRatePercent: numRate, horizonMonths: numMonths,
+    note: note || '', createdAt: new Date().toISOString()
+  };
+  db.data.financeInvestments.push(investment);
+  await db.write();
+  res.status(201).json({ ...investment, projectedValue: compoundProjection(numAmount, numRate, numMonths) });
+});
+
+router.delete('/investments/:id', async (req, res) => {
+  await db.read();
+  const before = db.data.financeInvestments.length;
+  db.data.financeInvestments = db.data.financeInvestments.filter(
+    i => !(i.id === req.params.id && i.userId === req.user.id)
+  );
+  if (db.data.financeInvestments.length === before) return res.status(404).json({ error: 'Investissement introuvable.' });
+  await db.write();
+  res.json({ ok: true });
+});
+
 export default router;

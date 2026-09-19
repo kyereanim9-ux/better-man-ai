@@ -948,8 +948,8 @@ document.getElementById('analyze-form').addEventListener('submit', async (e) => 
 
 // --- FINANCE ---
 async function loadFinance() {
-  const [summary, txs, savings] = await Promise.all([
-    api('/finance/summary'), api('/finance/transactions'), api('/finance/savings-goals')
+  const [summary, txs, savings, investments] = await Promise.all([
+    api('/finance/summary'), api('/finance/transactions'), api('/finance/savings-goals'), api('/finance/investments')
   ]);
 
   document.getElementById('finance-summary').innerHTML = `
@@ -989,6 +989,20 @@ async function loadFinance() {
   document.querySelectorAll('[data-del-savings]').forEach(btn => {
     btn.onclick = async () => { await api(`/finance/savings-goals/${btn.dataset.delSavings}`, { method: 'DELETE' }); loadFinance(); };
   });
+
+  const INVESTMENT_TYPE_LABELS = { epargne: 'Épargne réglementée', bourse: 'Bourse / ETF', immobilier: 'Immobilier', crypto: 'Crypto', autre: 'Autre' };
+  document.getElementById('investment-list').innerHTML = investments.map(inv => `
+    <div class="card">
+      <span>
+        ${escapeHtml(inv.name)} <span class="meta">(${INVESTMENT_TYPE_LABELS[inv.type] || inv.type})</span><br/>
+        <span class="meta">${inv.amount.toFixed(2)} € → projeté à ${inv.projectedValue.toFixed(2)} € dans ${inv.horizonMonths} mois (à ${inv.annualRatePercent}%/an que tu as toi-même renseigné)</span>
+      </span>
+      <button class="small danger" data-del-investment="${inv.id}">Supprimer</button>
+    </div>
+  `).join('') || '<p class="meta">Aucun investissement suivi pour l\'instant.</p>';
+  document.querySelectorAll('[data-del-investment]').forEach(btn => {
+    btn.onclick = async () => { await api(`/finance/investments/${btn.dataset.delInvestment}`, { method: 'DELETE' }); loadFinance(); };
+  });
 }
 
 document.getElementById('tx-form').addEventListener('submit', async (e) => {
@@ -1012,6 +1026,26 @@ document.getElementById('savings-form').addEventListener('submit', async (e) => 
   document.getElementById('savings-title').value = '';
   document.getElementById('savings-target').value = '';
   loadFinance();
+});
+
+document.getElementById('investment-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('investment-name').value;
+  const type = document.getElementById('investment-type').value;
+  const amount = document.getElementById('investment-amount').value;
+  const annualRatePercent = document.getElementById('investment-rate').value;
+  const horizonMonths = document.getElementById('investment-months').value;
+  if (!name || !amount || annualRatePercent === '' || !horizonMonths) return;
+  try {
+    await api('/finance/investments', { method: 'POST', body: { name, type, amount, annualRatePercent, horizonMonths } });
+    document.getElementById('investment-name').value = '';
+    document.getElementById('investment-amount').value = '';
+    document.getElementById('investment-rate').value = '';
+    document.getElementById('investment-months').value = '';
+    loadFinance();
+  } catch (err) {
+    showToast(err.message);
+  }
 });
 
 // --- DOMAINES ---

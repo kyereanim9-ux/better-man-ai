@@ -19,6 +19,7 @@ const defaultData = {
   situations: [],    // { id, userId, content, domains, questions, suggestion, createdAt }
   financeTransactions: [], // { id, userId, type, amount, category, note, date }
   financeSavingsGoals: [],  // { id, userId, title, targetAmount, savedAmount, createdAt }
+  financeInvestments: [],   // { id, userId, name, type, amount, annualRatePercent, horizonMonths, note, createdAt }
   libraryItems: [],  // { id, userId, title, author, type, text, position, createdAt }
   videos: [],        // { id, userId, title, url, transcript, createdAt }
   teachTopics: [],   // { id, userId, topic, levels: [{key,label,completed}], createdAt }
@@ -156,6 +157,7 @@ export function purgeUserData(userId) {
   db.data.situations = db.data.situations.filter(s => s.userId !== userId);
   db.data.financeTransactions = db.data.financeTransactions.filter(t => t.userId !== userId);
   db.data.financeSavingsGoals = db.data.financeSavingsGoals.filter(g => g.userId !== userId);
+  db.data.financeInvestments = db.data.financeInvestments.filter(i => i.userId !== userId);
   db.data.libraryItems = db.data.libraryItems.filter(b => b.userId !== userId);
   db.data.videos = db.data.videos.filter(v => v.userId !== userId);
   db.data.teachTopics = db.data.teachTopics.filter(t => t.userId !== userId);
