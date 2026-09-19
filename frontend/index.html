@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Better Man AI</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="lock-screen" class="screen hidden" style="max-width:320px;margin:80px auto;text-align:center;">
+  <h1>🔒 Verrouillé</h1>
+  <form id="lock-unlock-form">
+    <input type="password" id="lock-pin-input" placeholder="Code" autocomplete="off" />
+    <button type="submit">Déverrouiller</button>
+    <p class="error" id="lock-error"></p>
+  </form>
+</div>
+
+<div id="app">
+
+  <!-- ÉCRAN AUTH -->
+  <section id="auth-screen" class="screen">
+    <h1>Better Man AI</h1>
+    <div class="tabs">
+      <button id="tab-login" class="tab active">Connexion</button>
+      <button id="tab-register" class="tab">Créer un compte</button>
+    </div>
+
+    <form id="login-form">
+      <input type="email" id="login-email" placeholder="Email" required />
+      <input type="password" id="login-password" placeholder="Mot de passe" required />
+      <button type="submit">Se connecter</button>
+      <p class="error" id="login-error"></p>
+    </form>
+
+    <form id="register-form" class="hidden">
+      <input type="text" id="register-name" placeholder="Nom" />
+      <input type="email" id="register-email" placeholder="Email" required />
+      <input type="password" id="register-password" placeholder="Mot de passe (8 caractères min.)" required />
+      <button type="submit">Créer mon compte</button>
+      <p class="error" id="register-error"></p>
+    </form>
+  </section>
+
+  <!-- ÉCRAN PRINCIPAL -->
+  <section id="main-screen" class="screen hidden">
+    <header>
+      <h1>Better Man AI</h1>
+      <div id="gami-bar" class="gami-bar"></div>
+      <div>
+        <span id="user-name"></span>
+        <button id="logout-btn">Déconnexion</button>
+      </div>
+    </header>
+
+    <nav id="main-nav">
+      <button data-view="daily" class="nav-btn active">🔄 Daily</button>
+      <button data-view="situation" class="nav-btn">🆘 Situation</button>
+      <button data-view="coach" class="nav-btn">💬 Coach</button>
+      <button data-view="journal" class="nav-btn">📓 Journal</button>
+      <button data-view="habits" class="nav-btn">✅ Habitudes</button>
+      <button data-view="goals" class="nav-btn">🎯 Objectifs</button>
+      <button data-view="bible" class="nav-btn">📖 Bible</button>
+      <button data-view="library" class="nav-btn">📚 Bibliothèque</button>
+      <button data-view="videos" class="nav-btn">🎬 Vidéos</button>
+      <button data-view="teach" class="nav-btn">🎓 Teach Me</button>
+      <button data-view="search" class="nav-btn">🌐 Recherche</button>
+      <button data-view="intimacy" class="nav-btn">🔞 Intimité</button>
+      <button data-view="finance" class="nav-btn">💰 Finance</button>
+      <button data-view="physique" class="nav-btn">💪 Physique</button>
+      <button data-view="style" class="nav-btn">👔 Style</button>
+      <button data-view="adaptation" class="nav-btn">⚙️ Adaptation</button>
+      <button data-view="communication" class="nav-btn">🗣️ Communication</button>
+      <button data-view="domains" class="nav-btn">📊 Domaines</button>
+      <button data-view="progress" class="nav-btn">📈 Progression</button>
+      <button data-view="profile-setup" class="nav-btn">📝 Profil</button>
+      <button data-view="whats-new" class="nav-btn">🆕 Nouveau</button>
+      <button data-view="account" class="nav-btn">⚙️ Compte</button>
+      <button data-view="admin" class="nav-btn hidden" id="nav-admin">🛠️ Admin</button>
+    </nav>
+
+    <!-- DAILY -->
+    <div class="view" id="view-daily">
+      <h2>Ta mission du jour</h2>
+      <div id="daily-content">Chargement...</div>
+    </div>
+
+    <!-- COACH -->
+    <div class="view hidden" id="view-coach">
+      <h2>AI Coach</h2>
+      <div class="coach-layout">
+        <div id="conversation-list"></div>
+        <div class="coach-main">
+          <button id="new-conv-btn">+ Nouvelle conversation</button>
+          <div id="messages"></div>
+          <form id="message-form">
+            <input type="text" id="message-input" placeholder="Écris ton message..." autocomplete="off" />
+            <button type="submit">Envoyer</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOURNAL -->
+    <div class="view hidden" id="view-journal">
+      <h2>Journal</h2>
+      <form id="journal-form">
+        <textarea id="journal-input" placeholder="Écris librement..."></textarea>
+        <button type="submit">Enregistrer</button>
+      </form>
+      <div id="journal-list"></div>
+    </div>
+
+    <!-- HABITS -->
+    <div class="view hidden" id="view-habits">
+      <h2>Habitudes</h2>
+      <form id="habit-form">
+        <input type="text" id="habit-input" placeholder="Nouvelle habitude" />
+        <select id="habit-domain">
+          <option value="discipline">Discipline</option>
+          <option value="emotionnel">Émotionnel</option>
+          <option value="relationnel">Relationnel</option>
+          <option value="physique">Physique</option>
+          <option value="mental">Mental</option>
+          <option value="financier">Financier</option>
+          <option value="professionnel">Professionnel</option>
+          <option value="social">Social</option>
+          <option value="communication">Communication</option>
+          <option value="intime">Intime</option>
+          <option value="spirituel">Spirituel</option>
+        </select>
+        <button type="submit">Ajouter</button>
+      </form>
+      <div id="habits-list"></div>
+    </div>
+
+    <!-- GOALS -->
+    <div class="view hidden" id="view-goals">
+      <h2>Objectifs</h2>
+      <form id="goal-form">
+        <input type="text" id="goal-input" placeholder="Nouvel objectif" />
+        <select id="goal-category">
+          <option value="emotionnel">Émotionnel</option>
+          <option value="relationnel">Relationnel</option>
+          <option value="physique">Physique</option>
+          <option value="mental">Mental</option>
+          <option value="financier">Financier</option>
+          <option value="professionnel">Professionnel</option>
+          <option value="spirituel">Spirituel</option>
+          <option value="intime">Intime</option>
+        </select>
+        <button type="submit">Ajouter</button>
+      </form>
+      <div id="goals-list"></div>
+    </div>
+
+    <!-- BIBLE -->
+    <div class="view hidden" id="view-bible">
+      <h2>📖 Bible</h2>
+
+      <div class="card-block">
+        <h3>Verset du jour</h3>
+        <div id="bible-verse-of-day">Chargement...</div>
+      </div>
+
+      <div class="card-block">
+        <h3>Lecture du jour</h3>
+        <div id="bible-reading-of-day">Chargement...</div>
+      </div>
+
+      <div class="card-block">
+        <h3>Question du jour</h3>
+        <div id="bible-question-of-day">Chargement...</div>
+      </div>
+
+      <div class="card-block">
+        <h3>Rechercher un thème</h3>
+        <form id="bible-search-form">
+          <input type="text" id="bible-search-input" placeholder="ex: colère, pardon, finances, patience..." />
+          <button type="submit">Rechercher</button>
+        </form>
+        <div id="bible-search-results"></div>
+      </div>
+
+      <div class="card-block">
+        <h3>Poser une question</h3>
+        <form id="bible-ask-form">
+          <input type="text" id="bible-ask-input" placeholder="Que dit la Bible sur... ?" />
+          <button type="submit">Demander</button>
+        </form>
+        <div id="bible-ask-result"></div>
+      </div>
+
+      <div class="card-block">
+        <h3>Quiz biblique</h3>
+        <button id="bible-quiz-btn">Nouveau quiz</button>
+        <div id="bible-quiz-result"></div>
+      </div>
+
+      <div class="card-block">
+        <h3>Mémorisation (répétition espacée)</h3>
+        <div id="bible-memorization"></div>
+      </div>
+    </div>
+
+    <!-- LIBRARY -->
+    <div class="view hidden" id="view-library">
+      <h2>📚 Bibliothèque</h2>
+
+      <div class="card-block">
+        <h3>Ajouter un livre</h3>
+        <form id="library-text-form">
+          <input type="text" id="library-title" placeholder="Titre" />
+          <input type="text" id="library-author" placeholder="Auteur (optionnel)" />
+          <textarea id="library-text" placeholder="Colle le texte ici..." rows="4"></textarea>
+          <button type="submit">Ajouter (texte collé)</button>
+        </form>
+        <form id="library-upload-form">
+          <input type="text" id="library-upload-title" placeholder="Titre" />
+          <input type="file" id="library-upload-file" accept=".pdf,.txt,.epub,.docx" />
+          <button type="submit">Importer un fichier (PDF, TXT, EPUB, DOCX)</button>
+        </form>
+        <p class="meta">N'importe que des fichiers que tu as le droit légal d'utiliser.</p>
+      </div>
+
+      <div class="card-block">
+        <div id="library-list">Chargement...</div>
+      </div>
+
+      <div class="card-block hidden" id="library-detail-block">
+        <div id="library-detail"></div>
+      </div>
+    </div>
+
+    <!-- VIDEOS -->
+    <div class="view hidden" id="view-videos">
+      <h2>🎬 Vidéothèque</h2>
+
+      <div class="card-block">
+        <h3>Ajouter une vidéo</h3>
+        <form id="video-form">
+          <input type="text" id="video-title" placeholder="Titre" />
+          <input type="text" id="video-url" placeholder="Lien (YouTube, etc.)" />
+          <textarea id="video-transcript" placeholder="Transcription (optionnelle, colle-la si tu l'as — ex: YouTube 'Afficher la transcription')" rows="3"></textarea>
+          <button type="submit">Ajouter</button>
+        </form>
+      </div>
+
+      <div class="card-block">
+        <div id="video-list">Chargement...</div>
+      </div>
+
+      <div class="card-block hidden" id="video-detail-block">
+        <div id="video-detail"></div>
+      </div>
+    </div>
+
+    <!-- TEACH ME -->
+    <div class="view hidden" id="view-teach">
+      <h2>🎓 Teach Me</h2>
+
+      <div class="card-block">
+        <h3>Nouveau sujet</h3>
+        <form id="teach-form">
+          <input type="text" id="teach-topic" placeholder="Ex : Leadership, Finances, Communication..." />
+          <button type="submit">Créer le programme</button>
+        </form>
+      </div>
+
+      <div class="card-block">
+        <div id="teach-list">Chargement...</div>
+      </div>
+
+      <div class="card-block hidden" id="teach-detail-block">
+        <div id="teach-detail"></div>
+      </div>
+
+      <div class="card-block">
+        <h3>🧠 Ce qui te pose problème / ce que tu maîtrises</h3>
+        <div id="learning-insights">Chargement...</div>
+      </div>
+    </div>
+
+    <!-- INTIMACY -->
+    <div class="view hidden" id="view-intimacy">
+      <h2>🔞 Intimité</h2>
+
+      <div class="card-block hidden" id="intimacy-gate">
+        <p>Cette section aborde la communication et l'intimité entre adultes consentants. Réservée aux 18 ans et plus.</p>
+        <form id="intimacy-confirm-form">
+          <label><input type="checkbox" id="intimacy-age-check" /> J'ai 18 ans ou plus</label><br/>
+          <label><input type="checkbox" id="intimacy-consent-check" /> Je souhaite activer cette section volontairement</label><br/>
+          <button type="submit">Activer l'accès</button>
+        </form>
+      </div>
+
+      <div class="hidden" id="intimacy-content">
+        <div class="card-block">
+          <button id="intimacy-revoke-btn" class="small danger">Désactiver l'accès à cette section</button>
+        </div>
+
+        <div class="card-block">
+          <h3>Sujets</h3>
+          <div id="intimacy-topics">Chargement...</div>
+        </div>
+
+        <div class="card-block">
+          <h3>Suggestions de messages</h3>
+          <div class="badge-row">
+            <button class="small" data-intimacy-tone="romantique">Romantique</button>
+            <button class="small" data-intimacy-tone="suggestif">Suggestif</button>
+          </div>
+          <div id="intimacy-message-result"></div>
+        </div>
+
+        <div class="card-block">
+          <h3>Journal privé dédié</h3>
+          <form id="intimacy-journal-form">
+            <textarea id="intimacy-journal-input" placeholder="Espace séparé de ton journal général..."></textarea>
+            <button type="submit">Enregistrer</button>
+          </form>
+          <div id="intimacy-journal-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="view hidden" id="view-search">
+      <h2>🌐 Recherche web</h2>
+      <div class="card-block">
+        <form id="search-form">
+          <input type="text" id="search-input" placeholder="Rechercher sur le web..." />
+          <button type="submit">Rechercher</button>
+        </form>
+        <div id="search-status" class="meta"></div>
+        <div id="search-results"></div>
+      </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="view hidden" id="view-progress">
+      <h2>📈 Progression</h2>
+      <div class="card-block">
+        <h3>Revue de la semaine</h3>
+        <div id="weekly-review-content">Chargement...</div>
+      </div>
+      <div class="card-block">
+        <h3>Revue du mois</h3>
+        <div id="monthly-review-content">Chargement...</div>
+      </div>
+      <div class="card-block">
+        <h3>Tendances détectées (journal, 14 derniers jours)</h3>
+        <div id="trends-content">Chargement...</div>
+      </div>
+      <div class="card-block">
+        <h3>Habitudes — 14 derniers jours</h3>
+        <div id="habits-chart"></div>
+      </div>
+      <div class="card-block">
+        <h3>Objectifs</h3>
+        <div id="goals-chart"></div>
+      </div>
+      <div class="card-block">
+        <h3>Mémorisation biblique</h3>
+        <div id="memorization-stats"></div>
+      </div>
+    </div>
+
+    <!-- SITUATION RÉELLE -->
+    <div class="view hidden" id="view-situation">
+      <h2>🆘 Situation réelle</h2>
+      <div class="card-block">
+        <p class="meta">Décris exactement ce qui vient de se passer. L'app te pose des questions de réflexion et propose UNE action concrète, avant que tu répondes ou agisses.</p>
+        <form id="situation-form">
+          <textarea id="situation-input" placeholder="Ex : Je viens de me disputer avec ma copine. Voici exactement ce qui s'est passé..."></textarea>
+          <button type="submit">Analyser cette situation</button>
+        </form>
+        <div id="situation-result"></div>
+      </div>
+
+      <div class="card-block">
+        <h3>Schémas répétitifs (30 derniers jours)</h3>
+        <div id="situation-patterns">Chargement...</div>
+      </div>
+
+      <div class="card-block">
+        <h3>Historique</h3>
+        <div id="situation-history">Chargement...</div>
+      </div>
+    </div>
+
+    <!-- COMMUNICATION -->
+    <div class="view hidden" id="view-communication">
+      <h2>🗣️ Communication</h2>
+
+      <div class="card-block">
+        <h3>Que puis-je lui répondre ?</h3>
+        <form id="reply-form">
+          <textarea id="reply-input" placeholder="Colle ici le message qu'elle t'a envoyé..."></textarea>
+          <button type="submit">Proposer des réponses</button>
+        </form>
+        <div id="reply-result"></div>
+      </div>
+
+      <div class="card-block">
+        <h3>Analyser une conversation</h3>
+        <form id="analyze-form">
+          <textarea id="analyze-input" placeholder="Colle l'échange complet (une ligne par message)..."></textarea>
+          <button type="submit">Analyser</button>
+        </form>
+        <div id="analyze-result"></div>
+      </div>
+    </div>
+
+    <!-- FINANCE -->
+    <div class="view hidden" id="view-finance">
+      <h2>💰 Finance</h2>
+
+      <div class="card-block">
+        <h3>Résumé du mois</h3>
+        <div id="finance-summary">Chargement...</div>
+      </div>
+
+      <div class="card-block">
+        <h3>Ajouter une transaction</h3>
+        <form id="tx-form">
+          <select id="tx-type">
+            <option value="expense">Dépense</option>
+            <option value="income">Revenu</option>
+          </select>
+          <input type="number" step="0.01" id="tx-amount" placeholder="Montant (€)" />
+          <input type="text" id="tx-category" placeholder="Catégorie (ex: nourriture)" />
+          <button type="submit">Ajouter</button>
+        </form>
+        <div id="tx-list"></div>
+      </div>
+
+      <div class="card-block">
+        <h3>Objectifs d'épargne</h3>
+        <form id="savings-form">
+          <input type="text" id="savings-title" placeholder="Ex : Fonds d'urgence" />
+          <input type="number" step="0.01" id="savings-target" placeholder="Montant cible (€)" />
+          <button type="submit">Créer</button>
+        </form>
+        <div id="savings-list"></div>
+      </div>
+    </div>
+
+    <!-- PHYSIQUE -->
+    <div class="view hidden" id="view-physique">
+      <h2>💪 Physique</h2>
+
+      <div class="card-block">
+        <h3>Résumé</h3>
+        <div id="physique-summary">Chargement...</div>
+      </div>
+
+      <div class="card-block">
+        <h3>Nouvelle mesure</h3>
+        <form id="measurement-form">
+          <input type="number" step="0.1" id="measurement-weight" placeholder="Poids (kg)" />
+          <input type="number" step="0.1" id="measurement-waist" placeholder="Tour de taille (cm)" />
+          <button type="submit">Enregistrer</button>
+        </form>
+        <div id="measurement-list"></div>
+      </div>
+
+      <div class="card-block">
+        <h3>Nouvel entraînement</h3>
+        <form id="workout-form">
+          <input type="text" id="workout-type" placeholder="Type (musculation, course, mobilité...)" />
+          <input type="number" id="workout-duration" placeholder="Durée (min)" />
+          <input type="number" id="workout-sets" placeholder="Séries" />
+          <input type="number" id="workout-reps" placeholder="Répétitions" />
+          <button type="submit">Enregistrer</button>
+        </form>
+        <div id="workout-list"></div>
+      </div>
+
+      <div class="card-block">
+        <h3>Objectifs progressifs</h3>
+        <form id="physique-goal-form">
+          <input type="text" id="physique-goal-title" placeholder="Ex : Faire 20 pompes d'affilée" />
+          <select id="physique-goal-milestone">
+            <option value="30j">30 jours</option>
+            <option value="60j">60 jours</option>
+            <option value="90j">90 jours</option>
+            <option value="6mois">6 mois</option>
+            <option value="1an">1 an</option>
+          </select>
+          <button type="submit">Ajouter</button>
+        </form>
+        <div id="physique-goal-list"></div>
+      </div>
+    </div>
+
+    <!-- STYLE -->
+    <div class="view hidden" id="view-style">
+      <h2>👔 Style et présentation</h2>
+      <p class="meta">Réflexion, pas un standard imposé — cohérence avec tes propres objectifs.</p>
+
+      <div class="card-block">
+        <h3>Angles morts</h3>
+        <div id="style-overview">Chargement...</div>
+      </div>
+
+      <div class="card-block">
+        <h3>Domaines</h3>
+        <div id="style-checklist">Chargement...</div>
+      </div>
+
+      <div class="card-block">
+        <h3>Historique</h3>
+        <div id="style-entries-list"></div>
+      </div>
+    </div>
+
+    <!-- ADAPTATION -->
+    <div class="view hidden" id="view-adaptation">
+      <h2>⚙️ Adaptation automatique</h2>
+      <p class="meta">Analyse ponctuelle de ton activité — augmente, réduis ou réintroduis selon ce qu'elle détecte.</p>
+      <button id="adaptation-refresh-btn">Analyser maintenant</button>
+      <div class="card-block" id="adaptation-results">Clique sur "Analyser maintenant".</div>
+    </div>
+
+    <!-- DOMAINES -->
+    <div class="view hidden" id="view-domains">
+      <h2>📊 Domaines de vie</h2>
+      <p class="meta">Indicateurs d'activité relative, pas une mesure scientifique de ta valeur.</p>
+      <div class="card-block">
+        <div id="domains-scores">Chargement...</div>
+      </div>
+    </div>
+
+    <!-- PROFIL / ONBOARDING -->
+    <div class="view hidden" id="view-profile-setup">
+      <h2>📝 Mon profil</h2>
+      <p class="meta">Complète ce que tu veux, quand tu veux. Rien n'est obligatoire.</p>
+      <form id="onboarding-form" class="card-block"></form>
+      <button id="onboarding-save-btn">Enregistrer</button>
+      <p id="onboarding-status" class="meta"></p>
+    </div>
+
+    <!-- WHAT'S NEW -->
+    <div class="view hidden" id="view-whats-new">
+      <h2>🆕 Nouveautés</h2>
+      <div id="whats-new-list">Chargement...</div>
+    </div>
+
+    <!-- COMPTE / CONFIDENTIALITÉ -->
+    <div class="view hidden" id="view-account">
+      <h2>⚙️ Mon compte</h2>
+
+      <div class="card-block">
+        <h3>Mon profil</h3>
+        <form id="account-name-form">
+          <input type="text" id="account-name-input" placeholder="Nom" />
+          <button type="submit">Enregistrer</button>
+        </form>
+        <p class="meta" id="account-name-status"></p>
+      </div>
+
+      <div class="card-block">
+        <h3>Verrouillage local</h3>
+        <p class="meta">Protège l'accès à l'app sur cet appareil avec un code (stocké uniquement dans ce navigateur, ce n'est pas un chiffrement).</p>
+        <div id="lock-controls"></div>
+      </div>
+
+      <div class="card-block">
+        <h3>Exporter mes données</h3>
+        <p class="meta">Télécharge toutes tes données personnelles (journal, habitudes, objectifs, situations, finances...) au format JSON.</p>
+        <button id="export-btn">Exporter mes données</button>
+      </div>
+
+      <div class="card-block">
+        <h3>Supprimer mon compte</h3>
+        <p class="meta">Action définitive : supprime ton compte et toutes tes données. Demande ton mot de passe pour confirmer.</p>
+        <form id="delete-account-form">
+          <input type="password" id="delete-account-password" placeholder="Mot de passe" />
+          <button type="submit" class="danger-btn">Supprimer définitivement mon compte</button>
+        </form>
+        <p id="delete-account-status" class="meta"></p>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="view hidden" id="view-admin">
+      <h2>Administration</h2>
+      <div class="card-block">
+        <h3>Statut système</h3>
+        <div id="admin-system-status">Chargement...</div>
+      </div>
+      <div id="admin-users-list"></div>
+    </div>
+  </section>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
