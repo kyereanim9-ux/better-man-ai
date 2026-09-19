@@ -41,7 +41,8 @@ router.get('/export', async (req, res) => {
     dailyReflections: db.data.dailyReflections.filter(r => r.userId === uid),
     physiqueProgressPhotos: db.data.physiqueProgressPhotos.filter(p => p.userId === uid),
     skincareLogs: db.data.skincareLogs.filter(s => s.userId === uid),
-    mealLogs: db.data.mealLogs.filter(m => m.userId === uid)
+    mealLogs: db.data.mealLogs.filter(m => m.userId === uid),
+    imageAnalyses: db.data.imageAnalyses.filter(a => a.userId === uid)
   };
 
   res.setHeader('Content-Disposition', 'attachment; filename="better-man-ai-export.json"');

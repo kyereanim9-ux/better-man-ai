@@ -691,7 +691,7 @@
 
     <div class="view hidden" id="view-nutrition">
       <h2>🍽️ Alimentation</h2>
-      <p class="meta">Journal photo manuel — l'app ne reconnaît pas automatiquement le contenu d'une photo (pas d'IA de vision gratuite disponible), décris toi-même ce que tu manges.</p>
+      <p class="meta">Journal photo — décris ce que tu manges. Une reconnaissance automatique (aliments, calories approximatives) s'active si un fournisseur IA est configuré côté serveur.</p>
       <div class="card-block">
         <h3>Ajouter un repas</h3>
         <form id="meal-form">
@@ -708,6 +708,49 @@
       </div>
       <div class="card-block">
         <div id="meal-list">Chargement...</div>
+      </div>
+    </div>
+
+    <div class="view hidden" id="view-image-analysis">
+      <h2>📷 Analyse photo</h2>
+      <p class="meta">Prends une photo ou choisis-en une dans ta galerie — l'app identifie de quoi il s'agit et tu peux continuer la conversation. Nécessite un fournisseur IA configuré (OpenRouter ou Gemini) côté serveur.</p>
+
+      <div class="card-block" id="image-analysis-new-block">
+        <h3>Nouvelle analyse</h3>
+        <form id="image-analysis-form">
+          <select id="ia-category">
+            <option value="auto">Détection automatique</option>
+            <option value="nourriture">🍽️ Nourriture</option>
+            <option value="peau">👤 Visage et peau</option>
+            <option value="objet">📦 Objet</option>
+            <option value="produit">🛍️ Produit</option>
+            <option value="document">📄 Document</option>
+            <option value="vetement">👕 Vêtement</option>
+            <option value="animal">🐶 Animal</option>
+            <option value="plante">🌱 Plante</option>
+            <option value="materiel_av">🎥 Matériel audiovisuel</option>
+          </select>
+          <input type="text" id="ia-question" placeholder="Ta question (optionnel, ex : Combien de protéines ?)" />
+          <input type="file" id="ia-photo-input" accept="image/*" />
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);">
+            <input type="checkbox" id="ia-keep-photo" checked style="width:auto;" /> Conserver cette photo dans mon historique
+          </label>
+          <button type="submit">Analyser</button>
+        </form>
+        <p class="meta" id="image-analysis-status"></p>
+      </div>
+
+      <div class="card-block hidden" id="image-analysis-chat-block">
+        <div id="image-analysis-chat"></div>
+        <form id="ia-followup-form">
+          <input type="text" id="ia-followup-input" placeholder="Continue la conversation sur cette photo..." />
+          <button type="submit">Envoyer</button>
+        </form>
+      </div>
+
+      <div class="card-block">
+        <h3>Historique</h3>
+        <div id="image-analysis-history">Chargement...</div>
       </div>
     </div>
 

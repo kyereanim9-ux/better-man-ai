@@ -296,6 +296,49 @@ nouvelles :
 Testé de bout en bout (backend complet + non-régression sur 19 endpoints
 existants) avant et après câblage frontend.
 
+## Phase 10 — Analyse d'image multimodale (OpenRouter + Gemini)
+Système complet de conversation avec image, construit selon une architecture
+modulaire pilotée par configuration :
+
+- **`config/aiProviders.js`** : un seul fichier à modifier pour
+  ajouter/retirer/réordonner un fournisseur, changer de modèle, ou
+  couper Vision — rien de codé en dur ailleurs.
+- **Routeur central** (`ai/aiRouter.js`) : essaie OpenRouter puis Gemini
+  dans l'ordre de priorité ; si un échoue, bascule automatiquement au
+  suivant ; si aucun n'est configuré, le dit clairement plutôt que
+  d'inventer une réponse. Compteurs de requêtes/erreurs en mémoire,
+  exposés sur `/api/image-analysis/status` (admin) pour un futur panneau.
+- **OpenRouter en modèle `openrouter/free`** (pas un modèle précis) —
+  choix délibéré après recherche : la liste des modèles gratuits
+  individuels change en permanence, ce routeur automatique
+  sélectionne lui-même un modèle gratuit compatible image à chaque
+  requête, ce qui évite un identifiant qui casse en quelques mois.
+- **9 catégories d'analyse** (nourriture, visage/peau, objet, produit,
+  document, vêtement, animal, plante, matériel audiovisuel) + détection
+  automatique, chacune avec son propre prompt dans `ai/prompts.js`.
+- **Conversation multi-tours avec la même image** : la photo n'est
+  envoyée qu'au premier message, les tours suivants la réutilisent côté
+  fournisseur sans re-upload.
+- **Historique** ("Mes analyses") avec réglage "conserver cette photo"
+  par analyse (si décoché, la photo est supprimée après l'analyse,
+  seul le texte reste).
+- **Correctif de robustesse trouvé en testant** : les appels aux APIs
+  externes n'avaient aucun timeout (risque de requête bloquée
+  indéfiniment) — ajouté partout (20s), y compris sur l'ancien système
+  de reconnaissance des repas qui avait le même trou.
+
+Limite de test rencontrée : le bac à sable de développement bloque
+l'accès réseau sortant vers OpenRouter/Gemini — toute la logique interne
+(catégories, validation, historique, comportement sans clé, non-régression
+sur 16 endpoints) a été vérifiée ; l'appel réel aux fournisseurs IA ne
+pourra être confirmé qu'une fois déployé sur Render (accès réseau complet).
+
+Non construit dans cette phase (voir cahier des charges original) :
+Hugging Face en 3e fournisseur, panneau admin "AI Settings" complet
+(seul un statut brut existe), entrée vocale (micro), et interface de
+sélection de catégorie déjà unifiée avec le module Alimentation existant
+(les deux systèmes de reconnaissance repas coexistent encore séparément).
+
 ## Automatisations / nouvelles intégrations — non construites
 Ces deux points du cahier des charges restent volontairement hors scope :
 une app 100% gratuite et auto-hébergée n'a pas de serveur toujours actif pour

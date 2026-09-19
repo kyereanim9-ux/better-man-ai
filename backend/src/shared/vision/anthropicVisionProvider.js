@@ -12,25 +12,36 @@ Réponds UNIQUEMENT avec un objet JSON valide, sans texte autour, au format exac
 {"foods": ["aliment identifié 1", "aliment identifié 2"], "estimatedCalories": nombre_approximatif, "macroNote": "phrase courte sur protéines/glucides/lipides approximatifs", "confidence": "faible"|"moyenne"|"élevée"}
 Reste prudent : donne un ordre de grandeur, pas une valeur exacte impossible à garantir depuis une photo.`;
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 400,
-      messages: [{
-        role: 'user',
-        content: [
-          { type: 'image', source: { type: 'base64', media_type: mimeType, data: base64Data } },
-          { type: 'text', text: prompt }
-        ]
-      }]
-    })
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20000);
+  let res;
+  try {
+    res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 400,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: mimeType, data: base64Data } },
+            { type: 'text', text: prompt }
+          ]
+        }]
+      }),
+      signal: controller.signal
+    });
+  } catch (e) {
+    if (e.name === 'AbortError') throw new Error('Délai dépassé (20s).');
+    throw e;
+  } finally {
+    clearTimeout(timeout);
+  }
 
   if (!res.ok) throw new Error(`Anthropic a répondu avec le statut ${res.status}`);
   const data = await res.json();

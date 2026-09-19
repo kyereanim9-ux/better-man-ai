@@ -224,6 +224,7 @@ function switchView(view) {
   if (view === 'relationships') loadRelationships();
   if (view === 'skincare') loadSkincare();
   if (view === 'nutrition') loadNutrition();
+  if (view === 'image-analysis') loadImageAnalysisHistory();
   if (view === 'adaptation') { /* chargé au clic sur "Analyser" */ }
   if (view === 'domains') loadDomains();
   if (view === 'profile-setup') loadOnboarding();
@@ -257,6 +258,7 @@ const CATEGORIES = {
     { view: 'library', icon: '📚', name: 'Bibliothèque', desc: 'Tes livres et lectures' },
     { view: 'teach', icon: '🎓', name: 'Teach Me', desc: 'Apprends un sujet en 5 niveaux' },
     { view: 'videos', icon: '🎬', name: 'Vidéos', desc: 'Résumés de tes vidéos' },
+    { view: 'image-analysis', icon: '📷', name: 'Analyse photo', desc: 'Prends une photo, discute avec l\'IA' },
     { view: 'search', icon: '🌐', name: 'Recherche', desc: 'Chercher sur le web' }
   ],
   'cat-corps': [
@@ -2271,6 +2273,102 @@ async function loadProgressPhotos() {
   `).join('') || '<p class="meta">Aucune photo pour l\'instant.</p>';
   document.querySelectorAll('[data-del-photo]').forEach(btn => {
     btn.onclick = async () => { await api(`/physique/progress-photos/${btn.dataset.delPhoto}`, { method: 'DELETE' }); loadProgressPhotos(); };
+  });
+}
+
+// --- Analyse photo (multimodale) ---
+const CATEGORY_ICONS = {
+  auto: '🔍', nourriture: '🍽️', peau: '👤', objet: '📦', produit: '🛍️',
+  document: '📄', vetement: '👕', animal: '🐶', plante: '🌱', materiel_av: '🎥'
+};
+let currentImageAnalysisId = null;
+
+function renderImageAnalysisChat(analysis) {
+  currentImageAnalysisId = analysis.id;
+  document.getElementById('image-analysis-chat-block').classList.remove('hidden');
+  const chatEl = document.getElementById('image-analysis-chat');
+  chatEl.innerHTML = `
+    ${analysis.photo ? `<img src="${analysis.photo}" style="max-width:160px;border-radius:10px;margin-bottom:10px;" />` : ''}
+    <div id="ia-messages" style="display:flex;flex-direction:column;gap:8px;">
+      ${analysis.messages.map(m => `
+        <div class="msg ${m.role === 'user' ? 'user' : 'assistant'}" style="align-self:${m.role === 'user' ? 'flex-end' : 'flex-start'};">
+          <div>${escapeHtml(m.content)}</div>
+          ${m.role === 'assistant' ? speakerHTML(m.content) : ''}
+        </div>
+      `).join('')}
+    </div>
+    ${analysis.providerUsed ? `<p class="meta" style="margin-top:6px;">Répondu par ${escapeHtml(analysis.providerUsed)} (${escapeHtml(analysis.modelUsed || '')})</p>` : ''}
+  `;
+  chatEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+document.getElementById('image-analysis-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fileInput = document.getElementById('ia-photo-input');
+  const status = document.getElementById('image-analysis-status');
+  if (!fileInput.files[0]) { status.textContent = 'Choisis ou prends une photo.'; return; }
+  status.textContent = 'Analyse en cours...';
+  try {
+    const photo = await resizeImageToDataUrl(fileInput.files[0], 700, 0.8);
+    const analysis = await api('/image-analysis', {
+      method: 'POST',
+      body: {
+        photo,
+        category: document.getElementById('ia-category').value,
+        question: document.getElementById('ia-question').value,
+        keepPhoto: document.getElementById('ia-keep-photo').checked
+      }
+    });
+    status.textContent = analysis.unavailable ? '' : 'Analyse terminée ✅';
+    renderImageAnalysisChat(analysis);
+    fileInput.value = '';
+    document.getElementById('ia-question').value = '';
+    loadImageAnalysisHistory();
+  } catch (err) {
+    status.textContent = err.message;
+  }
+});
+
+document.getElementById('ia-followup-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const input = document.getElementById('ia-followup-input');
+  if (!input.value.trim() || !currentImageAnalysisId) return;
+  const content = input.value;
+  input.value = '';
+  const analysis = await api(`/image-analysis/${currentImageAnalysisId}/messages`, { method: 'POST', body: { content } });
+  renderImageAnalysisChat(analysis);
+  loadImageAnalysisHistory();
+});
+
+async function openImageAnalysis(id) {
+  const analysis = await api(`/image-analysis/${id}`);
+  renderImageAnalysisChat(analysis);
+}
+
+async function loadImageAnalysisHistory() {
+  const list = await api('/image-analysis');
+  const CATEGORY_LABELS_FR = { auto: 'Détection automatique', nourriture: 'Nourriture', peau: 'Visage et peau', objet: 'Objet', produit: 'Produit', document: 'Document', vetement: 'Vêtement', animal: 'Animal', plante: 'Plante', materiel_av: 'Matériel audiovisuel' };
+  document.getElementById('image-analysis-history').innerHTML = list.length ? list.map(a => `
+    <div class="card">
+      ${a.photo ? `<img src="${a.photo}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0;" />` : `<span style="font-size:20px;">${CATEGORY_ICONS[a.category] || '📷'}</span>`}
+      <span style="flex:1;">${CATEGORY_ICONS[a.category] || ''} ${escapeHtml(CATEGORY_LABELS_FR[a.category] || a.category)} <span class="meta">— ${escapeHtml(a.lastMessage || '')}</span></span>
+      <div>
+        <button class="small" data-open-ia="${a.id}">Ouvrir</button>
+        <button class="small danger" data-del-ia="${a.id}">Supprimer</button>
+      </div>
+    </div>
+  `).join('') : '<p class="meta">Aucune analyse pour l\'instant.</p>';
+
+  document.querySelectorAll('[data-open-ia]').forEach(btn => { btn.onclick = () => openImageAnalysis(btn.dataset.openIa); });
+  document.querySelectorAll('[data-del-ia]').forEach(btn => {
+    btn.onclick = async () => {
+      await api(`/image-analysis/${btn.dataset.delIa}`, { method: 'DELETE' });
+      if (currentImageAnalysisId === btn.dataset.delIa) {
+        currentImageAnalysisId = null;
+        document.getElementById('image-analysis-chat-block').classList.add('hidden');
+      }
+      loadImageAnalysisHistory();
+    };
   });
 }
 

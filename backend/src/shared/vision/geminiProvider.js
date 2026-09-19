@@ -11,21 +11,32 @@ Réponds UNIQUEMENT avec un objet JSON valide, sans texte autour, au format exac
 {"foods": ["aliment identifié 1", "aliment identifié 2"], "estimatedCalories": nombre_approximatif, "macroNote": "phrase courte sur protéines/glucides/lipides approximatifs", "confidence": "faible"|"moyenne"|"élevée"}
 Reste prudent : donne un ordre de grandeur, pas une valeur exacte impossible à garantir depuis une photo.`;
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          parts: [
-            { text: prompt },
-            { inline_data: { mime_type: mimeType, data: base64Data } }
-          ]
-        }]
-      })
-    }
-  );
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20000);
+  let res;
+  try {
+    res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { text: prompt },
+              { inline_data: { mime_type: mimeType, data: base64Data } }
+            ]
+          }]
+        }),
+        signal: controller.signal
+      }
+    );
+  } catch (e) {
+    if (e.name === 'AbortError') throw new Error('Délai dépassé (20s).');
+    throw e;
+  } finally {
+    clearTimeout(timeout);
+  }
 
   if (!res.ok) throw new Error(`Gemini a répondu avec le statut ${res.status}`);
   const data = await res.json();
@@ -47,3 +58,4 @@ export function parseAnalysisJson(text) {
     return { foods: [], estimatedCalories: null, macroNote: text.slice(0, 300), confidence: 'faible' };
   }
 }
+

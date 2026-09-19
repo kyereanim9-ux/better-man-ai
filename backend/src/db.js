@@ -34,7 +34,8 @@ const defaultData = {
   dailyReflections: [],     // { id, userId, date, accomplished, difficult, learned, differently, createdAt }
   physiqueProgressPhotos: [], // { id, userId, photo, note, date, createdAt } — comparaison visuelle datée, jamais notée par l'IA
   skincareLogs: [],         // { id, userId, date, amSteps: [], pmSteps: [] }
-  mealLogs: []              // { id, userId, photo, description, mealType, date, createdAt } — journal photo, aucune analyse automatique
+  mealLogs: [],              // { id, userId, photo, description, mealType, date, createdAt } — journal photo, aucune analyse automatique
+  imageAnalyses: []          // { id, userId, category, photo (ou null si non conservée), messages: [{role,content,createdAt}], providerUsed, modelUsed, createdAt }
 };
 
 // Domaines de vie utilisés partout dans l'app (scores, objectifs, habitudes,
@@ -179,4 +180,5 @@ export function purgeUserData(userId) {
   db.data.physiqueProgressPhotos = db.data.physiqueProgressPhotos.filter(p => p.userId !== userId);
   db.data.skincareLogs = db.data.skincareLogs.filter(s => s.userId !== userId);
   db.data.mealLogs = db.data.mealLogs.filter(m => m.userId !== userId);
+  db.data.imageAnalyses = db.data.imageAnalyses.filter(a => a.userId !== userId);
 }
