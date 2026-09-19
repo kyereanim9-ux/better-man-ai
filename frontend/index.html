@@ -325,13 +325,24 @@
       <h2>🎬 Vidéothèque</h2>
 
       <div class="card-block">
-        <h3>Ajouter une vidéo</h3>
+        <h3>Ajouter une vidéo (lien)</h3>
         <form id="video-form">
           <input type="text" id="video-title" placeholder="Titre" />
           <input type="text" id="video-url" placeholder="Lien (YouTube, etc.)" />
           <textarea id="video-transcript" placeholder="Transcription (optionnelle, colle-la si tu l'as — ex: YouTube 'Afficher la transcription')" rows="3"></textarea>
           <button type="submit">Ajouter</button>
         </form>
+      </div>
+
+      <div class="card-block">
+        <h3>Importer une vidéo depuis ton téléphone</h3>
+        <p class="meta">Vidéo courte uniquement (8 Mo max — stockée directement dans l'app). La transcription reste à coller toi-même, pas de reconnaissance vocale automatique sur fichier.</p>
+        <form id="video-upload-form">
+          <input type="text" id="video-upload-title" placeholder="Titre" />
+          <input type="file" id="video-upload-input" accept="video/*" capture="environment" />
+          <button type="submit">Importer</button>
+        </form>
+        <p class="meta" id="video-upload-status"></p>
       </div>
 
       <div class="card-block">

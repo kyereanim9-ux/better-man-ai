@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import multer from 'multer';
 import { nanoid } from 'nanoid';
 import { requireAuth } from '../../middleware/auth.js';
 import { db } from '../../db.js';
@@ -6,6 +7,31 @@ import { extractiveSummary, keyTerms, generateFlashcards, generateComprehensionQ
 
 const router = Router();
 router.use(requireAuth);
+
+// Import direct d'un fichier vidéo (téléphone/galerie), en plus du lien.
+// Stockée en base64 dans la base — donc plafonnée à une taille modeste
+// (8 Mo, une courte vidéo) pour rester raisonnable sur un plan gratuit ;
+// pas de service de stockage de fichiers séparé dans cette architecture 0€.
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 8 * 1024 * 1024 } });
+
+router.post('/upload', upload.single('file'), async (req, res) => {
+  const { title } = req.body;
+  if (!req.file) return res.status(400).json({ error: 'Aucun fichier reçu.' });
+  if (!title?.trim()) return res.status(400).json({ error: 'Titre requis.' });
+  if (!req.file.mimetype.startsWith('video/')) {
+    return res.status(400).json({ error: 'Le fichier doit être une vidéo.' });
+  }
+
+  await db.read();
+  const video = {
+    id: nanoid(), userId: req.user.id, title, url: '',
+    videoFile: `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`,
+    transcript: '', createdAt: new Date().toISOString()
+  };
+  db.data.videos.push(video);
+  await db.write();
+  res.status(201).json({ id: video.id, title: video.title, hasFile: true, createdAt: video.createdAt });
+});
 
 // Cette app ne télécharge ni ne transcrit automatiquement de vidéo (ça
 // nécessiterait un service payant ou un modèle lourd). L'utilisateur ajoute
@@ -29,7 +55,7 @@ router.get('/', async (req, res) => {
   await db.read();
   const list = db.data.videos
     .filter(v => v.userId === req.user.id)
-    .map(v => ({ id: v.id, title: v.title, url: v.url, hasTranscript: !!v.transcript, createdAt: v.createdAt }));
+    .map(v => ({ id: v.id, title: v.title, url: v.url, hasFile: !!v.videoFile, hasTranscript: !!v.transcript, createdAt: v.createdAt }));
   res.json(list);
 });
 

@@ -1643,7 +1643,7 @@ async function loadVideos() {
   const el = document.getElementById('video-list');
   el.innerHTML = videos.length ? videos.map(v => `
     <div class="card">
-      <span>${escapeHtml(v.title)} ${v.hasTranscript ? '📝' : ''} <span class="meta">${escapeHtml(v.url)}</span></span>
+      <span>${escapeHtml(v.title)} ${v.hasFile ? '🎬' : ''} ${v.hasTranscript ? '📝' : ''} <span class="meta">${escapeHtml(v.url || '')}</span></span>
       <div>
         <button class="small" data-open-video="${v.id}">Ouvrir</button>
         <button class="small danger" data-del-video="${v.id}">Supprimer</button>
@@ -1659,12 +1659,38 @@ async function loadVideos() {
   });
 }
 
+document.getElementById('video-upload-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const title = document.getElementById('video-upload-title').value.trim();
+  const fileInput = document.getElementById('video-upload-input');
+  const status = document.getElementById('video-upload-status');
+  if (!title || !fileInput.files[0]) { status.textContent = 'Titre et fichier requis.'; return; }
+  status.textContent = 'Import en cours...';
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('file', fileInput.files[0]);
+  try {
+    const res = await fetch(API_BASE + '/videos/upload', {
+      method: 'POST', headers: { Authorization: `Bearer ${state.token}` }, body: formData
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Erreur');
+    status.textContent = 'Importée ✅';
+    document.getElementById('video-upload-title').value = '';
+    fileInput.value = '';
+    loadVideos();
+  } catch (err) {
+    status.textContent = err.message;
+  }
+});
+
 async function openVideo(id) {
   const video = await api(`/videos/${id}`);
   const studyPack = video.transcript ? await api(`/videos/${id}/study-pack`).catch(() => null) : null;
   const block = document.getElementById('video-detail-block');
   block.classList.remove('hidden');
   document.getElementById('video-detail').innerHTML = `
+    ${video.videoFile ? `<div class="card-block"><video src="${video.videoFile}" controls style="width:100%;border-radius:10px;"></video></div>` : ''}
     <div class="card-block">
       <h3>📝 Transcription</h3>
       <form id="video-transcript-edit-form">

@@ -370,6 +370,23 @@ Testé de bout en bout : coach texte simple (non-régression), validation
 photo invalide rejetée (coach + relations), vraie photo acceptée et stockée
 (relations), non-régression sur 12 endpoints existants.
 
+## Phase 12 — Import vidéo depuis le téléphone + clé OpenRouter sur Render
+- **Import de fichier vidéo réel** (`POST /videos/upload`, multipart) —
+  jusqu'à 8 Mo, stockée en base64 dans la base (pas de service de stockage
+  fichier séparé dans cette architecture 0€, d'où la limite volontairement
+  modeste). Lecteur `<video>` intégré dans le détail de la vidéo. La
+  transcription reste manuelle (à coller) — aucune reconnaissance vocale
+  automatique sur fichier n'est connectée, dit clairement à l'utilisateur
+  plutôt que promis à tort.
+- **`OPENROUTER_API_KEY` configurée directement sur Render** via les
+  outils MCP Render (accès trouvé et utilisé en cours de session) —
+  service `better-man-ai` (`srv-dan44vrtqb8s73ahase0`), déploiement
+  déclenché automatiquement par la mise à jour de variable.
+
+Testé de bout en bout : upload d'un vrai (tout petit) fichier vidéo,
+`hasFile` correctement renvoyé dans la liste, non-régression sur 10
+endpoints existants.
+
 ## Automatisations / nouvelles intégrations — non construites
 Ces deux points du cahier des charges restent volontairement hors scope :
 une app 100% gratuite et auto-hébergée n'a pas de serveur toujours actif pour
