@@ -387,6 +387,28 @@ Testé de bout en bout : upload d'un vrai (tout petit) fichier vidéo,
 `hasFile` correctement renvoyé dans la liste, non-régression sur 10
 endpoints existants.
 
+## Phase 13 — Vrai LLM sur le Coach IA texte (fallback multi-fournisseurs)
+Le Coach IA texte n'utilisait jusqu'ici que des réponses locales à base de
+règles (mots-clés + questions réflexives génériques). Ajout d'un vrai LLM
+en priorité, avec repli automatique intact :
+
+- **`config/textProviders.js`** : Gemini (endpoint compatible OpenAI,
+  réutilise `GEMINI_API_KEY`), Mistral, Cohere, Z.AI (Zhipu) — dans cet
+  ordre, chacun avec sa propre clé.
+- **`ai/textChatRouter.js`** (`chatWithFallback`) : essaie chaque
+  fournisseur configuré dans l'ordre, timeout 15s par tentative, compteurs
+  requêtes/erreurs en mémoire (`/api/chat/text-provider-status`, admin).
+- **Coach IA** (`chat/routes.js`) : un message texte tente d'abord le vrai
+  LLM (prompt dédié "Better Man Coach" — réflexif, pas d'ordre donné) ; si
+  aucune clé n'est configurée ou si tous les fournisseurs échouent, retombe
+  silencieusement sur le coach local existant, sans rien casser pour un
+  usage 100% gratuit.
+
+Testé de bout en bout : sans aucune clé configurée, le coach local répond
+exactement comme avant (non-régression comportementale confirmée), statut
+des 4 fournisseurs correctement renvoyé comme non configurés, non-régression
+sur 10 endpoints existants.
+
 ## Automatisations / nouvelles intégrations — non construites
 Ces deux points du cahier des charges restent volontairement hors scope :
 une app 100% gratuite et auto-hébergée n'a pas de serveur toujours actif pour

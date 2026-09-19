@@ -1,13 +1,20 @@
 import { Router } from 'express';
 import { nanoid } from 'nanoid';
-import { requireAuth } from '../../middleware/auth.js';
+import { requireAuth, requireAdmin } from '../../middleware/auth.js';
 import { db } from '../../db.js';
 import { getCoachReply } from '../coach/aiProvider.js';
 import { routeImageChat } from '../../ai/aiRouter.js';
 import { buildSystemPrompt } from '../../ai/prompts.js';
+import { chatWithFallback, getTextProviderStatus } from '../../ai/textChatRouter.js';
 
 const router = Router();
 router.use(requireAuth);
+
+const COACH_SYSTEM_PROMPT =
+  "Tu es Better Man Coach, un coach personnel bienveillant et réfléchi. Aide l'utilisateur à réfléchir avant d'agir : pose des questions, reste concret, ne décide jamais à sa place et ne donne pas d'ordre. Reste bref (quelques phrases), réponds en français, avec empathie mais sans complaisance excessive.";
+
+// Statut des fournisseurs de texte (admin) — même esprit que /image-analysis/status.
+router.get('/text-provider-status', requireAdmin, (req, res) => res.json(getTextProviderStatus()));
 
 // Liste des conversations de l'utilisateur connecté UNIQUEMENT.
 router.get('/conversations', async (req, res) => {
@@ -82,7 +89,16 @@ router.post('/conversations/:id/messages', async (req, res) => {
     });
     reply = result.ok ? result.reply : result.note;
   } else {
-    reply = await getCoachReply(conv.messages, { userId: req.user.id });
+    // Vrai LLM en priorité si au moins un fournisseur est configuré ;
+    // repli automatique sur le coach local (réflexif, à base de règles,
+    // 0 €) si aucune clé n'est renseignée ou si tous les fournisseurs échouent.
+    try {
+      const history = conv.messages.map(m => ({ role: m.role, content: m.content }));
+      const result = await chatWithFallback([{ role: 'system', content: COACH_SYSTEM_PROMPT }, ...history]);
+      reply = result.content;
+    } catch {
+      reply = await getCoachReply(conv.messages, { userId: req.user.id });
+    }
   }
   const assistantMsg = { role: 'assistant', content: reply, createdAt: new Date().toISOString() };
   conv.messages.push(assistantMsg);
