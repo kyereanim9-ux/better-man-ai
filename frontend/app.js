@@ -419,26 +419,39 @@ function renderMessages(messages) {
   const el = document.getElementById('messages');
   el.innerHTML = messages.map(m => `
     <div class="msg ${m.role}">
-      <div>${escapeHtml(m.content)}</div>
+      <div>${m.hasPhoto ? '📷 ' : ''}${escapeHtml(m.content)}</div>
       ${m.role === 'assistant' ? speakerHTML(m.content) : ''}
     </div>
   `).join('');
   el.scrollTop = el.scrollHeight;
 }
 
+let selectedMessagePhoto = null;
+document.getElementById('message-photo-btn').onclick = () => document.getElementById('message-photo-input').click();
+document.getElementById('message-photo-input').onchange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  selectedMessagePhoto = await resizeImageToDataUrl(file, 700, 0.8);
+  document.getElementById('message-photo-status').textContent = '📷 Photo prête à être envoyée — écris ta question (optionnel) et envoie.';
+};
+
 document.getElementById('message-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const input = document.getElementById('message-input');
   const content = input.value.trim();
-  if (!content) return;
+  const photo = selectedMessagePhoto;
+  if (!content && !photo) return;
   if (!state.currentConversationId) {
-    const conv = await api('/chat/conversations', { method: 'POST', body: { title: content.slice(0, 30) } });
+    const conv = await api('/chat/conversations', { method: 'POST', body: { title: (content || 'Photo').slice(0, 30) } });
     state.currentConversationId = conv.id;
     await loadConversations();
   }
   input.value = '';
-  const data = await api(`/chat/conversations/${state.currentConversationId}/messages`, {
-    method: 'POST', body: { content }
+  selectedMessagePhoto = null;
+  document.getElementById('message-photo-status').textContent = '';
+  document.getElementById('message-photo-input').value = '';
+  await api(`/chat/conversations/${state.currentConversationId}/messages`, {
+    method: 'POST', body: { content, photo }
   });
   const conv = await api(`/chat/conversations/${state.currentConversationId}`);
   renderMessages(conv.messages);
@@ -823,6 +836,54 @@ function wordOverlapScore(target, said) {
   return targetWords.length ? Math.round((matched / targetWords.length) * 100) : 0;
 }
 function stripAccentsClient(s) { return s.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+
+// Micro générique : transcrit la voix directement dans une zone de texte.
+// Réutilisable partout (Journal, Situation...) sans dupliquer la logique.
+function attachVoiceToTextarea(btnId, textareaId, statusId) {
+  const btn = document.getElementById(btnId);
+  const textarea = document.getElementById(textareaId);
+  const status = document.getElementById(statusId);
+  if (!SpeechRecognitionAPI) {
+    btn.disabled = true;
+    status.textContent = "Non supporté par ce navigateur (essaie Chrome).";
+    return;
+  }
+
+  let recognition = null;
+  let listening = false;
+  const baseText = () => textarea.dataset.baseText || '';
+
+  btn.onclick = () => {
+    if (listening) { recognition.stop(); return; }
+    textarea.dataset.baseText = textarea.value ? textarea.value + ' ' : '';
+    recognition = new SpeechRecognitionAPI();
+    recognition.lang = 'fr-FR';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onresult = (e) => {
+      let interim = '', final = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) final += e.results[i][0].transcript + ' ';
+        else interim += e.results[i][0].transcript;
+      }
+      if (final) textarea.dataset.baseText = baseText() + final;
+      textarea.value = baseText() + interim;
+    };
+    recognition.onerror = () => { status.textContent = "Erreur de reconnaissance — réessaie."; };
+    recognition.onend = () => {
+      listening = false;
+      btn.textContent = "🎤 Parler au lieu d'écrire";
+      status.textContent = '';
+    };
+    recognition.start();
+    listening = true;
+    btn.textContent = '⏹️ Arrêter';
+    status.textContent = 'Écoute en cours...';
+  };
+}
+attachVoiceToTextarea('journal-voice-btn', 'journal-input', 'journal-voice-status');
+attachVoiceToTextarea('situation-voice-btn', 'situation-input', 'situation-voice-status');
 
 function openRecitationPanel(id, text, ref) {
   const panel = document.getElementById(`recite-panel-${id}`);
@@ -2117,6 +2178,7 @@ async function openRelationship(id) {
       <textarea id="rel-entry-know" placeholder="Ce que tu SAIS (dit clairement, pas supposé)" rows="2"></textarea>
       <textarea id="rel-entry-assume" placeholder="Ce que tu SUPPOSES seulement" rows="2"></textarea>
       <textarea id="rel-entry-ask" placeholder="Ce qu'il faudrait lui demander directement" rows="2"></textarea>
+      <input type="file" id="rel-entry-photo" accept="image/*" capture="environment" />
       <button type="submit">Enregistrer</button>
     </form>
     <div id="relationship-entries-list" style="margin-top:14px;">
@@ -2126,6 +2188,7 @@ async function openRelationship(id) {
             <span class="badge">${escapeHtml(data.entryTypeLabels[en.type] || en.type)}</span>
             <button class="small danger" data-del-rel-entry="${en.id}">Supprimer</button>
           </div>
+          ${en.photo ? `<img src="${en.photo}" style="max-width:120px;border-radius:8px;margin:8px 0;" />` : ''}
           <p style="margin:8px 0 4px;">${escapeHtml(en.content)}</p>
           ${en.whatYouKnow ? `<p class="meta">Sais : ${escapeHtml(en.whatYouKnow)}</p>` : ''}
           ${en.whatYouAssume ? `<p class="meta">Suppose : ${escapeHtml(en.whatYouAssume)}</p>` : ''}
@@ -2139,13 +2202,17 @@ async function openRelationship(id) {
     e.preventDefault();
     const content = document.getElementById('rel-entry-content').value;
     if (!content.trim()) return;
+    const fileInput = document.getElementById('rel-entry-photo');
+    let photo = null;
+    if (fileInput.files[0]) photo = await resizeImageToDataUrl(fileInput.files[0], 600, 0.8);
     await api(`/relationships/${id}/entries`, {
       method: 'POST',
       body: {
         type: document.getElementById('rel-entry-type').value, content,
         whatYouKnow: document.getElementById('rel-entry-know').value,
         whatYouAssume: document.getElementById('rel-entry-assume').value,
-        toAsk: document.getElementById('rel-entry-ask').value
+        toAsk: document.getElementById('rel-entry-ask').value,
+        photo
       }
     });
     openRelationship(id);

@@ -339,6 +339,37 @@ Hugging Face en 3e fournisseur, panneau admin "AI Settings" complet
 sélection de catégorie déjà unifiée avec le module Alimentation existant
 (les deux systèmes de reconnaissance repas coexistent encore séparément).
 
+## Phase 11 — Entrées voix/photo élargies (Journal, Coach, Situation, Relations)
+Suite à une demande de faciliter la communication multi-canal dans l'app :
+
+- **Micro générique réutilisable** (`attachVoiceToTextarea`) — transcrit la
+  voix en direct dans une zone de texte, branché sur Journal et Situation.
+  Le transcript devient le texte de l'entrée elle-même (pas de fichier audio
+  brut stocké séparément — cohérent avec l'approche texte du reste de l'app).
+- **Coach IA avec photo** : bouton 📷 dans le chat — si une photo est jointe
+  et qu'un fournisseur IA de vision est configuré, la réponse passe par le
+  routeur d'image (nouveau prompt de catégorie "coach", réflexif et
+  bienveillant) plutôt que le coach local habituel ; sans photo, rien ne
+  change. Dégrade proprement si aucun fournisseur n'est configuré.
+- **Relations avec photo** : chaque entrée peut avoir une photo jointe,
+  affichée dans l'historique de la relation.
+- **Accès caméra direct** (`capture="environment"` / `capture="user"`)
+  ajouté à tous les champs photo existants (avatar, repas, progression
+  physique, analyse d'image, relations) — sur mobile, propose maintenant
+  le choix appareil photo/galerie au lieu de systématiquement passer par
+  la galerie.
+
+Non construit, avec raison technique explicite donnée à l'utilisateur :
+**transcription automatique de vidéos importées** (Vidéothèque) — demande
+un service de reconnaissance vocale sur fichier audio/vidéo (différent de
+la reconnaissance vocale du navigateur utilisée ailleurs dans l'app), non
+connecté. Le flux existant (coller la transcription, ex. depuis YouTube)
+reste la voie fonctionnelle.
+
+Testé de bout en bout : coach texte simple (non-régression), validation
+photo invalide rejetée (coach + relations), vraie photo acceptée et stockée
+(relations), non-régression sur 12 endpoints existants.
+
 ## Automatisations / nouvelles intégrations — non construites
 Ces deux points du cahier des charges restent volontairement hors scope :
 une app 100% gratuite et auto-hébergée n'a pas de serveur toujours actif pour

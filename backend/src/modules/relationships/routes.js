@@ -51,9 +51,15 @@ router.get('/:id/entries', async (req, res) => {
 });
 
 router.post('/:id/entries', async (req, res) => {
-  const { type, content, whatYouKnow, whatYouAssume, toAsk } = req.body;
+  const { type, content, whatYouKnow, whatYouAssume, toAsk, photo } = req.body;
   if (!ENTRY_TYPES.includes(type)) return res.status(400).json({ error: `type doit être l'un de : ${ENTRY_TYPES.join(', ')}.` });
   if (!content?.trim()) return res.status(400).json({ error: 'Contenu vide.' });
+  if (photo) {
+    if (typeof photo !== 'string' || !photo.startsWith('data:image/')) {
+      return res.status(400).json({ error: 'Format de photo invalide.' });
+    }
+    if (photo.length > 900000) return res.status(400).json({ error: 'Photo trop volumineuse.' });
+  }
   await db.read();
   const relationship = db.data.relationships.find(r => r.id === req.params.id && r.userId === req.user.id);
   if (!relationship) return res.status(404).json({ error: 'Relation introuvable.' });
@@ -61,7 +67,7 @@ router.post('/:id/entries', async (req, res) => {
   const entry = {
     id: nanoid(), userId: req.user.id, relationshipId: req.params.id, type, content,
     whatYouKnow: whatYouKnow || '', whatYouAssume: whatYouAssume || '', toAsk: toAsk || '',
-    createdAt: new Date().toISOString()
+    photo: photo || null, createdAt: new Date().toISOString()
   };
   db.data.relationshipEntries.push(entry);
   await db.write();

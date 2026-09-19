@@ -3,6 +3,8 @@ import { nanoid } from 'nanoid';
 import { requireAuth } from '../../middleware/auth.js';
 import { db } from '../../db.js';
 import { getCoachReply } from '../coach/aiProvider.js';
+import { routeImageChat } from '../../ai/aiRouter.js';
+import { buildSystemPrompt } from '../../ai/prompts.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -51,19 +53,37 @@ router.delete('/conversations/:id', async (req, res) => {
   res.json({ ok: true });
 });
 
-// Envoie un message et reçoit la réponse du coach.
+// Envoie un message et reçoit la réponse du coach. Si une photo est jointe et
+// qu'un fournisseur IA de vision est configuré, la réponse passe par le
+// routeur d'image plutôt que le coach local (texte seul) habituel.
 router.post('/conversations/:id/messages', async (req, res) => {
-  const { content } = req.body;
-  if (!content?.trim()) return res.status(400).json({ error: 'Message vide.' });
+  const { content, photo } = req.body;
+  if (!content?.trim() && !photo) return res.status(400).json({ error: 'Message vide.' });
+  if (photo) {
+    if (typeof photo !== 'string' || !photo.startsWith('data:image/')) {
+      return res.status(400).json({ error: 'Format de photo invalide.' });
+    }
+    if (photo.length > 1200000) return res.status(400).json({ error: 'Photo trop volumineuse.' });
+  }
 
   await db.read();
   const conv = db.data.conversations.find(c => c.id === req.params.id && c.userId === req.user.id);
   if (!conv) return res.status(404).json({ error: 'Conversation introuvable.' });
 
-  const userMsg = { role: 'user', content, createdAt: new Date().toISOString() };
+  const userMsg = { role: 'user', content: content || '(photo envoyée)', createdAt: new Date().toISOString(), hasPhoto: !!photo };
   conv.messages.push(userMsg);
 
-  const reply = await getCoachReply(conv.messages, { userId: req.user.id });
+  let reply;
+  if (photo) {
+    const result = await routeImageChat({
+      systemPrompt: buildSystemPrompt('coach'),
+      messages: [{ role: 'user', content: content || 'Regarde cette photo et aide-moi à réfléchir à ce qu\'elle représente.' }],
+      imageDataUrl: photo
+    });
+    reply = result.ok ? result.reply : result.note;
+  } else {
+    reply = await getCoachReply(conv.messages, { userId: req.user.id });
+  }
   const assistantMsg = { role: 'assistant', content: reply, createdAt: new Date().toISOString() };
   conv.messages.push(assistantMsg);
 

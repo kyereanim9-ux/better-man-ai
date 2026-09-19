@@ -176,8 +176,11 @@
           <div id="messages"></div>
           <form id="message-form">
             <input type="text" id="message-input" placeholder="Écris ton message..." autocomplete="off" />
+            <button type="button" id="message-photo-btn" class="small" style="background:transparent;border:1px solid var(--border);color:var(--muted);box-shadow:none;">📷</button>
+            <input type="file" id="message-photo-input" accept="image/*" capture="environment" style="display:none;" />
             <button type="submit">Envoyer</button>
           </form>
+          <p class="meta" id="message-photo-status"></p>
         </div>
       </div>
     </div>
@@ -187,6 +190,10 @@
       <h2>Journal</h2>
       <form id="journal-form">
         <textarea id="journal-input" placeholder="Écris librement..."></textarea>
+        <div class="speaker">
+          <button type="button" id="journal-voice-btn">🎤 Parler au lieu d'écrire</button>
+          <span class="meta" id="journal-voice-status"></span>
+        </div>
         <button type="submit">Enregistrer</button>
       </form>
       <div id="journal-list"></div>
@@ -454,6 +461,10 @@
         <p class="meta">Décris exactement ce qui vient de se passer. L'app te pose des questions de réflexion et propose UNE action concrète, avant que tu répondes ou agisses.</p>
         <form id="situation-form">
           <textarea id="situation-input" placeholder="Ex : Je viens de me disputer avec ma copine. Voici exactement ce qui s'est passé..."></textarea>
+          <div class="speaker">
+            <button type="button" id="situation-voice-btn">🎤 Parler au lieu d'écrire</button>
+            <span class="meta" id="situation-voice-status"></span>
+          </div>
           <button type="submit">Analyser cette situation</button>
         </form>
         <div id="situation-result"></div>
@@ -647,7 +658,7 @@
         <h3>📸 Photos de progression</h3>
         <p class="meta">Comparaison visuelle datée, sans note ni verdict de l'IA — à toi de juger, dans le temps.</p>
         <form id="progress-photo-form">
-          <input type="file" id="progress-photo-input" accept="image/*" />
+          <input type="file" id="progress-photo-input" accept="image/*" capture="environment" />
           <input type="text" id="progress-photo-note" placeholder="Note (optionnel)" />
           <button type="submit">Ajouter</button>
         </form>
@@ -702,7 +713,7 @@
             <option value="collation">Collation</option>
           </select>
           <input type="text" id="meal-description" placeholder="Ce que tu manges (ex : poulet, riz, brocolis)" />
-          <input type="file" id="meal-photo-input" accept="image/*" />
+          <input type="file" id="meal-photo-input" accept="image/*" capture="environment" />
           <button type="submit">Ajouter</button>
         </form>
       </div>
@@ -731,7 +742,7 @@
             <option value="materiel_av">🎥 Matériel audiovisuel</option>
           </select>
           <input type="text" id="ia-question" placeholder="Ta question (optionnel, ex : Combien de protéines ?)" />
-          <input type="file" id="ia-photo-input" accept="image/*" />
+          <input type="file" id="ia-photo-input" accept="image/*" capture="environment" />
           <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);">
             <input type="checkbox" id="ia-keep-photo" checked style="width:auto;" /> Conserver cette photo dans mon historique
           </label>
@@ -812,7 +823,7 @@
           <img id="account-avatar-preview" style="width:64px;height:64px;border-radius:50%;object-fit:cover;display:none;border:2px solid var(--border);" />
           <div id="account-avatar-fallback" class="avatar-btn" style="width:64px;height:64px;font-size:22px;cursor:default;"></div>
           <div>
-            <input type="file" id="account-avatar-input" accept="image/*" style="display:none;" />
+            <input type="file" id="account-avatar-input" accept="image/*" capture="user" style="display:none;" />
             <button type="button" id="account-avatar-pick-btn" class="small" style="padding:8px 14px;">Changer la photo</button>
             <button type="button" id="account-avatar-remove-btn" class="small" style="padding:8px 14px;background:transparent;color:var(--muted);box-shadow:none;border:1px solid var(--border);">Retirer</button>
           </div>
