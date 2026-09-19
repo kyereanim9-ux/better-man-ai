@@ -98,4 +98,38 @@ router.get('/overview', async (req, res) => {
   });
 });
 
+// Routine skincare coréenne (10 étapes classiques) — suivi de complétion,
+// jamais d'analyse de peau par photo.
+const SKINCARE_STEPS = {
+  am: ['nettoyant-doux', 'toner', 'essence', 'serum', 'contour-yeux', 'hydratant', 'spf'],
+  pm: ['huile-demaquillante', 'nettoyant-doux', 'exfoliant-2-3x-semaine', 'toner', 'essence', 'serum', 'contour-yeux', 'masque-nuit-hydratant']
+};
+
+router.get('/skincare/steps', (req, res) => res.json(SKINCARE_STEPS));
+
+router.get('/skincare', async (req, res) => {
+  await db.read();
+  const list = db.data.skincareLogs
+    .filter(s => s.userId === req.user.id)
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 30);
+  res.json(list);
+});
+
+router.put('/skincare', async (req, res) => {
+  const { amSteps, pmSteps } = req.body;
+  const today = new Date().toISOString().slice(0, 10);
+  await db.read();
+  let entry = db.data.skincareLogs.find(s => s.userId === req.user.id && s.date === today);
+  if (entry) {
+    if (Array.isArray(amSteps)) entry.amSteps = amSteps;
+    if (Array.isArray(pmSteps)) entry.pmSteps = pmSteps;
+  } else {
+    entry = { id: nanoid(), userId: req.user.id, date: today, amSteps: amSteps || [], pmSteps: pmSteps || [] };
+    db.data.skincareLogs.push(entry);
+  }
+  await db.write();
+  res.json(entry);
+});
+
 export default router;

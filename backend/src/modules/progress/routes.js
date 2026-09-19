@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { nanoid } from 'nanoid';
 import { requireAuth } from '../../middleware/auth.js';
 import { db } from '../../db.js';
 import { stripAccents } from '../../shared/textNormalize.js';
@@ -188,6 +189,45 @@ router.get('/monthly-review', async (req, res) => {
       "Quelle est UNE chose que tu veux rendre un peu plus difficile le mois prochain ?"
     ]
   });
+});
+
+// Bilan du soir : 4 questions de réflexion, une entrée par jour (upsert).
+router.put('/daily-reflection', async (req, res) => {
+  const { accomplished, difficult, learned, differently } = req.body;
+  const today = new Date().toISOString().slice(0, 10);
+  await db.read();
+  let entry = db.data.dailyReflections.find(r => r.userId === req.user.id && r.date === today);
+  if (entry) {
+    entry.accomplished = accomplished ?? entry.accomplished;
+    entry.difficult = difficult ?? entry.difficult;
+    entry.learned = learned ?? entry.learned;
+    entry.differently = differently ?? entry.differently;
+  } else {
+    entry = {
+      id: nanoid(), userId: req.user.id, date: today,
+      accomplished: accomplished || '', difficult: difficult || '', learned: learned || '', differently: differently || '',
+      createdAt: new Date().toISOString()
+    };
+    db.data.dailyReflections.push(entry);
+  }
+  await db.write();
+  res.json(entry);
+});
+
+router.get('/daily-reflection', async (req, res) => {
+  const today = new Date().toISOString().slice(0, 10);
+  await db.read();
+  const entry = db.data.dailyReflections.find(r => r.userId === req.user.id && r.date === today);
+  res.json(entry || null);
+});
+
+router.get('/daily-reflections/recent', async (req, res) => {
+  await db.read();
+  const list = db.data.dailyReflections
+    .filter(r => r.userId === req.user.id)
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 14);
+  res.json(list);
 });
 
 export default router;

@@ -257,6 +257,45 @@ système de variables CSS assure la même flexibilité de personnalisation.
   (habitudes, objectifs, finance, physique, style, teach, bibliothèque,
   vidéos, intimité, progression) confirmée après la refonte.
 
+## Phase 9 — Journal intelligent, Relations, Bilan du soir, sport, skincare, repas
+Suite à un audit complet des deux cahiers des charges d'origine contre le code
+réel, 4 lacunes identifiées ont été comblées, plus plusieurs demandes
+nouvelles :
+
+- **Journal avec analyse locale** : chaque entrée détecte maintenant les
+  domaines concernés (mêmes mots-clés que Situation, insensibles aux
+  accents) et propose jusqu'à 5 questions de réflexion adaptées — affichées
+  sous chaque entrée dans l'interface.
+- **Coach relationnel (`/relationships`)** : un espace par relation
+  importante, avec le cadre explicite "ce que tu sais / ce que tu supposes
+  seulement / ce qu'il faudrait demander" pour chaque entrée (sujet,
+  conflit, moment positif, besoin exprimé) — l'app ne diagnostique jamais
+  ce que l'autre personne pense.
+- **Bilan du soir** : 4 questions (accompli / difficile / appris /
+  différemment demain), une entrée par jour (upsert), intégré à l'accueil.
+- **Récitation biblique** : bouton 🎤 sur les versets à réviser, utilise la
+  reconnaissance vocale native du navigateur (`SpeechRecognition`, gratuite,
+  dégrade proprement si non supportée), calcule un pourcentage de
+  correspondance approximatif par recoupement de mots.
+- **Générateur de séance sport** (`/physique/workout-suggestion`) : à
+  règles fixes (pas d'IA), selon lieu (maison/salle) et matériel
+  (aucun/élastiques/haltères), toujours choisi par l'utilisateur.
+- **Photos de progression physique** : comparaison visuelle datée,
+  **jamais de note ni de verdict généré par l'IA** — décision délibérée
+  après discussion avec l'utilisateur sur les risques d'une IA qui "juge"
+  un corps sur photo.
+- **Suivi skincare coréen** : routine matin/soir (10 étapes classiques),
+  coché au jour le jour — pas d'analyse de peau par photo, même logique
+  de prudence que ci-dessus.
+- **Journal photo des repas** (`/nutrition`) : photo + description
+  manuelle. Explicitement **pas d'analyse automatique du contenu** —
+  aucune IA de vision connectée dans l'architecture 0€ ; l'app le dit
+  clairement dans sa réponse API et dans l'interface plutôt que de laisser
+  croire à une reconnaissance qui n'existe pas.
+
+Testé de bout en bout (backend complet + non-régression sur 19 endpoints
+existants) avant et après câblage frontend.
+
 ## Automatisations / nouvelles intégrations — non construites
 Ces deux points du cahier des charges restent volontairement hors scope :
 une app 100% gratuite et auto-hébergée n'a pas de serveur toujours actif pour

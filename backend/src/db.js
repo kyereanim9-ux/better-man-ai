@@ -28,7 +28,13 @@ const defaultData = {
   physiqueMeasurements: [], // { id, userId, weight, waist, date, createdAt }
   physiqueWorkouts: [],     // { id, userId, type, durationMinutes, sets, reps, notes, date, createdAt }
   physiqueGoals: [],        // { id, userId, title, milestone, targetDate, achieved, createdAt }
-  styleEntries: []          // { id, userId, area, note, createdAt }
+  styleEntries: [],         // { id, userId, area, note, createdAt }
+  relationships: [],        // { id, userId, name, createdAt }
+  relationshipEntries: [],  // { id, userId, relationshipId, type, content, createdAt }
+  dailyReflections: [],     // { id, userId, date, accomplished, difficult, learned, differently, createdAt }
+  physiqueProgressPhotos: [], // { id, userId, photo, note, date, createdAt } — comparaison visuelle datée, jamais notée par l'IA
+  skincareLogs: [],         // { id, userId, date, amSteps: [], pmSteps: [] }
+  mealLogs: []              // { id, userId, photo, description, mealType, date, createdAt } — journal photo, aucune analyse automatique
 };
 
 // Domaines de vie utilisés partout dans l'app (scores, objectifs, habitudes,
@@ -167,4 +173,10 @@ export function purgeUserData(userId) {
   db.data.physiqueWorkouts = db.data.physiqueWorkouts.filter(w => w.userId !== userId);
   db.data.physiqueGoals = db.data.physiqueGoals.filter(g => g.userId !== userId);
   db.data.styleEntries = db.data.styleEntries.filter(e => e.userId !== userId);
+  db.data.relationships = db.data.relationships.filter(r => r.userId !== userId);
+  db.data.relationshipEntries = db.data.relationshipEntries.filter(e => e.userId !== userId);
+  db.data.dailyReflections = db.data.dailyReflections.filter(r => r.userId !== userId);
+  db.data.physiqueProgressPhotos = db.data.physiqueProgressPhotos.filter(p => p.userId !== userId);
+  db.data.skincareLogs = db.data.skincareLogs.filter(s => s.userId !== userId);
+  db.data.mealLogs = db.data.mealLogs.filter(m => m.userId !== userId);
 }

@@ -31,6 +31,8 @@ import intimacyRoutes from './modules/intimacy/routes.js';
 import physiqueRoutes from './modules/physique/routes.js';
 import styleRoutes from './modules/style/routes.js';
 import adaptationRoutes from './modules/adaptation/routes.js';
+import relationshipsRoutes from './modules/relationships/routes.js';
+import nutritionRoutes from './modules/nutrition/routes.js';
 
 export const app = express();
 app.use(cors());
@@ -65,6 +67,8 @@ app.use('/api/intimacy', intimacyRoutes);
 app.use('/api/physique', physiqueRoutes);
 app.use('/api/style', styleRoutes);
 app.use('/api/adaptation', adaptationRoutes);
+app.use('/api/relationships', relationshipsRoutes);
+app.use('/api/nutrition', nutritionRoutes);
 
 // Résolution du dossier frontend, avec gestion d'erreur explicite pour ne
 // jamais planter la fonction si un chemin est introuvable en serverless.

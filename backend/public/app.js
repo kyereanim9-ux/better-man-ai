@@ -221,6 +221,9 @@ function switchView(view) {
   if (view === 'finance') loadFinance();
   if (view === 'physique') loadPhysique();
   if (view === 'style') loadStyle();
+  if (view === 'relationships') loadRelationships();
+  if (view === 'skincare') loadSkincare();
+  if (view === 'nutrition') loadNutrition();
   if (view === 'adaptation') { /* chargé au clic sur "Analyser" */ }
   if (view === 'domains') loadDomains();
   if (view === 'profile-setup') loadOnboarding();
@@ -244,6 +247,7 @@ const CATEGORIES = {
   'cat-coaching': [
     { view: 'coach', icon: '🤖', name: 'Coach IA', desc: 'Réfléchis avant d\'agir' },
     { view: 'situation', icon: '🆘', name: 'Situation', desc: 'Analyse un moment précis' },
+    { view: 'relationships', icon: '❤️', name: 'Relations', desc: 'Un espace par relation importante' },
     { view: 'communication', icon: '💬', name: 'Communication', desc: 'Mieux te faire comprendre' },
     { view: 'adaptation', icon: '⚙️', name: 'Adaptation', desc: 'Ajuste ton rythme' },
     { view: 'domains', icon: '🧠', name: 'Domaines', desc: 'Vue d\'ensemble de ta vie' }
@@ -258,6 +262,8 @@ const CATEGORIES = {
   'cat-corps': [
     { view: 'physique', icon: '💪', name: 'Physique', desc: 'Construis un corps plus fort' },
     { view: 'style', icon: '👔', name: 'Style', desc: 'Présentation et image' },
+    { view: 'skincare', icon: '🧴', name: 'Skincare', desc: 'Routine coréenne, suivi quotidien' },
+    { view: 'nutrition', icon: '🍽️', name: 'Alimentation', desc: 'Journal photo de tes repas' },
     { view: 'intimacy', icon: '🔞', name: 'Intimité', desc: 'Réservé aux adultes' }
   ],
   'cat-vie': [
@@ -336,6 +342,17 @@ async function loadDailyDashboard() {
     } else {
       homeDash.innerHTML = '<p class="meta">Indisponible pour l\'instant.</p>';
     }
+
+    try {
+      const reflection = await api('/progress/daily-reflection');
+      if (reflection) {
+        document.getElementById('reflection-accomplished').value = reflection.accomplished || '';
+        document.getElementById('reflection-difficult').value = reflection.difficult || '';
+        document.getElementById('reflection-learned').value = reflection.learned || '';
+        document.getElementById('reflection-differently').value = reflection.differently || '';
+        document.getElementById('daily-reflection-status').textContent = 'Déjà rempli aujourd\'hui — tu peux le modifier.';
+      }
+    } catch { /* pas bloquant */ }
   } catch (err) {
     document.getElementById('mission-sub').textContent = 'Erreur : ' + err.message;
   }
@@ -430,13 +447,22 @@ async function loadJournal() {
   const entries = await api('/journal');
   const el = document.getElementById('journal-list');
   el.innerHTML = entries.map(e => `
-    <div class="card">
-      <div>
-        <div>${escapeHtml(e.content)}</div>
-        <div class="meta">${new Date(e.createdAt).toLocaleString('fr-FR')}</div>
-        ${speakerHTML(e.content)}
+    <div class="card" style="flex-direction:column;align-items:stretch;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+        <div>
+          <div>${escapeHtml(e.content)}</div>
+          <div class="meta">${new Date(e.createdAt).toLocaleString('fr-FR')}</div>
+          ${speakerHTML(e.content)}
+        </div>
+        <button class="small danger" data-id="${e.id}">Supprimer</button>
       </div>
-      <button class="small danger" data-id="${e.id}">Supprimer</button>
+      ${e.questions?.length ? `
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+          ${e.domains?.length ? `<div class="badge-row" style="margin-bottom:8px;">${e.domains.map(d => `<span class="badge">${escapeHtml(DOMAIN_LABELS[d] || d)}</span>`).join('')}</div>` : ''}
+          <p class="meta" style="font-weight:700;margin-bottom:4px;">Pour réfléchir</p>
+          <ul style="margin:0;padding-left:18px;font-size:13px;color:var(--muted);">${e.questions.map(q => `<li>${escapeHtml(q)}</li>`).join('')}</ul>
+        </div>
+      ` : ''}
     </div>
   `).join('') || '<p class="meta">Aucune entrée pour l\'instant.</p>';
 
@@ -757,10 +783,12 @@ async function loadMemorization() {
           <div class="card mem-item">
             <span>${escapeHtml(m.ref)} <span class="meta">— ${escapeHtml(m.stageLabel)}</span></span>
             <div>
+              <button class="small" data-recite="${m.id}" data-recite-text="${escapeHtml(m.text)}" data-recite-ref="${escapeHtml(m.ref)}">🎤 Réciter</button>
               ${showAdvance ? `<button class="small" data-advance="${m.id}">Valider cette étape</button>` : ''}
               <button class="small danger" data-del-mem="${m.id}">Supprimer</button>
             </div>
           </div>
+          <div class="hidden" id="recite-panel-${m.id}"></div>
         `).join('')}
       </div>
     `;
@@ -772,12 +800,86 @@ async function loadMemorization() {
     renderGroup('Maîtrisés', data.mastered, false) ||
     '<p class="meta">Aucun verset en mémorisation. Ajoute-en un depuis le verset du jour ou une recherche.</p>';
 
+  el.querySelectorAll('[data-recite]').forEach(btn => {
+    btn.onclick = () => openRecitationPanel(btn.dataset.recite, btn.dataset.reciteText, btn.dataset.reciteRef);
+  });
   el.querySelectorAll('[data-advance]').forEach(btn => {
     btn.onclick = async () => { await api(`/bible/memorization/${btn.dataset.advance}/advance`, { method: 'POST' }); loadMemorization(); };
   });
   el.querySelectorAll('[data-del-mem]').forEach(btn => {
     btn.onclick = async () => { await api(`/bible/memorization/${btn.dataset.delMem}`, { method: 'DELETE' }); loadMemorization(); };
   });
+}
+
+// --- Récitation biblique via reconnaissance vocale du navigateur (gratuite) ---
+const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+function wordOverlapScore(target, said) {
+  const norm = s => stripAccentsClient(s.toLowerCase()).replace(/[^a-z\s]/g, ' ').split(/\s+/).filter(Boolean);
+  const targetWords = norm(target);
+  const saidWords = new Set(norm(said));
+  const matched = targetWords.filter(w => saidWords.has(w)).length;
+  return targetWords.length ? Math.round((matched / targetWords.length) * 100) : 0;
+}
+function stripAccentsClient(s) { return s.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+
+function openRecitationPanel(id, text, ref) {
+  const panel = document.getElementById(`recite-panel-${id}`);
+  const isOpen = !panel.classList.contains('hidden');
+  document.querySelectorAll('[id^="recite-panel-"]').forEach(p => p.classList.add('hidden'));
+  if (isOpen) return;
+  panel.classList.remove('hidden');
+
+  if (!SpeechRecognitionAPI) {
+    panel.innerHTML = `<div class="card-block"><p class="meta">🎤 La reconnaissance vocale n'est pas supportée par ce navigateur. Essaie avec Chrome sur mobile ou ordinateur.</p></div>`;
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="card-block">
+      <p class="meta">Récite "${escapeHtml(ref)}" à voix haute, puis arrête l'enregistrement.</p>
+      <div class="speaker">
+        <button data-recite-start="${id}">🎤 Démarrer</button>
+        <button data-recite-stop="${id}">⏹️ Arrêter</button>
+      </div>
+      <p class="meta" id="recite-status-${id}"></p>
+      <p id="recite-transcript-${id}" style="font-style:italic;"></p>
+      <p id="recite-score-${id}" style="font-weight:700;"></p>
+    </div>
+  `;
+
+  const recognition = new SpeechRecognitionAPI();
+  recognition.lang = 'fr-FR';
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  let finalTranscript = '';
+
+  recognition.onresult = (e) => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) finalTranscript += e.results[i][0].transcript + ' ';
+      else interim += e.results[i][0].transcript;
+    }
+    document.getElementById(`recite-transcript-${id}`).textContent = finalTranscript + interim;
+  };
+  recognition.onerror = () => {
+    document.getElementById(`recite-status-${id}`).textContent = "Erreur de reconnaissance vocale — réessaie.";
+  };
+  recognition.onend = () => {
+    document.getElementById(`recite-status-${id}`).textContent = 'Arrêté.';
+    if (finalTranscript.trim()) {
+      const score = wordOverlapScore(text, finalTranscript);
+      document.getElementById(`recite-score-${id}`).textContent = `Correspondance approximative : ${score}%`;
+    }
+  };
+
+  panel.querySelector(`[data-recite-start="${id}"]`).onclick = () => {
+    finalTranscript = '';
+    document.getElementById(`recite-transcript-${id}`).textContent = '';
+    document.getElementById(`recite-score-${id}`).textContent = '';
+    document.getElementById(`recite-status-${id}`).textContent = 'Écoute en cours...';
+    recognition.start();
+  };
+  panel.querySelector(`[data-recite-stop="${id}"]`).onclick = () => recognition.stop();
 }
 
 // --- PROGRESSION ---
@@ -1773,6 +1875,7 @@ async function loadPhysique() {
   const [summary, measurements, workouts, goals] = await Promise.all([
     api('/physique/summary'), api('/physique/measurements'), api('/physique/workouts'), api('/physique/goals')
   ]);
+  loadProgressPhotos();
 
   document.getElementById('physique-summary').innerHTML = `
     <div class="badge-row">
@@ -1927,6 +2030,220 @@ document.getElementById('adaptation-refresh-btn').onclick = async () => {
     : '<p class="meta">Rien à signaler pour l\'instant — continue comme ça.</p>';
   el.innerHTML += `<p class="meta">${escapeHtml(data.note)}</p>`;
 };
+
+// --- Bilan du soir ---
+document.getElementById('daily-reflection-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const status = document.getElementById('daily-reflection-status');
+  try {
+    await api('/progress/daily-reflection', {
+      method: 'PUT',
+      body: {
+        accomplished: document.getElementById('reflection-accomplished').value,
+        difficult: document.getElementById('reflection-difficult').value,
+        learned: document.getElementById('reflection-learned').value,
+        differently: document.getElementById('reflection-differently').value
+      }
+    });
+    status.textContent = 'Enregistré ✅';
+    showToast('Bilan du soir enregistré ✅');
+  } catch (err) {
+    status.textContent = err.message;
+  }
+});
+
+// --- RELATIONS ---
+document.getElementById('relationship-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const input = document.getElementById('relationship-name');
+  if (!input.value.trim()) return;
+  await api('/relationships', { method: 'POST', body: { name: input.value } });
+  input.value = '';
+  loadRelationships();
+});
+
+async function loadRelationships() {
+  const list = await api('/relationships');
+  const el = document.getElementById('relationship-list');
+  el.innerHTML = list.length ? list.map(r => `
+    <div class="card">
+      <span>${escapeHtml(r.name)} <span class="meta">(${r.entryCount} entrée${r.entryCount > 1 ? 's' : ''})</span></span>
+      <div>
+        <button class="small" data-open-rel="${r.id}">Ouvrir</button>
+        <button class="small danger" data-del-rel="${r.id}">Supprimer</button>
+      </div>
+    </div>
+  `).join('') : '<p class="meta">Aucune relation pour l\'instant.</p>';
+
+  el.querySelectorAll('[data-open-rel]').forEach(btn => { btn.onclick = () => openRelationship(btn.dataset.openRel); });
+  el.querySelectorAll('[data-del-rel]').forEach(btn => {
+    btn.onclick = async () => { await api(`/relationships/${btn.dataset.delRel}`, { method: 'DELETE' }); loadRelationships(); };
+  });
+}
+
+async function openRelationship(id) {
+  const data = await api(`/relationships/${id}/entries`);
+  const block = document.getElementById('relationship-detail-block');
+  block.classList.remove('hidden');
+  document.getElementById('relationship-detail').innerHTML = `
+    <h3>${escapeHtml(data.relationship.name)}</h3>
+    <form id="relationship-entry-form">
+      <select id="rel-entry-type">
+        <option value="sujet">Sujet important</option>
+        <option value="conflit">Conflit</option>
+        <option value="positif">Moment positif</option>
+        <option value="besoin">Besoin exprimé</option>
+      </select>
+      <textarea id="rel-entry-content" placeholder="Ce qui s'est passé..." rows="2"></textarea>
+      <textarea id="rel-entry-know" placeholder="Ce que tu SAIS (dit clairement, pas supposé)" rows="2"></textarea>
+      <textarea id="rel-entry-assume" placeholder="Ce que tu SUPPOSES seulement" rows="2"></textarea>
+      <textarea id="rel-entry-ask" placeholder="Ce qu'il faudrait lui demander directement" rows="2"></textarea>
+      <button type="submit">Enregistrer</button>
+    </form>
+    <div id="relationship-entries-list" style="margin-top:14px;">
+      ${data.entries.map(en => `
+        <div class="card" style="flex-direction:column;align-items:stretch;">
+          <div style="display:flex;justify-content:space-between;">
+            <span class="badge">${escapeHtml(data.entryTypeLabels[en.type] || en.type)}</span>
+            <button class="small danger" data-del-rel-entry="${en.id}">Supprimer</button>
+          </div>
+          <p style="margin:8px 0 4px;">${escapeHtml(en.content)}</p>
+          ${en.whatYouKnow ? `<p class="meta">Sais : ${escapeHtml(en.whatYouKnow)}</p>` : ''}
+          ${en.whatYouAssume ? `<p class="meta">Suppose : ${escapeHtml(en.whatYouAssume)}</p>` : ''}
+          ${en.toAsk ? `<p class="meta">À demander : ${escapeHtml(en.toAsk)}</p>` : ''}
+          <p class="meta">${new Date(en.createdAt).toLocaleString('fr-FR')}</p>
+        </div>
+      `).join('') || '<p class="meta">Aucune entrée pour l\'instant.</p>'}
+    </div>
+  `;
+  document.getElementById('relationship-entry-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const content = document.getElementById('rel-entry-content').value;
+    if (!content.trim()) return;
+    await api(`/relationships/${id}/entries`, {
+      method: 'POST',
+      body: {
+        type: document.getElementById('rel-entry-type').value, content,
+        whatYouKnow: document.getElementById('rel-entry-know').value,
+        whatYouAssume: document.getElementById('rel-entry-assume').value,
+        toAsk: document.getElementById('rel-entry-ask').value
+      }
+    });
+    openRelationship(id);
+    loadRelationships();
+  });
+  document.querySelectorAll('[data-del-rel-entry]').forEach(btn => {
+    btn.onclick = async () => { await api(`/relationships/${id}/entries/${btn.dataset.delRelEntry}`, { method: 'DELETE' }); openRelationship(id); loadRelationships(); };
+  });
+  block.scrollIntoView({ behavior: 'smooth' });
+}
+
+// --- SKINCARE ---
+const SKINCARE_STEP_LABELS = {
+  'nettoyant-doux': 'Nettoyant doux', 'toner': 'Toner', 'essence': 'Essence', 'serum': 'Sérum',
+  'contour-yeux': 'Contour des yeux', 'hydratant': 'Hydratant', 'spf': 'SPF',
+  'huile-demaquillante': 'Huile démaquillante', 'exfoliant-2-3x-semaine': 'Exfoliant (2-3x/semaine)',
+  'masque-nuit-hydratant': 'Masque de nuit hydratant'
+};
+async function loadSkincare() {
+  const [steps, logs] = await Promise.all([api('/style/skincare/steps'), api('/style/skincare')]);
+  const today = logs.find(l => l.date === new Date().toISOString().slice(0, 10)) || { amSteps: [], pmSteps: [] };
+
+  function renderChecklist(containerId, stepKeys, doneKeys, period) {
+    document.getElementById(containerId).innerHTML = stepKeys.map(key => `
+      <label style="display:flex;align-items:center;gap:8px;padding:8px 0;">
+        <input type="checkbox" data-skincare-step="${key}" data-skincare-period="${period}" ${doneKeys.includes(key) ? 'checked' : ''} />
+        ${escapeHtml(SKINCARE_STEP_LABELS[key] || key)}
+      </label>
+    `).join('');
+  }
+  renderChecklist('skincare-am-list', steps.am, today.amSteps, 'am');
+  renderChecklist('skincare-pm-list', steps.pm, today.pmSteps, 'pm');
+
+  document.querySelectorAll('[data-skincare-step]').forEach(cb => {
+    cb.onchange = async () => {
+      const period = cb.dataset.skincarePeriod;
+      const checked = Array.from(document.querySelectorAll(`[data-skincare-period="${period}"]:checked`)).map(c => c.dataset.skincareStep);
+      const body = period === 'am' ? { amSteps: checked } : { pmSteps: checked };
+      await api('/style/skincare', { method: 'PUT', body });
+    };
+  });
+}
+
+// --- ALIMENTATION ---
+document.getElementById('meal-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const description = document.getElementById('meal-description').value;
+  const mealType = document.getElementById('meal-type').value;
+  const fileInput = document.getElementById('meal-photo-input');
+  if (!description.trim() && !fileInput.files[0]) return;
+  try {
+    let photo = null;
+    if (fileInput.files[0]) photo = await resizeImageToDataUrl(fileInput.files[0], 500, 0.75);
+    await api('/nutrition/meals', { method: 'POST', body: { description, mealType, photo } });
+    document.getElementById('meal-description').value = '';
+    fileInput.value = '';
+    loadNutrition();
+  } catch (err) {
+    showToast(err.message);
+  }
+});
+
+async function loadNutrition() {
+  const meals = await api('/nutrition/meals');
+  const MEAL_TYPE_LABELS = { 'petit-dejeuner': 'Petit-déjeuner', 'dejeuner': 'Déjeuner', 'diner': 'Dîner', 'collation': 'Collation' };
+  document.getElementById('meal-list').innerHTML = meals.length ? meals.map(m => `
+    <div class="card">
+      ${m.photo ? `<img src="${m.photo}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;" />` : ''}
+      <span style="flex:1;">${escapeHtml(MEAL_TYPE_LABELS[m.mealType] || m.mealType)} — ${escapeHtml(m.description)} <span class="meta">(${m.date})</span></span>
+      <button class="small danger" data-del-meal="${m.id}">Supprimer</button>
+    </div>
+  `).join('') : '<p class="meta">Aucun repas enregistré pour l\'instant.</p>';
+  document.querySelectorAll('[data-del-meal]').forEach(btn => {
+    btn.onclick = async () => { await api(`/nutrition/meals/${btn.dataset.delMeal}`, { method: 'DELETE' }); loadNutrition(); };
+  });
+}
+
+// --- Générateur de séance sport (physique) ---
+document.getElementById('workout-gen-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const location = document.getElementById('workout-gen-location').value;
+  const equipment = document.getElementById('workout-gen-equipment').value;
+  const data = await api(`/physique/workout-suggestion?location=${location}&equipment=${equipment}`);
+  document.getElementById('workout-gen-result').innerHTML = `
+    ${data.exercises.map(ex => `<div class="card"><span>${escapeHtml(ex.name)}</span><span class="meta">${ex.sets} × ${ex.reps}</span></div>`).join('')}
+    <p class="meta">${escapeHtml(data.note)}</p>
+  `;
+});
+
+// --- Photos de progression physique ---
+document.getElementById('progress-photo-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fileInput = document.getElementById('progress-photo-input');
+  if (!fileInput.files[0]) return;
+  try {
+    const photo = await resizeImageToDataUrl(fileInput.files[0], 500, 0.8);
+    const note = document.getElementById('progress-photo-note').value;
+    await api('/physique/progress-photos', { method: 'POST', body: { photo, note } });
+    fileInput.value = '';
+    document.getElementById('progress-photo-note').value = '';
+    loadProgressPhotos();
+  } catch (err) {
+    showToast(err.message);
+  }
+});
+async function loadProgressPhotos() {
+  const photos = await api('/physique/progress-photos');
+  document.getElementById('progress-photo-list').innerHTML = photos.map(p => `
+    <div style="position:relative;">
+      <img src="${p.photo}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;" title="${escapeHtml(p.date)} ${escapeHtml(p.note || '')}" />
+      <button class="small danger" data-del-photo="${p.id}" style="position:absolute;top:4px;right:4px;padding:2px 6px;">✕</button>
+    </div>
+  `).join('') || '<p class="meta">Aucune photo pour l\'instant.</p>';
+  document.querySelectorAll('[data-del-photo]').forEach(btn => {
+    btn.onclick = async () => { await api(`/physique/progress-photos/${btn.dataset.delPhoto}`, { method: 'DELETE' }); loadProgressPhotos(); };
+  });
+}
 
 // --- Init ---
 checkAppLock();

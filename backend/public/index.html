@@ -152,6 +152,18 @@
         <h3>Ta progression cette semaine</h3>
         <div id="home-domains-dashboard">Chargement...</div>
       </div>
+
+      <div class="card-block">
+        <h3>🌙 Bilan du soir</h3>
+        <form id="daily-reflection-form">
+          <textarea id="reflection-accomplished" placeholder="Qu'as-tu accompli aujourd'hui ?" rows="2"></textarea>
+          <textarea id="reflection-difficult" placeholder="Qu'est-ce qui a été difficile ?" rows="2"></textarea>
+          <textarea id="reflection-learned" placeholder="Qu'as-tu appris ?" rows="2"></textarea>
+          <textarea id="reflection-differently" placeholder="Que feras-tu différemment demain ?" rows="2"></textarea>
+          <button type="submit">Enregistrer</button>
+        </form>
+        <p class="meta" id="daily-reflection-status"></p>
+      </div>
     </div>
 
     <!-- COACH -->
@@ -459,6 +471,27 @@
     </div>
 
     <!-- COMMUNICATION -->
+    <div class="view hidden" id="view-relationships">
+      <h2>❤️ Relations</h2>
+      <p class="meta">Un espace par relation importante. L'app ne devine jamais ce que pense l'autre — elle t'aide à distinguer ce que tu sais, ce que tu supposes, et ce qu'il faudrait demander.</p>
+
+      <div class="card-block">
+        <h3>Nouvelle relation</h3>
+        <form id="relationship-form">
+          <input type="text" id="relationship-name" placeholder="Ex : Ohemaa, mon frère, un ami proche..." />
+          <button type="submit">Créer</button>
+        </form>
+      </div>
+
+      <div class="card-block">
+        <div id="relationship-list">Chargement...</div>
+      </div>
+
+      <div class="card-block hidden" id="relationship-detail-block">
+        <div id="relationship-detail"></div>
+      </div>
+    </div>
+
     <div class="view hidden" id="view-communication">
       <h2>🗣️ Communication</h2>
 
@@ -581,6 +614,35 @@
         </form>
         <div id="physique-goal-list"></div>
       </div>
+
+      <div class="card-block">
+        <h3>🏋️ Générer une séance</h3>
+        <p class="meta">À la maison ou en salle — dis-moi ton matériel, l'app propose une séance à partir de règles fixes (pas d'IA).</p>
+        <form id="workout-gen-form">
+          <select id="workout-gen-location">
+            <option value="home">À la maison</option>
+            <option value="gym">En salle de sport</option>
+          </select>
+          <select id="workout-gen-equipment">
+            <option value="none">Aucun matériel</option>
+            <option value="bands">Élastiques</option>
+            <option value="dumbbells">Haltères</option>
+          </select>
+          <button type="submit">Générer</button>
+        </form>
+        <div id="workout-gen-result"></div>
+      </div>
+
+      <div class="card-block">
+        <h3>📸 Photos de progression</h3>
+        <p class="meta">Comparaison visuelle datée, sans note ni verdict de l'IA — à toi de juger, dans le temps.</p>
+        <form id="progress-photo-form">
+          <input type="file" id="progress-photo-input" accept="image/*" />
+          <input type="text" id="progress-photo-note" placeholder="Note (optionnel)" />
+          <button type="submit">Ajouter</button>
+        </form>
+        <div id="progress-photo-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:10px;"></div>
+      </div>
     </div>
 
     <!-- STYLE -->
@@ -601,6 +663,41 @@
       <div class="card-block">
         <h3>Historique</h3>
         <div id="style-entries-list"></div>
+      </div>
+    </div>
+
+    <div class="view hidden" id="view-skincare">
+      <h2>🧴 Skincare coréen</h2>
+      <p class="meta">Suivi de routine — coche ce que tu as fait aujourd'hui. Pas d'analyse de peau par photo, juste de la régularité.</p>
+      <div class="card-block">
+        <h3>Routine du matin</h3>
+        <div id="skincare-am-list"></div>
+      </div>
+      <div class="card-block">
+        <h3>Routine du soir</h3>
+        <div id="skincare-pm-list"></div>
+      </div>
+    </div>
+
+    <div class="view hidden" id="view-nutrition">
+      <h2>🍽️ Alimentation</h2>
+      <p class="meta">Journal photo manuel — l'app ne reconnaît pas automatiquement le contenu d'une photo (pas d'IA de vision gratuite disponible), décris toi-même ce que tu manges.</p>
+      <div class="card-block">
+        <h3>Ajouter un repas</h3>
+        <form id="meal-form">
+          <select id="meal-type">
+            <option value="petit-dejeuner">Petit-déjeuner</option>
+            <option value="dejeuner">Déjeuner</option>
+            <option value="diner">Dîner</option>
+            <option value="collation">Collation</option>
+          </select>
+          <input type="text" id="meal-description" placeholder="Ce que tu manges (ex : poulet, riz, brocolis)" />
+          <input type="file" id="meal-photo-input" accept="image/*" />
+          <button type="submit">Ajouter</button>
+        </form>
+      </div>
+      <div class="card-block">
+        <div id="meal-list">Chargement...</div>
       </div>
     </div>
 

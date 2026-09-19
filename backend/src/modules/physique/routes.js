@@ -161,4 +161,89 @@ router.get('/summary', async (req, res) => {
   });
 });
 
+// Générateur de séance simple, à règles fixes (pas d'IA) : selon le lieu
+// (maison/salle) et le matériel disponible, propose une séance équilibrée.
+// L'utilisateur choisit toujours lieu + matériel ; rien n'est deviné.
+const EXERCISE_BANK = {
+  home_none: [
+    { name: 'Pompes', sets: 4, reps: '10-15' },
+    { name: 'Squats au poids du corps', sets: 4, reps: '15-20' },
+    { name: 'Fentes', sets: 3, reps: '12 par jambe' },
+    { name: 'Gainage (planche)', sets: 3, reps: '30-45 sec' },
+    { name: 'Burpees', sets: 3, reps: '10' },
+    { name: 'Mountain climbers', sets: 3, reps: '20' }
+  ],
+  home_bands: [
+    { name: 'Squats avec élastique', sets: 4, reps: '15' },
+    { name: 'Rowing élastique', sets: 4, reps: '12-15' },
+    { name: 'Développé épaules élastique', sets: 3, reps: '12' },
+    { name: 'Pompes', sets: 3, reps: '10-15' },
+    { name: 'Gainage', sets: 3, reps: '40 sec' }
+  ],
+  home_dumbbells: [
+    { name: 'Développé couché haltères', sets: 4, reps: '8-12' },
+    { name: 'Rowing haltère unilatéral', sets: 4, reps: '10-12' },
+    { name: 'Squats goblet', sets: 4, reps: '12-15' },
+    { name: 'Curl biceps', sets: 3, reps: '12' },
+    { name: 'Élévations latérales', sets: 3, reps: '12-15' }
+  ],
+  gym: [
+    { name: 'Développé couché barre', sets: 4, reps: '6-10' },
+    { name: 'Squat barre', sets: 4, reps: '6-10' },
+    { name: 'Tirage vertical', sets: 4, reps: '10-12' },
+    { name: 'Presse à cuisses', sets: 3, reps: '10-12' },
+    { name: 'Développé militaire', sets: 3, reps: '8-10' },
+    { name: 'Rowing barre', sets: 3, reps: '10' }
+  ]
+};
+
+router.get('/workout-suggestion', (req, res) => {
+  const location = req.query.location;
+  const equipment = req.query.equipment || 'none';
+  if (!['home', 'gym'].includes(location)) {
+    return res.status(400).json({ error: 'location doit être "home" ou "gym".' });
+  }
+  const bankKey = location === 'gym' ? 'gym' : `home_${equipment}`;
+  const exercises = EXERCISE_BANK[bankKey] || EXERCISE_BANK.home_none;
+  res.json({
+    location, equipment, exercises,
+    note: "Séance générée par des règles fixes, pas par une IA — adapte les charges et répétitions à ton niveau, et arrête-toi en cas de douleur."
+  });
+});
+
+router.get('/progress-photos', async (req, res) => {
+  await db.read();
+  const list = db.data.physiqueProgressPhotos
+    .filter(p => p.userId === req.user.id)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  res.json(list);
+});
+
+router.post('/progress-photos', async (req, res) => {
+  const { photo, note, date } = req.body;
+  if (typeof photo !== 'string' || !photo.startsWith('data:image/')) {
+    return res.status(400).json({ error: 'Format de photo invalide.' });
+  }
+  if (photo.length > 900000) return res.status(400).json({ error: 'Photo trop volumineuse.' });
+  await db.read();
+  const entry = {
+    id: nanoid(), userId: req.user.id, photo, note: note || '',
+    date: date || new Date().toISOString().slice(0, 10), createdAt: new Date().toISOString()
+  };
+  db.data.physiqueProgressPhotos.push(entry);
+  await db.write();
+  res.status(201).json(entry);
+});
+
+router.delete('/progress-photos/:id', async (req, res) => {
+  await db.read();
+  const before = db.data.physiqueProgressPhotos.length;
+  db.data.physiqueProgressPhotos = db.data.physiqueProgressPhotos.filter(
+    p => !(p.id === req.params.id && p.userId === req.user.id)
+  );
+  if (db.data.physiqueProgressPhotos.length === before) return res.status(404).json({ error: 'Photo introuvable.' });
+  await db.write();
+  res.json({ ok: true });
+});
+
 export default router;
