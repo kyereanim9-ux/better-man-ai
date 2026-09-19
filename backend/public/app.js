@@ -2193,10 +2193,22 @@ async function loadNutrition() {
   const meals = await api('/nutrition/meals');
   const MEAL_TYPE_LABELS = { 'petit-dejeuner': 'Petit-déjeuner', 'dejeuner': 'Déjeuner', 'diner': 'Dîner', 'collation': 'Collation' };
   document.getElementById('meal-list').innerHTML = meals.length ? meals.map(m => `
-    <div class="card">
-      ${m.photo ? `<img src="${m.photo}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;" />` : ''}
-      <span style="flex:1;">${escapeHtml(MEAL_TYPE_LABELS[m.mealType] || m.mealType)} — ${escapeHtml(m.description)} <span class="meta">(${m.date})</span></span>
-      <button class="small danger" data-del-meal="${m.id}">Supprimer</button>
+    <div class="card" style="flex-direction:column;align-items:stretch;">
+      <div style="display:flex;gap:10px;align-items:center;">
+        ${m.photo ? `<img src="${m.photo}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0;" />` : ''}
+        <span style="flex:1;">${escapeHtml(MEAL_TYPE_LABELS[m.mealType] || m.mealType)} — ${escapeHtml(m.description)} <span class="meta">(${m.date})</span></span>
+        <button class="small danger" data-del-meal="${m.id}">Supprimer</button>
+      </div>
+      ${m.aiAnalysis ? (m.aiAnalysis.unavailable
+        ? `<p class="meta" style="margin-top:8px;">${escapeHtml(m.aiAnalysis.note)}</p>`
+        : `
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
+            <p class="meta" style="font-weight:700;">ANALYSE IA (${escapeHtml(m.aiAnalysis.confidence)} confiance)</p>
+            ${m.aiAnalysis.foods?.length ? `<div class="badge-row">${m.aiAnalysis.foods.map(f => `<span class="badge">${escapeHtml(f)}</span>`).join('')}</div>` : ''}
+            ${m.aiAnalysis.estimatedCalories ? `<p class="meta">≈ ${m.aiAnalysis.estimatedCalories} kcal</p>` : ''}
+            ${m.aiAnalysis.macroNote ? `<p class="meta">${escapeHtml(m.aiAnalysis.macroNote)}</p>` : ''}
+          </div>
+        `) : ''}
     </div>
   `).join('') : '<p class="meta">Aucun repas enregistré pour l\'instant.</p>';
   document.querySelectorAll('[data-del-meal]').forEach(btn => {

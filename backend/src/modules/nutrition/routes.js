@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { nanoid } from 'nanoid';
 import { requireAuth } from '../../middleware/auth.js';
 import { db } from '../../db.js';
+import { analyzeFoodPhoto } from '../../shared/visionProvider.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -28,18 +29,27 @@ router.post('/meals', async (req, res) => {
   if (mealType && !MEAL_TYPES.includes(mealType)) {
     return res.status(400).json({ error: `mealType doit être l'un de : ${MEAL_TYPES.join(', ')}.` });
   }
+
+  // Reconnaissance automatique si une photo est fournie et qu'un provider de
+  // vision est configuré (voir shared/visionProvider.js) — sinon dégrade
+  // proprement, sans jamais inventer une analyse.
+  let aiAnalysis = null;
+  if (photo) {
+    const result = await analyzeFoodPhoto(photo, description);
+    aiAnalysis = result.unavailable
+      ? { unavailable: true, note: result.note }
+      : { unavailable: false, foods: result.foods, estimatedCalories: result.estimatedCalories, macroNote: result.macroNote, confidence: result.confidence };
+  }
+
   await db.read();
   const entry = {
     id: nanoid(), userId: req.user.id, photo: photo || null, description: description || '',
     mealType: mealType || 'collation', date: date || new Date().toISOString().slice(0, 10),
-    createdAt: new Date().toISOString()
+    aiAnalysis, createdAt: new Date().toISOString()
   };
   db.data.mealLogs.push(entry);
   await db.write();
-  res.status(201).json({
-    ...entry,
-    note: "Journal manuel : l'app ne reconnaît pas automatiquement le contenu d'une photo (pas d'IA de vision connectée gratuitement). Décris ce que tu manges toi-même."
-  });
+  res.status(201).json(entry);
 });
 
 router.delete('/meals/:id', async (req, res) => {
