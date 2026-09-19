@@ -42,7 +42,7 @@ router.post('/register', async (req, res) => {
   await db.write();
 
   const token = signToken(user);
-  res.status(201).json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
+  res.status(201).json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role, avatar: user.avatar || null } });
 });
 
 router.post('/login', async (req, res) => {
@@ -56,7 +56,7 @@ router.post('/login', async (req, res) => {
   if (!ok) return res.status(401).json({ error: 'Identifiants invalides.' });
 
   const token = signToken(user);
-  res.json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
+  res.json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role, avatar: user.avatar || null } });
 });
 
 export default router;

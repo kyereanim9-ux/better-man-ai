@@ -159,6 +159,15 @@ function pickDailyQuote() {
   return GREETING_QUOTES[hash % GREETING_QUOTES.length];
 }
 
+function renderAvatarBtn() {
+  const btn = document.getElementById('avatar-btn');
+  if (state.user.avatar) {
+    btn.innerHTML = `<img src="${state.user.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />`;
+  } else {
+    btn.textContent = state.user.name.trim().slice(0, 1).toUpperCase() || '?';
+  }
+}
+
 function showMain() {
   authScreen.classList.add('hidden');
   mainScreen.classList.remove('hidden');
@@ -167,7 +176,7 @@ function showMain() {
   const first = state.user.name.trim().split(' ')[0] || state.user.name;
   document.getElementById('greeting-text').textContent = `Bonjour ${first} 👋`;
   document.getElementById('greeting-quote').textContent = pickDailyQuote();
-  document.getElementById('avatar-btn').textContent = state.user.name.trim().slice(0, 1).toUpperCase() || '?';
+  renderAvatarBtn();
   document.getElementById('pd-name').textContent = state.user.name;
   document.getElementById('pd-role').textContent = state.user.role === 'admin' ? 'Administrateur' : 'Membre';
   document.getElementById('pd-admin').classList.toggle('hidden', state.user.role !== 'admin');
@@ -221,6 +230,9 @@ function switchView(view) {
 }
 
 // --- CATÉGORIES (accueil) ---
+document.querySelectorAll('.feature-card [data-view]').forEach(btn => {
+  btn.onclick = () => switchView(btn.dataset.view);
+});
 const CATEGORIES = {
   'cat-moi': [
     { view: 'profile-setup', icon: '👤', name: 'Profil', desc: 'Ce que tu es, ce que tu vises' },
@@ -1092,13 +1104,83 @@ async function loadWhatsNew() {
 }
 
 // --- COMPTE / CONFIDENTIALITÉ ---
+function renderAccountAvatar() {
+  const img = document.getElementById('account-avatar-preview');
+  const fallback = document.getElementById('account-avatar-fallback');
+  if (state.user.avatar) {
+    img.src = state.user.avatar;
+    img.style.display = 'block';
+    fallback.style.display = 'none';
+  } else {
+    img.style.display = 'none';
+    fallback.style.display = 'flex';
+    fallback.textContent = state.user.name.trim().slice(0, 1).toUpperCase() || '?';
+  }
+}
+
+function resizeImageToDataUrl(file, maxSize = 240, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = () => { img.src = reader.result; };
+    reader.onerror = reject;
+    img.onload = () => {
+      const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 async function loadAccount() {
   renderLockControls();
+  renderAccountAvatar();
 
   try {
     const me = await api('/users/me');
     document.getElementById('account-name-input').value = me.name;
+    if (me.avatar !== state.user.avatar) {
+      state.user.avatar = me.avatar;
+      localStorage.setItem('bm_user', JSON.stringify(state.user));
+      renderAccountAvatar();
+      renderAvatarBtn();
+    }
   } catch { /* si indisponible, le champ reste vide, pas bloquant */ }
+
+  document.getElementById('account-avatar-pick-btn').onclick = () => document.getElementById('account-avatar-input').click();
+  document.getElementById('account-avatar-input').onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const dataUrl = await resizeImageToDataUrl(file);
+      const updated = await api('/users/me', { method: 'PATCH', body: { avatar: dataUrl } });
+      state.user.avatar = updated.avatar;
+      localStorage.setItem('bm_user', JSON.stringify(state.user));
+      renderAccountAvatar();
+      renderAvatarBtn();
+      showToast('Photo mise à jour ✅');
+    } catch (err) {
+      showToast(err.message);
+    }
+    e.target.value = '';
+  };
+  document.getElementById('account-avatar-remove-btn').onclick = async () => {
+    try {
+      const updated = await api('/users/me', { method: 'PATCH', body: { avatar: null } });
+      state.user.avatar = updated.avatar;
+      localStorage.setItem('bm_user', JSON.stringify(state.user));
+      renderAccountAvatar();
+      renderAvatarBtn();
+    } catch (err) {
+      showToast(err.message);
+    }
+  };
 
   document.getElementById('export-btn').onclick = async () => {
     const res = await fetch(API_BASE + '/privacy/export', { headers: { Authorization: `Bearer ${state.token}` } });
@@ -1122,6 +1204,7 @@ document.getElementById('account-name-form').addEventListener('submit', async (e
     const first = state.user.name.trim().split(' ')[0] || state.user.name;
     document.getElementById('greeting-text').textContent = `Bonjour ${first} 👋`;
     document.getElementById('avatar-btn').textContent = state.user.name.trim().slice(0, 1).toUpperCase() || '?';
+    renderAvatarBtn();
     document.getElementById('pd-name').textContent = state.user.name;
     status.textContent = 'Nom mis à jour ✅';
   } catch (err) {
