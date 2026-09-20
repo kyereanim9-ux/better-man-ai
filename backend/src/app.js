@@ -91,15 +91,18 @@ if (frontendDir) {
   // revalidation systématique (pas de cache agressif navigateur/mobile) pour
   // que les correctifs arrivent vraiment côté utilisateur au lieu de rester
   // coincé sur une ancienne version en cache sans que rien ne le signale.
+  // no-store (plus strict que no-cache) : le navigateur ne doit même pas
+  // conserver une copie, ce qui limite aussi les restaurations bfcache
+  // affichant une ancienne exécution JS quand l'utilisateur revient dans l'app.
   app.use(express.static(frontendDir, {
     setHeaders: (res, filePath) => {
       if (/\.(html|js|css)$/.test(filePath)) {
-        res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+        res.setHeader('Cache-Control', 'no-store, must-revalidate');
       }
     }
   }));
   app.get(/^(?!\/api).*/, (req, res) => {
-    res.set('Cache-Control', 'no-cache, must-revalidate');
+    res.set('Cache-Control', 'no-store, must-revalidate');
     res.sendFile(path.join(frontendDir, 'index.html'), (err) => {
       if (err) res.status(500).json({ error: 'Frontend introuvable sur le serveur.' });
     });
