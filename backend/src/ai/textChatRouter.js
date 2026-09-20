@@ -22,10 +22,16 @@ async function callProvider(provider, messages) {
   if (!apiKey) throw new Error(`Clé API manquante (${provider.apiKeyEnvVar})`);
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15000);
+  const timeout = setTimeout(() => controller.abort(), 10000);
+
+  // Cohere n'utilise pas le chemin /chat/completions comme les autres, et sa
+  // réponse a une forme différente (content en tableau de blocs, pas une
+  // simple chaîne) — cas particulier isolé ici plutôt que de casser
+  // l'hypothèse "tous compatibles OpenAI" pour les autres fournisseurs.
+  const endpoint = provider.id === 'cohere' ? `${provider.baseUrl}/chat` : `${provider.baseUrl}/chat/completions`;
 
   try {
-    const res = await fetch(`${provider.baseUrl}/chat/completions`, {
+    const res = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({ model: provider.model, messages, max_tokens: 400 }),
@@ -37,11 +43,15 @@ async function callProvider(provider, messages) {
       throw new Error(`HTTP ${res.status}: ${body.slice(0, 200)}`);
     }
     const data = await res.json();
-    const content = data?.choices?.[0]?.message?.content;
+    // Format OpenAI standard (Gemini, Mistral, Z.AI) ou format Cohere v2 (content en blocs).
+    let content = data?.choices?.[0]?.message?.content;
+    if (!content && Array.isArray(data?.message?.content)) {
+      content = data.message.content.map(b => b.text || '').join(' ').trim();
+    }
     if (!content) throw new Error('Réponse vide ou format inattendu');
     return content;
   } catch (e) {
-    if (e.name === 'AbortError') throw new Error('Délai dépassé (15s).');
+    if (e.name === 'AbortError') throw new Error('Délai dépassé (10s).');
     throw e;
   } finally {
     clearTimeout(timeout);
