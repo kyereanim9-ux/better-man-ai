@@ -87,8 +87,19 @@ try {
 }
 
 if (frontendDir) {
-  app.use(express.static(frontendDir));
+  // index.html/app.js/style.css changent à chaque déploiement — forcer une
+  // revalidation systématique (pas de cache agressif navigateur/mobile) pour
+  // que les correctifs arrivent vraiment côté utilisateur au lieu de rester
+  // coincé sur une ancienne version en cache sans que rien ne le signale.
+  app.use(express.static(frontendDir, {
+    setHeaders: (res, filePath) => {
+      if (/\.(html|js|css)$/.test(filePath)) {
+        res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+      }
+    }
+  }));
   app.get(/^(?!\/api).*/, (req, res) => {
+    res.set('Cache-Control', 'no-cache, must-revalidate');
     res.sendFile(path.join(frontendDir, 'index.html'), (err) => {
       if (err) res.status(500).json({ error: 'Frontend introuvable sur le serveur.' });
     });
