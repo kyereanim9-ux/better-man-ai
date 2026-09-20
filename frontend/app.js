@@ -22,6 +22,14 @@ async function api(path, options = {}) {
     body: options.body ? JSON.stringify(options.body) : undefined
   });
   const data = await res.json().catch(() => ({}));
+  if (res.status === 401) {
+    // Session invalide ou expirée : avant, ça laissait la page bloquée sur
+    // "Chargement..." indéfiniment sans aucune explication. Maintenant, on
+    // reconnecte clairement l'utilisateur au lieu de le laisser deviner.
+    doLogout();
+    showToast('Session expirée — reconnecte-toi.');
+    throw new Error('Session expirée.');
+  }
   if (!res.ok) throw new Error(data.error || 'Erreur inconnue');
   return data;
 }
@@ -470,6 +478,10 @@ if (SpeechRecognitionAPI) {
       for (let i = 0; i < e.results.length; i++) text += e.results[i][0].transcript;
       input.value = base + text;
     };
+    micRecognition.onerror = (e) => {
+      const messages = { 'not-allowed': "Permission micro refusée.", 'no-speech': "Aucune voix détectée." };
+      showToast(messages[e.error] || `Erreur micro (${e.error})`);
+    };
     micRecognition.onend = () => { micListening = false; micBtn.textContent = '🎤'; };
     micRecognition.start();
     micListening = true;
@@ -749,21 +761,28 @@ document.addEventListener('click', (e) => {
 
 // --- BIBLE ---
 async function loadBible() {
-  const [vod, rod, qod] = await Promise.all([
-    api('/bible/verse-of-day'),
-    api('/bible/reading-of-day'),
-    api('/bible/question-of-day')
-  ]);
+  try {
+    const [vod, rod, qod] = await Promise.all([
+      api('/bible/verse-of-day'),
+      api('/bible/reading-of-day'),
+      api('/bible/question-of-day')
+    ]);
 
-  document.getElementById('bible-verse-of-day').innerHTML = renderVerseBlock(vod.verse);
-  document.getElementById('bible-reading-of-day').innerHTML = renderVerseBlock(rod.verse);
-  document.getElementById('bible-question-of-day').innerHTML = `
-    <div class="verse-ref">${escapeHtml(qod.verse.ref)}</div>
-    <div>${escapeHtml(qod.question)}</div>
-    ${speakerHTML(qod.question)}
-  `;
-  bindAddMemButtons(document.getElementById('bible-verse-of-day'));
-  bindAddMemButtons(document.getElementById('bible-reading-of-day'));
+    document.getElementById('bible-verse-of-day').innerHTML = renderVerseBlock(vod.verse);
+    document.getElementById('bible-reading-of-day').innerHTML = renderVerseBlock(rod.verse);
+    document.getElementById('bible-question-of-day').innerHTML = `
+      <div class="verse-ref">${escapeHtml(qod.verse.ref)}</div>
+      <div>${escapeHtml(qod.question)}</div>
+      ${speakerHTML(qod.question)}
+    `;
+    bindAddMemButtons(document.getElementById('bible-verse-of-day'));
+    bindAddMemButtons(document.getElementById('bible-reading-of-day'));
+  } catch (err) {
+    document.getElementById('bible-verse-of-day').textContent = 'Erreur : ' + err.message;
+    document.getElementById('bible-reading-of-day').textContent = 'Erreur : ' + err.message;
+    document.getElementById('bible-question-of-day').textContent = 'Erreur : ' + err.message;
+    return;
+  }
 
   loadMemorization();
 }
@@ -914,7 +933,10 @@ function attachVoiceToTextarea(btnId, textareaId, statusId) {
       if (final) textarea.dataset.baseText = baseText() + final;
       textarea.value = baseText() + interim;
     };
-    recognition.onerror = () => { status.textContent = "Erreur de reconnaissance — réessaie."; };
+    recognition.onerror = (e) => {
+      const messages = { 'not-allowed': "Permission micro refusée — active-la dans les réglages du navigateur.", 'no-speech': "Aucune voix détectée.", 'network': "Problème réseau." };
+      status.textContent = messages[e.error] || `Erreur de reconnaissance (${e.error}) — réessaie.`;
+    };
     recognition.onend = () => {
       listening = false;
       btn.textContent = "🎤 Parler au lieu d'écrire";
@@ -968,8 +990,9 @@ function openRecitationPanel(id, text, ref) {
     }
     document.getElementById(`recite-transcript-${id}`).textContent = finalTranscript + interim;
   };
-  recognition.onerror = () => {
-    document.getElementById(`recite-status-${id}`).textContent = "Erreur de reconnaissance vocale — réessaie.";
+  recognition.onerror = (e) => {
+    const messages = { 'not-allowed': "Permission micro refusée — active-la dans les réglages du navigateur.", 'no-speech': "Aucune voix détectée.", 'network': "Problème réseau." };
+    document.getElementById(`recite-status-${id}`).textContent = messages[e.error] || `Erreur de reconnaissance (${e.error}) — réessaie.`;
   };
   recognition.onend = () => {
     document.getElementById(`recite-status-${id}`).textContent = 'Arrêté.';
@@ -991,12 +1014,18 @@ function openRecitationPanel(id, text, ref) {
 
 // --- PROGRESSION ---
 async function loadProgress() {
-  const [review, monthly, trends, summary] = await Promise.all([
-    api('/progress/weekly-review'),
-    api('/progress/monthly-review'),
-    api('/progress/trends'),
-    api('/progress/summary')
-  ]);
+  let review, monthly, trends, summary;
+  try {
+    [review, monthly, trends, summary] = await Promise.all([
+      api('/progress/weekly-review'),
+      api('/progress/monthly-review'),
+      api('/progress/trends'),
+      api('/progress/summary')
+    ]);
+  } catch (err) {
+    document.getElementById('weekly-review-content').textContent = 'Erreur : ' + err.message;
+    return;
+  }
 
   document.getElementById('weekly-review-content').innerHTML = review.summary.map(l => `<p>${escapeHtml(l)}</p>`).join('');
 
@@ -1157,9 +1186,15 @@ document.getElementById('analyze-form').addEventListener('submit', async (e) => 
 
 // --- FINANCE ---
 async function loadFinance() {
-  const [summary, txs, savings, investments] = await Promise.all([
-    api('/finance/summary'), api('/finance/transactions'), api('/finance/savings-goals'), api('/finance/investments')
-  ]);
+  let summary, txs, savings, investments;
+  try {
+    [summary, txs, savings, investments] = await Promise.all([
+      api('/finance/summary'), api('/finance/transactions'), api('/finance/savings-goals'), api('/finance/investments')
+    ]);
+  } catch (err) {
+    document.getElementById('finance-summary').textContent = 'Erreur : ' + err.message;
+    return;
+  }
 
   document.getElementById('finance-summary').innerHTML = `
     <div class="badge-row">
@@ -2119,9 +2154,15 @@ document.getElementById('physique-goal-form').addEventListener('submit', async (
 const STYLE_LABELS = {};
 
 async function loadStyle() {
-  const [checklist, overview, entries] = await Promise.all([
-    api('/style/checklist'), api('/style/overview'), api('/style/entries')
-  ]);
+  let checklist, overview, entries;
+  try {
+    [checklist, overview, entries] = await Promise.all([
+      api('/style/checklist'), api('/style/overview'), api('/style/entries')
+    ]);
+  } catch (err) {
+    document.getElementById('style-overview').textContent = 'Erreur : ' + err.message;
+    return;
+  }
   checklist.forEach(a => { STYLE_LABELS[a.id] = a.title; });
 
   document.getElementById('style-overview').innerHTML = `
@@ -2302,7 +2343,13 @@ const SKINCARE_STEP_LABELS = {
   'masque-nuit-hydratant': 'Masque de nuit hydratant'
 };
 async function loadSkincare() {
-  const [steps, logs] = await Promise.all([api('/style/skincare/steps'), api('/style/skincare')]);
+  let steps, logs;
+  try {
+    [steps, logs] = await Promise.all([api('/style/skincare/steps'), api('/style/skincare')]);
+  } catch (err) {
+    document.getElementById('skincare-am-list').textContent = 'Erreur : ' + err.message;
+    return;
+  }
   const today = logs.find(l => l.date === new Date().toISOString().slice(0, 10)) || { amSteps: [], pmSteps: [] };
 
   function renderChecklist(containerId, stepKeys, doneKeys, period) {
