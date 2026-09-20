@@ -81,6 +81,7 @@ router.post('/conversations/:id/messages', async (req, res) => {
   conv.messages.push(userMsg);
 
   let reply;
+  let source = 'local';
   if (photo) {
     const result = await routeImageChat({
       systemPrompt: buildSystemPrompt('coach'),
@@ -88,19 +89,24 @@ router.post('/conversations/:id/messages', async (req, res) => {
       imageDataUrl: photo
     });
     reply = result.ok ? result.reply : result.note;
+    source = result.ok ? result.providerUsed : 'local';
   } else {
     // Vrai LLM en priorité si au moins un fournisseur est configuré ;
     // repli automatique sur le coach local (réflexif, à base de règles,
     // 0 €) si aucune clé n'est renseignée ou si tous les fournisseurs échouent.
+    // "source" est renvoyée au frontend pour que ce soit VÉRIFIABLE, pas
+    // juste affirmé — sans ça, la bascule est invisible côté utilisateur.
     try {
       const history = conv.messages.map(m => ({ role: m.role, content: m.content }));
       const result = await chatWithFallback([{ role: 'system', content: COACH_SYSTEM_PROMPT }, ...history]);
       reply = result.content;
+      source = result.providerUsed;
     } catch {
       reply = await getCoachReply(conv.messages, { userId: req.user.id });
+      source = 'local';
     }
   }
-  const assistantMsg = { role: 'assistant', content: reply, createdAt: new Date().toISOString() };
+  const assistantMsg = { role: 'assistant', content: reply, source, createdAt: new Date().toISOString() };
   conv.messages.push(assistantMsg);
 
   await db.write();

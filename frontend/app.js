@@ -421,6 +421,7 @@ function renderMessages(messages) {
     <div class="msg ${m.role}">
       <div>${m.hasPhoto ? '📷 ' : ''}${escapeHtml(m.content)}</div>
       ${m.role === 'assistant' ? speakerHTML(m.content) : ''}
+      ${m.role === 'assistant' && m.source ? `<div class="meta" style="margin-top:4px;">${m.source === 'local' ? '⚙️ Coach local (aucune IA externe configurée ou toutes indisponibles)' : `✅ Répondu par ${escapeHtml(m.source)}`}</div>` : ''}
     </div>
   `).join('');
   el.scrollTop = el.scrollHeight;
