@@ -44,6 +44,7 @@ export async function routeImageChat({ systemPrompt, messages, imageDataUrl }) {
       stats.errors++;
       stats.lastError = e.message;
       errors.push(`${provider.label} : ${e.message}`);
+      console.error(`[chat IA vision] ${provider.label} a échoué : ${e.message}`);
     }
   }
 

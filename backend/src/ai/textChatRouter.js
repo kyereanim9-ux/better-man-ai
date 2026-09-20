@@ -66,6 +66,9 @@ export async function chatWithFallback(messages, providers = TEXT_AI_PROVIDERS) 
       stats.errors++;
       stats.lastError = err.message;
       attempts.push({ provider: provider.name, error: err.message });
+      // Journalisé en clair pour pouvoir diagnostiquer via les logs Render —
+      // sans ça, l'échec était invisible même côté serveur.
+      console.error(`[chat IA texte] ${provider.name} a échoué : ${err.message}`);
     }
   }
 
