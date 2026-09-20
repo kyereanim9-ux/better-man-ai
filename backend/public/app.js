@@ -667,14 +667,14 @@ function escapeHtml(str) {
 // --- LECTEUR VOCAL (Web Speech API, gratuit, intégré au navigateur) ---
 let speakerIdCounter = 0;
 const SPEAKER_TEXTS = {};
-const SPEECH_SUPPORTED = 'speechSynthesis' in window;
+function isSpeechSupported() { return typeof window !== 'undefined' && 'speechSynthesis' in window; }
 
 // Liste des voix disponibles sur ce navigateur/OS (varie selon l'appareil).
 // Chargée de façon asynchrone par certains navigateurs (Chrome), d'où l'écoute
 // de l'événement 'voiceschanged'. On privilégie les voix françaises en tête de liste.
 let AVAILABLE_VOICES = [];
 function refreshVoices() {
-  if (!SPEECH_SUPPORTED) return;
+  if (!isSpeechSupported()) return;
   const voices = window.speechSynthesis.getVoices();
   AVAILABLE_VOICES = voices.sort((a, b) => {
     const aFr = a.lang.startsWith('fr') ? 0 : 1;
@@ -682,7 +682,7 @@ function refreshVoices() {
     return aFr - bFr;
   });
 }
-if (SPEECH_SUPPORTED) {
+if (isSpeechSupported()) {
   refreshVoices();
   window.speechSynthesis.onvoiceschanged = refreshVoices;
 }
@@ -699,7 +699,7 @@ function voiceOptionsHTML() {
 }
 
 function speakerHTML(text) {
-  if (!SPEECH_SUPPORTED) return '<div class="speaker meta">(lecture audio non supportée par ce navigateur)</div>';
+  if (!isSpeechSupported()) return '<div class="speaker meta">(lecture audio non supportée par ce navigateur)</div>';
   const id = 'sp' + (speakerIdCounter++);
   SPEAKER_TEXTS[id] = text;
   return `
@@ -1668,7 +1668,7 @@ function bindAudiobookControls(book) {
 }
 
 function startAudiobook(book, startPosition, statusEl) {
-  if (!SPEECH_SUPPORTED) { statusEl.textContent = 'Lecture audio non supportée par ce navigateur.'; return; }
+  if (!isSpeechSupported()) { statusEl.textContent = 'Lecture audio non supportée par ce navigateur.'; return; }
   window.speechSynthesis.cancel();
   const remainingText = book.text.slice(startPosition);
   if (!remainingText.trim()) { statusEl.textContent = 'Tu es arrivé(e) à la fin du livre 🎉'; return; }
