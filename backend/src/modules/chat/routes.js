@@ -64,7 +64,7 @@ router.delete('/conversations/:id', async (req, res) => {
 // qu'un fournisseur IA de vision est configuré, la réponse passe par le
 // routeur d'image plutôt que le coach local (texte seul) habituel.
 router.post('/conversations/:id/messages', async (req, res) => {
-  const { content, photo } = req.body;
+  const { content, photo, lang } = req.body;
   if (!content?.trim() && !photo) return res.status(400).json({ error: 'Message vide.' });
   if (photo) {
     if (typeof photo !== 'string' || !photo.startsWith('data:image/')) {
@@ -98,7 +98,8 @@ router.post('/conversations/:id/messages', async (req, res) => {
     // juste affirmé — sans ça, la bascule est invisible côté utilisateur.
     try {
       const history = conv.messages.map(m => ({ role: m.role, content: m.content }));
-      const result = await chatWithFallback([{ role: 'system', content: COACH_SYSTEM_PROMPT }, ...history]);
+      const langInstruction = lang && lang !== 'français' ? ` Réponds en ${lang}, pas en français.` : '';
+      const result = await chatWithFallback([{ role: 'system', content: COACH_SYSTEM_PROMPT + langInstruction }, ...history]);
       reply = result.content;
       source = result.providerUsed;
     } catch {

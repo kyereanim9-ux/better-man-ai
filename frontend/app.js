@@ -111,6 +111,22 @@ document.querySelectorAll('[data-accent-choice]').forEach(b => {
 });
 initAppearance();
 
+// --- Langue (voix + contenu IA) ---
+const LANG_BCP47 = { fr: 'fr-FR', en: 'en-US', ko: 'ko-KR' };
+const LANG_NAMES = { fr: 'français', en: 'anglais', ko: 'coréen' };
+function getAppLang() { return localStorage.getItem('bm_lang') || 'fr'; }
+function getAppLangBCP47() { return LANG_BCP47[getAppLang()] || 'fr-FR'; }
+function applyLang(lang) {
+  localStorage.setItem('bm_lang', lang);
+  document.querySelectorAll('[data-lang-choice]').forEach(b => {
+    b.classList.toggle('active-choice', b.dataset.langChoice === lang);
+  });
+}
+document.querySelectorAll('[data-lang-choice]').forEach(b => {
+  b.onclick = () => applyLang(b.dataset.langChoice);
+});
+applyLang(getAppLang());
+
 // --- Toasts (XP gagné, mission terminée) ---
 function showToast(html) {
   const layer = document.getElementById('toast-layer');
@@ -436,6 +452,31 @@ document.getElementById('message-photo-input').onchange = async (e) => {
   document.getElementById('message-photo-status').textContent = '📷 Photo prête à être envoyée — écris ta question (optionnel) et envoie.';
 };
 
+if (SpeechRecognitionAPI) {
+  const micBtn = document.getElementById('message-mic-btn');
+  let micListening = false;
+  let micRecognition = null;
+  micBtn.onclick = () => {
+    if (micListening) { micRecognition.stop(); return; }
+    const input = document.getElementById('message-input');
+    micRecognition = new SpeechRecognitionAPI();
+    micRecognition.lang = getAppLangBCP47();
+    micRecognition.interimResults = true;
+    const base = input.value ? input.value + ' ' : '';
+    micRecognition.onresult = (e) => {
+      let text = '';
+      for (let i = 0; i < e.results.length; i++) text += e.results[i][0].transcript;
+      input.value = base + text;
+    };
+    micRecognition.onend = () => { micListening = false; micBtn.textContent = '🎤'; };
+    micRecognition.start();
+    micListening = true;
+    micBtn.textContent = '⏹️';
+  };
+} else {
+  document.getElementById('message-mic-btn').disabled = true;
+}
+
 document.getElementById('message-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const input = document.getElementById('message-input');
@@ -452,7 +493,7 @@ document.getElementById('message-form').addEventListener('submit', async (e) => 
   document.getElementById('message-photo-status').textContent = '';
   document.getElementById('message-photo-input').value = '';
   await api(`/chat/conversations/${state.currentConversationId}/messages`, {
-    method: 'POST', body: { content, photo }
+    method: 'POST', body: { content, photo, lang: LANG_NAMES[getAppLang()] }
   });
   const conv = await api(`/chat/conversations/${state.currentConversationId}`);
   renderMessages(conv.messages);
@@ -666,7 +707,7 @@ function speakerHTML(text) {
 
 function buildUtterance(text, container) {
   const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'fr-FR';
+  utter.lang = getAppLangBCP47();
   const rateSelect = container.querySelector('select[data-action="rate"]');
   utter.rate = parseFloat(rateSelect?.value || '1');
 
@@ -858,7 +899,7 @@ function attachVoiceToTextarea(btnId, textareaId, statusId) {
     if (listening) { recognition.stop(); return; }
     textarea.dataset.baseText = textarea.value ? textarea.value + ' ' : '';
     recognition = new SpeechRecognitionAPI();
-    recognition.lang = 'fr-FR';
+    recognition.lang = getAppLangBCP47();
     recognition.continuous = true;
     recognition.interimResults = true;
 
@@ -912,7 +953,7 @@ function openRecitationPanel(id, text, ref) {
   `;
 
   const recognition = new SpeechRecognitionAPI();
-  recognition.lang = 'fr-FR';
+  recognition.lang = getAppLangBCP47();
   recognition.continuous = true;
   recognition.interimResults = true;
   let finalTranscript = '';

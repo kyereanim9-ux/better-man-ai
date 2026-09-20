@@ -176,6 +176,7 @@
           <div id="messages"></div>
           <form id="message-form">
             <input type="text" id="message-input" placeholder="Écris ton message..." autocomplete="off" />
+            <button type="button" id="message-mic-btn" class="small" style="background:transparent;border:1px solid var(--border);color:var(--muted);box-shadow:none;">🎤</button>
             <button type="button" id="message-photo-btn" class="small" style="background:transparent;border:1px solid var(--border);color:var(--muted);box-shadow:none;">📷</button>
             <input type="file" id="message-photo-input" accept="image/*" capture="environment" style="display:none;" />
             <button type="submit">Envoyer</button>
@@ -826,6 +827,13 @@
           <button type="button" class="accent-dot" data-accent-choice="vert" title="Vert"></button>
           <button type="button" class="accent-dot" data-accent-choice="orange" title="Orange"></button>
         </div>
+        <p class="meta" style="margin-top:14px;">Langue de la voix et des réponses IA (Coach, Bible...)</p>
+        <div class="theme-toggle-row" id="lang-toggle-row">
+          <button type="button" data-lang-choice="fr">🇫🇷 Français</button>
+          <button type="button" data-lang-choice="en">🇬🇧 English</button>
+          <button type="button" data-lang-choice="ko">🇰🇷 한국어</button>
+        </div>
+        <p class="meta">Ne traduit pas les menus de l'app, seulement la voix et le contenu généré par l'IA.</p>
       </div>
 
       <div class="card-block">

@@ -409,6 +409,29 @@ exactement comme avant (non-régression comportementale confirmée), statut
 des 4 fournisseurs correctement renvoyé comme non configurés, non-régression
 sur 10 endpoints existants.
 
+## Phase 14 — Diagnostic Cohere/Mistral en production + langue voix/IA
+- **Vrai bug trouvé et corrigé via les logs Render** (accès direct utilisé
+  pour diagnostiquer) : Cohere utilisait le mauvais chemin d'API
+  (`/v2/chat/completions` au lieu de `/v2/chat`, HTTP 405) et un format de
+  réponse différent des autres (content en tableau de blocs, pas une
+  chaîne) — corrigé, avec repli tolérant aux deux formats. Mistral
+  fonctionne mais avait atteint sa limite gratuite (429) au moment du test
+  — pas un bug, juste un quota.
+- **Journalisation en clair de chaque échec fournisseur** (texte + vision)
+  ajoutée — auparavant invisible même côté serveur, rendait tout diagnostic
+  impossible sans deviner.
+- **Micro sur le Coach IA texte** (en plus de Journal/Situation déjà faits).
+- **Sélecteur de langue** (français/anglais/coréen, Compte → Apparence) :
+  s'applique à la synthèse vocale, à la reconnaissance vocale, et demande
+  au Coach IA de répondre dans la langue choisie. Ne traduit PAS les menus
+  de l'interface elle-même — précisé clairement à l'utilisateur pour ne
+  pas laisser croire à une i18n complète non construite.
+- Timeout par fournisseur réduit de 15s à 10s pour limiter la latence
+  perçue en cas d'échecs en cascade.
+
+Testé de bout en bout : non-régression sur 10 endpoints existants,
+paramètre `lang` accepté par le Coach.
+
 ## Automatisations / nouvelles intégrations — non construites
 Ces deux points du cahier des charges restent volontairement hors scope :
 une app 100% gratuite et auto-hébergée n'a pas de serveur toujours actif pour
