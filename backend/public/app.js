@@ -253,6 +253,9 @@ function switchView(view) {
 document.querySelectorAll('.feature-card [data-view]').forEach(btn => {
   btn.onclick = () => switchView(btn.dataset.view);
 });
+document.querySelectorAll('#view-account [data-view]').forEach(btn => {
+  btn.onclick = () => switchView(btn.dataset.view);
+});
 const CATEGORIES = {
   'cat-moi': [
     { view: 'profile-setup', icon: '👤', name: 'Profil', desc: 'Ce que tu es, ce que tu vises' },
@@ -281,8 +284,7 @@ const CATEGORIES = {
     { view: 'physique', icon: '💪', name: 'Physique', desc: 'Construis un corps plus fort' },
     { view: 'style', icon: '👔', name: 'Style', desc: 'Présentation et image' },
     { view: 'skincare', icon: '🧴', name: 'Skincare', desc: 'Routine coréenne, suivi quotidien' },
-    { view: 'nutrition', icon: '🍽️', name: 'Alimentation', desc: 'Journal photo de tes repas' },
-    { view: 'intimacy', icon: '🔞', name: 'Intimité', desc: 'Réservé aux adultes' }
+    { view: 'nutrition', icon: '🍽️', name: 'Alimentation', desc: 'Journal photo de tes repas' }
   ],
   'cat-vie': [
     { view: 'finance', icon: '💰', name: 'Finance', desc: 'Dépenses et épargne' }

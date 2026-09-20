@@ -178,7 +178,7 @@
             <input type="text" id="message-input" placeholder="Écris ton message..." autocomplete="off" />
             <button type="button" id="message-mic-btn" class="small" style="background:transparent;border:1px solid var(--border);color:var(--muted);box-shadow:none;">🎤</button>
             <button type="button" id="message-photo-btn" class="small" style="background:transparent;border:1px solid var(--border);color:var(--muted);box-shadow:none;">📷</button>
-            <input type="file" id="message-photo-input" accept="image/*" capture="environment" style="display:none;" />
+            <input type="file" id="message-photo-input" accept="image/*" style="display:none;" />
             <button type="submit">Envoyer</button>
           </form>
           <p class="meta" id="message-photo-status"></p>
@@ -340,7 +340,7 @@
         <p class="meta">Vidéo courte uniquement (8 Mo max — stockée directement dans l'app). La transcription reste à coller toi-même, pas de reconnaissance vocale automatique sur fichier.</p>
         <form id="video-upload-form">
           <input type="text" id="video-upload-title" placeholder="Titre" />
-          <input type="file" id="video-upload-input" accept="video/*" capture="environment" />
+          <input type="file" id="video-upload-input" accept="video/*" />
           <button type="submit">Importer</button>
         </form>
         <p class="meta" id="video-upload-status"></p>
@@ -670,7 +670,7 @@
         <h3>📸 Photos de progression</h3>
         <p class="meta">Comparaison visuelle datée, sans note ni verdict de l'IA — à toi de juger, dans le temps.</p>
         <form id="progress-photo-form">
-          <input type="file" id="progress-photo-input" accept="image/*" capture="environment" />
+          <input type="file" id="progress-photo-input" accept="image/*" />
           <input type="text" id="progress-photo-note" placeholder="Note (optionnel)" />
           <button type="submit">Ajouter</button>
         </form>
@@ -725,7 +725,7 @@
             <option value="collation">Collation</option>
           </select>
           <input type="text" id="meal-description" placeholder="Ce que tu manges (ex : poulet, riz, brocolis)" />
-          <input type="file" id="meal-photo-input" accept="image/*" capture="environment" />
+          <input type="file" id="meal-photo-input" accept="image/*" />
           <button type="submit">Ajouter</button>
         </form>
       </div>
@@ -754,7 +754,7 @@
             <option value="materiel_av">🎥 Matériel audiovisuel</option>
           </select>
           <input type="text" id="ia-question" placeholder="Ta question (optionnel, ex : Combien de protéines ?)" />
-          <input type="file" id="ia-photo-input" accept="image/*" capture="environment" />
+          <input type="file" id="ia-photo-input" accept="image/*" />
           <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);">
             <input type="checkbox" id="ia-keep-photo" checked style="width:auto;" /> Conserver cette photo dans mon historique
           </label>
@@ -813,6 +813,12 @@
     <div class="view hidden" id="view-account">
       <h2>⚙️ Mon compte</h2>
 
+      <div class="card-block">
+        <h3>🔞 Section privée</h3>
+        <p class="meta">Retirée de l'accueil pour rester discrète — accessible uniquement ici.</p>
+        <button type="button" data-view="intimacy" class="small">Ouvrir Intimité</button>
+      </div>
+
       <div class="card-block" id="appearance-card">
         <h3>🎨 Apparence</h3>
         <p class="meta">Thème et couleur d'accent — appliqués immédiatement, mémorisés sur cet appareil.</p>
@@ -842,7 +848,7 @@
           <img id="account-avatar-preview" style="width:64px;height:64px;border-radius:50%;object-fit:cover;display:none;border:2px solid var(--border);" />
           <div id="account-avatar-fallback" class="avatar-btn" style="width:64px;height:64px;font-size:22px;cursor:default;"></div>
           <div>
-            <input type="file" id="account-avatar-input" accept="image/*" capture="user" style="display:none;" />
+            <input type="file" id="account-avatar-input" accept="image/*" style="display:none;" />
             <button type="button" id="account-avatar-pick-btn" class="small" style="padding:8px 14px;">Changer la photo</button>
             <button type="button" id="account-avatar-remove-btn" class="small" style="padding:8px 14px;background:transparent;color:var(--muted);box-shadow:none;border:1px solid var(--border);">Retirer</button>
           </div>
