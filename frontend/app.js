@@ -135,6 +135,7 @@ const DOMAIN_LABELS = {
   discipline: 'Discipline', intime: 'Intimité', spirituel: 'Spirituel'
 };
 
+const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
 // --- Auth screen ---
 const authScreen = document.getElementById('auth-screen');
 const mainScreen = document.getElementById('main-screen');
@@ -896,7 +897,6 @@ async function loadMemorization() {
 }
 
 // --- Récitation biblique via reconnaissance vocale du navigateur (gratuite) ---
-const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
 function wordOverlapScore(target, said) {
   const norm = s => stripAccentsClient(s.toLowerCase()).replace(/[^a-z\s]/g, ' ').split(/\s+/).filter(Boolean);
   const targetWords = norm(target);
