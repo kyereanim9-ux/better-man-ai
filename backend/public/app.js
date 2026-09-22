@@ -2575,47 +2575,90 @@ let intimacyPhotos = [];
 
 // --- Initialisation de la section Intimité ---
 async function initIntimacy() {
-  const gateEl = document.getElementById('intimacy-gate');
+  const ageGateEl = document.getElementById('intimacy-age-gate');
+  const pinGateEl = document.getElementById('intimacy-pin-gate');
   const contentEl = document.getElementById('intimacy-content');
-  const pinControlEl = document.getElementById('intimacy-pin-control');
 
-  // Vérifie si l'utilisateur a déjà activé cette section
+  // Étape 1: Vérifier si l'utilisateur a activé cette section (âge + consentement)
   const activated = localStorage.getItem('bm_intimacy_activated') === 'true';
 
   if (!activated) {
-    gateEl.classList.remove('hidden');
+    // Afficher le gate d'âge
+    ageGateEl.classList.remove('hidden');
+    pinGateEl.classList.add('hidden');
     contentEl.classList.add('hidden');
+
     document.getElementById('intimacy-confirm-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const ageOk = document.getElementById('intimacy-age-check').checked;
       const consentOk = document.getElementById('intimacy-consent-check').checked;
       if (ageOk && consentOk) {
         localStorage.setItem('bm_intimacy_activated', 'true');
-        gateEl.classList.add('hidden');
+        // Redemander le choix du PIN après activation
+        ageGateEl.classList.add('hidden');
         contentEl.classList.remove('hidden');
         await loadIntimacyData();
+        renderIntimacyPinControl();
       } else {
         showToast('Tu dois accepter les deux conditions.');
       }
     });
   } else {
-    gateEl.classList.add('hidden');
-    contentEl.classList.remove('hidden');
-    await loadIntimacyData();
+    // Étape 2: Vérifier le PIN s'il existe
+    const hasPin = localStorage.getItem('bm_intimacy_pin') !== null;
+
+    if (hasPin) {
+      // Afficher le gate de PIN
+      ageGateEl.classList.add('hidden');
+      pinGateEl.classList.remove('hidden');
+      contentEl.classList.add('hidden');
+
+      // Gérer la vérification du PIN
+      document.getElementById('intimacy-pin-verify-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const inputPin = document.getElementById('intimacy-pin-input').value;
+        const storedPin = atob(localStorage.getItem('bm_intimacy_pin'));
+        
+        if (inputPin === storedPin) {
+          // PIN correct - accès autorisé
+          pinGateEl.classList.add('hidden');
+          contentEl.classList.remove('hidden');
+          document.getElementById('intimacy-pin-input').value = ''; // Vider le champ
+          document.getElementById('intimacy-pin-error').textContent = '';
+          loadIntimacyData();
+          renderIntimacyPinControl();
+          showToast('Accès autorisé ✅');
+        } else {
+          // PIN incorrect
+          document.getElementById('intimacy-pin-error').textContent = '❌ Mot de passe incorrect';
+          document.getElementById('intimacy-pin-input').value = '';
+          showToast('Mot de passe incorrect.');
+        }
+      });
+    } else {
+      // Pas de PIN - accès direct
+      ageGateEl.classList.add('hidden');
+      pinGateEl.classList.add('hidden');
+      contentEl.classList.remove('hidden');
+      await loadIntimacyData();
+      renderIntimacyPinControl();
+    }
   }
 
-  // Setup du PIN
-  renderIntimacyPinControl();
-
   // Revocation
-  document.getElementById('intimacy-revoke-btn').addEventListener('click', () => {
-    if (confirm('Désactiver l\'accès à cette section ? Tu devras recommencer la procédure pour la réactiver.')) {
-      localStorage.removeItem('bm_intimacy_activated');
-      localStorage.removeItem('bm_intimacy_pin');
-      gateEl.classList.remove('hidden');
-      contentEl.classList.add('hidden');
-    }
-  });
+  const revokeBtn = document.getElementById('intimacy-revoke-btn');
+  if (revokeBtn) {
+    revokeBtn.addEventListener('click', () => {
+      if (confirm('Désactiver l\'accès à cette section ? Tu devras recommencer la procédure pour la réactiver.')) {
+        localStorage.removeItem('bm_intimacy_activated');
+        localStorage.removeItem('bm_intimacy_pin');
+        ageGateEl.classList.remove('hidden');
+        pinGateEl.classList.add('hidden');
+        contentEl.classList.add('hidden');
+        showToast('Section Intimité désactivée.');
+      }
+    });
+  }
 }
 
 // --- Gestion du PIN/mot de passe ---

@@ -385,13 +385,23 @@
     <div class="view hidden" id="view-intimacy">
       <h2>🔞 Intimité</h2>
 
-      <div class="card-block hidden" id="intimacy-gate">
+      <div class="card-block hidden" id="intimacy-age-gate">
         <p>Cette section aborde la communication et l'intimité entre adultes consentants. Réservée aux 18 ans et plus.</p>
         <form id="intimacy-confirm-form">
           <label><input type="checkbox" id="intimacy-age-check" /> J'ai 18 ans ou plus</label><br/>
           <label><input type="checkbox" id="intimacy-consent-check" /> Je souhaite activer cette section volontairement</label><br/>
           <button type="submit">Activer l'accès</button>
         </form>
+      </div>
+
+      <div class="card-block hidden" id="intimacy-pin-gate">
+        <h3>🔐 Accès protégé</h3>
+        <p class="meta">Entre ton mot de passe pour accéder à cette section.</p>
+        <form id="intimacy-pin-verify-form">
+          <input type="password" id="intimacy-pin-input" placeholder="Mot de passe" required style="margin-bottom:12px;" />
+          <button type="submit">Accéder</button>
+        </form>
+        <div id="intimacy-pin-error" style="color:#d32f2f;margin-top:8px;font-size:13px;"></div>
       </div>
 
       <div class="hidden" id="intimacy-content">
