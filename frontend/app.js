@@ -34,6 +34,107 @@ async function api(path, options = {}) {
   return data;
 }
 
+// --- LECTEUR VOCAL (Web Speech API, gratuit, intégré au navigateur) ---
+let speakerIdCounter = 0;
+const SPEAKER_TEXTS = {};
+function isSpeechSupported() { return typeof window !== 'undefined' && 'speechSynthesis' in window; }
+
+// Liste des voix disponibles sur ce navigateur/OS (varie selon l'appareil).
+// Chargée de façon asynchrone par certains navigateurs (Chrome), d'où l'écoute
+// de l'événement 'voiceschanged'. On privilégie les voix françaises en tête de liste.
+let AVAILABLE_VOICES = [];
+function refreshVoices() {
+  if (!isSpeechSupported()) return;
+  const voices = window.speechSynthesis.getVoices();
+  AVAILABLE_VOICES = voices.sort((a, b) => {
+    const aFr = a.lang.startsWith('fr') ? 0 : 1;
+    const bFr = b.lang.startsWith('fr') ? 0 : 1;
+    return aFr - bFr;
+  });
+}
+if (isSpeechSupported()) {
+  refreshVoices();
+  window.speechSynthesis.onvoiceschanged = refreshVoices;
+}
+
+function voiceOptionsHTML() {
+  const savedVoice = localStorage.getItem('bm_voice_name') || '';
+  if (!AVAILABLE_VOICES.length) return '';
+  return `
+    <select data-action="voice" title="Voix">
+      <option value="">Voix par défaut</option>
+      ${AVAILABLE_VOICES.map(v => `<option value="${escapeHtml(v.name)}" ${v.name === savedVoice ? 'selected' : ''}>${escapeHtml(v.name)} (${v.lang})</option>`).join('')}
+    </select>
+  `;
+}
+
+function speakerHTML(text) {
+  if (!isSpeechSupported()) return '<div class="speaker meta">(lecture audio non supportée par ce navigateur)</div>';
+  const id = 'sp' + (speakerIdCounter++);
+  SPEAKER_TEXTS[id] = text;
+  return `
+    <div class="speaker" data-speaker="${id}">
+      <button data-action="play" data-id="${id}" title="Écouter">🔊 Écouter</button>
+      <button data-action="pause" data-id="${id}" title="Pause/Reprendre">⏸️</button>
+      <button data-action="stop" data-id="${id}" title="Stop">⏹️</button>
+      <select data-action="rate" data-id="${id}" title="Vitesse">
+        <option value="0.75">x0.75</option>
+        <option value="1" selected>x1</option>
+        <option value="1.25">x1.25</option>
+        <option value="1.5">x1.5</option>
+        <option value="2">x2</option>
+      </select>
+      ${voiceOptionsHTML()}
+    </div>
+  `;
+}
+
+function buildUtterance(text, container) {
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = getAppLangBCP47();
+  const rateSelect = container.querySelector('select[data-action="rate"]');
+  utter.rate = parseFloat(rateSelect?.value || '1');
+
+  const voiceSelect = container.querySelector('select[data-action="voice"]');
+  const voiceName = voiceSelect?.value;
+  if (voiceName) {
+    const voice = AVAILABLE_VOICES.find(v => v.name === voiceName);
+    if (voice) utter.voice = voice;
+  }
+  return utter;
+}
+
+document.addEventListener('change', (e) => {
+  if (e.target.matches('.speaker select[data-action="voice"]')) {
+    localStorage.setItem('bm_voice_name', e.target.value);
+  }
+});
+
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.speaker button');
+  if (!btn) return;
+  const { action, id } = btn.dataset;
+  const text = SPEAKER_TEXTS[id];
+  if (!text) return;
+  const container = document.querySelector(`.speaker[data-speaker="${id}"]`);
+
+  if (action === 'play') {
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(buildUtterance(text, container));
+  } else if (action === 'pause') {
+    if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) window.speechSynthesis.pause();
+    else if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+  } else if (action === 'stop') {
+    window.speechSynthesis.cancel();
+  }
+});
+
+const DOMAIN_LABELS = {
+  emotionnel: 'Émotionnel', relationnel: 'Relationnel', physique: 'Physique', mental: 'Mental',
+  financier: 'Financier', professionnel: 'Professionnel', social: 'Social', communication: 'Communication',
+  discipline: 'Discipline', intime: 'Intimité', spirituel: 'Spirituel'
+};
+
 // --- Auth screen ---
 const authScreen = document.getElementById('auth-screen');
 const mainScreen = document.getElementById('main-screen');
@@ -664,101 +765,6 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-// --- LECTEUR VOCAL (Web Speech API, gratuit, intégré au navigateur) ---
-let speakerIdCounter = 0;
-const SPEAKER_TEXTS = {};
-function isSpeechSupported() { return typeof window !== 'undefined' && 'speechSynthesis' in window; }
-
-// Liste des voix disponibles sur ce navigateur/OS (varie selon l'appareil).
-// Chargée de façon asynchrone par certains navigateurs (Chrome), d'où l'écoute
-// de l'événement 'voiceschanged'. On privilégie les voix françaises en tête de liste.
-let AVAILABLE_VOICES = [];
-function refreshVoices() {
-  if (!isSpeechSupported()) return;
-  const voices = window.speechSynthesis.getVoices();
-  AVAILABLE_VOICES = voices.sort((a, b) => {
-    const aFr = a.lang.startsWith('fr') ? 0 : 1;
-    const bFr = b.lang.startsWith('fr') ? 0 : 1;
-    return aFr - bFr;
-  });
-}
-if (isSpeechSupported()) {
-  refreshVoices();
-  window.speechSynthesis.onvoiceschanged = refreshVoices;
-}
-
-function voiceOptionsHTML() {
-  const savedVoice = localStorage.getItem('bm_voice_name') || '';
-  if (!AVAILABLE_VOICES.length) return '';
-  return `
-    <select data-action="voice" title="Voix">
-      <option value="">Voix par défaut</option>
-      ${AVAILABLE_VOICES.map(v => `<option value="${escapeHtml(v.name)}" ${v.name === savedVoice ? 'selected' : ''}>${escapeHtml(v.name)} (${v.lang})</option>`).join('')}
-    </select>
-  `;
-}
-
-function speakerHTML(text) {
-  if (!isSpeechSupported()) return '<div class="speaker meta">(lecture audio non supportée par ce navigateur)</div>';
-  const id = 'sp' + (speakerIdCounter++);
-  SPEAKER_TEXTS[id] = text;
-  return `
-    <div class="speaker" data-speaker="${id}">
-      <button data-action="play" data-id="${id}" title="Écouter">🔊 Écouter</button>
-      <button data-action="pause" data-id="${id}" title="Pause/Reprendre">⏸️</button>
-      <button data-action="stop" data-id="${id}" title="Stop">⏹️</button>
-      <select data-action="rate" data-id="${id}" title="Vitesse">
-        <option value="0.75">x0.75</option>
-        <option value="1" selected>x1</option>
-        <option value="1.25">x1.25</option>
-        <option value="1.5">x1.5</option>
-        <option value="2">x2</option>
-      </select>
-      ${voiceOptionsHTML()}
-    </div>
-  `;
-}
-
-function buildUtterance(text, container) {
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = getAppLangBCP47();
-  const rateSelect = container.querySelector('select[data-action="rate"]');
-  utter.rate = parseFloat(rateSelect?.value || '1');
-
-  const voiceSelect = container.querySelector('select[data-action="voice"]');
-  const voiceName = voiceSelect?.value;
-  if (voiceName) {
-    const voice = AVAILABLE_VOICES.find(v => v.name === voiceName);
-    if (voice) utter.voice = voice;
-  }
-  return utter;
-}
-
-document.addEventListener('change', (e) => {
-  if (e.target.matches('.speaker select[data-action="voice"]')) {
-    localStorage.setItem('bm_voice_name', e.target.value);
-  }
-});
-
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('.speaker button');
-  if (!btn) return;
-  const { action, id } = btn.dataset;
-  const text = SPEAKER_TEXTS[id];
-  if (!text) return;
-  const container = document.querySelector(`.speaker[data-speaker="${id}"]`);
-
-  if (action === 'play') {
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(buildUtterance(text, container));
-  } else if (action === 'pause') {
-    if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) window.speechSynthesis.pause();
-    else if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-  } else if (action === 'stop') {
-    window.speechSynthesis.cancel();
-  }
-});
-
 // --- BIBLE ---
 async function loadBible() {
   try {
@@ -1293,11 +1299,6 @@ document.getElementById('investment-form').addEventListener('submit', async (e) 
 });
 
 // --- DOMAINES ---
-const DOMAIN_LABELS = {
-  emotionnel: 'Émotionnel', relationnel: 'Relationnel', physique: 'Physique', mental: 'Mental',
-  financier: 'Financier', professionnel: 'Professionnel', social: 'Social', communication: 'Communication',
-  discipline: 'Discipline', intime: 'Intimité', spirituel: 'Spirituel'
-};
 
 async function loadDomains() {
   const data = await api('/domains/scores');
