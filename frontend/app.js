@@ -288,7 +288,7 @@ function pickDailyQuote() {
 function renderAvatarBtn() {
   const btn = document.getElementById('avatar-btn');
   if (state.user.avatar) {
-    btn.innerHTML = `<img src="${state.user.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />`;
+    btn.innerHTML = `<img src="${state.user.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:center;" />`;
   } else {
     btn.textContent = state.user.name.trim().slice(0, 1).toUpperCase() || '?';
   }
