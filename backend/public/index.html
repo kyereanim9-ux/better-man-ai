@@ -396,30 +396,56 @@
 
       <div class="hidden" id="intimacy-content">
         <div class="card-block">
+          <h3>🔐 Protection par mot de passe</h3>
+          <p class="meta">Ajoute un mot de passe supplémentaire pour cette section.</p>
+          <div id="intimacy-pin-control"></div>
+        </div>
+
+        <div class="card-block">
           <button id="intimacy-revoke-btn" class="small danger">Désactiver l'accès à cette section</button>
         </div>
 
         <div class="card-block">
-          <h3>Sujets</h3>
-          <div id="intimacy-topics">Chargement...</div>
-        </div>
-
-        <div class="card-block">
-          <h3>Suggestions de messages</h3>
-          <div class="badge-row">
-            <button class="small" data-intimacy-tone="romantique">Romantique</button>
-            <button class="small" data-intimacy-tone="suggestif">Suggestif</button>
+          <h3>🎤 Enregistrements audio</h3>
+          <p class="meta">Enregistre des messages vocaux privés.</p>
+          <div id="intimacy-recorder-controls">
+            <button id="intimacy-record-btn" class="small" style="background:var(--accent);">🎤 Commencer l'enregistrement</button>
+            <span id="intimacy-recorder-time" style="margin-left:10px;font-size:13px;color:var(--muted);">00:00</span>
           </div>
-          <div id="intimacy-message-result"></div>
+          <div id="intimacy-audio-list"></div>
         </div>
 
         <div class="card-block">
-          <h3>Journal privé dédié</h3>
+          <h3>📸 Photos privées</h3>
+          <p class="meta">Galerie privée avec upload et capture.</p>
+          <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <button id="intimacy-photo-upload-btn" class="small">📤 Télécharger une photo</button>
+            <button id="intimacy-camera-btn" class="small">📷 Prendre une photo</button>
+          </div>
+          <input type="file" id="intimacy-photo-input" accept="image/*" style="display:none;" />
+          <input type="file" id="intimacy-camera-input" accept="image/*" capture="environment" style="display:none;" />
+          <div id="intimacy-photo-gallery" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;"></div>
+        </div>
+
+        <div class="card-block">
+          <h3>📝 Journal intime</h3>
           <form id="intimacy-journal-form">
-            <textarea id="intimacy-journal-input" placeholder="Espace séparé de ton journal général..."></textarea>
+            <textarea id="intimacy-journal-input" placeholder="Espace privé pour tes pensées et sentiments..."></textarea>
             <button type="submit">Enregistrer</button>
           </form>
           <div id="intimacy-journal-list"></div>
+        </div>
+
+        <div class="card-block">
+          <h3>💬 Sujets &amp; Suggestions</h3>
+          <p class="meta">Aide et suggestions pour la communication intime.</p>
+          <div id="intimacy-topics">Chargement...</div>
+          <div class="badge-row" style="margin-top:12px;">
+            <button class="small" data-intimacy-tone="romantique">Romantique</button>
+            <button class="small" data-intimacy-tone="suggestif">Suggestif</button>
+            <button class="small" data-intimacy-tone="affectueux">Affectueux</button>
+          </div>
+          <div id="intimacy-message-result"></div>
         </div>
       </div>
     </div>

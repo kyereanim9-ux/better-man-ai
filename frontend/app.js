@@ -2560,3 +2560,398 @@ async function loadImageAnalysisHistory() {
 // --- Init ---
 checkAppLock();
 if (state.token && state.user) showMain();
+// ============================================================================
+// INTIMITÉ - Nouvelles fonctionnalités: Micro, Photos, Mot de passe, Journal
+// ============================================================================
+
+// Variables globales pour l'enregistrement audio
+let mediaRecorder = null;
+let audioChunks = [];
+let recordingStartTime = null;
+let recordingTimer = null;
+
+// Variables globales pour les photos privées
+let intimacyPhotos = [];
+
+// --- Initialisation de la section Intimité ---
+async function initIntimacy() {
+  const gateEl = document.getElementById('intimacy-gate');
+  const contentEl = document.getElementById('intimacy-content');
+  const pinControlEl = document.getElementById('intimacy-pin-control');
+
+  // Vérifie si l'utilisateur a déjà activé cette section
+  const activated = localStorage.getItem('bm_intimacy_activated') === 'true';
+
+  if (!activated) {
+    gateEl.classList.remove('hidden');
+    contentEl.classList.add('hidden');
+    document.getElementById('intimacy-confirm-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const ageOk = document.getElementById('intimacy-age-check').checked;
+      const consentOk = document.getElementById('intimacy-consent-check').checked;
+      if (ageOk && consentOk) {
+        localStorage.setItem('bm_intimacy_activated', 'true');
+        gateEl.classList.add('hidden');
+        contentEl.classList.remove('hidden');
+        await loadIntimacyData();
+      } else {
+        showToast('Tu dois accepter les deux conditions.');
+      }
+    });
+  } else {
+    gateEl.classList.add('hidden');
+    contentEl.classList.remove('hidden');
+    await loadIntimacyData();
+  }
+
+  // Setup du PIN
+  renderIntimacyPinControl();
+
+  // Revocation
+  document.getElementById('intimacy-revoke-btn').addEventListener('click', () => {
+    if (confirm('Désactiver l\'accès à cette section ? Tu devras recommencer la procédure pour la réactiver.')) {
+      localStorage.removeItem('bm_intimacy_activated');
+      localStorage.removeItem('bm_intimacy_pin');
+      gateEl.classList.remove('hidden');
+      contentEl.classList.add('hidden');
+    }
+  });
+}
+
+// --- Gestion du PIN/mot de passe ---
+function renderIntimacyPinControl() {
+  const hasPin = localStorage.getItem('bm_intimacy_pin') !== null;
+  const el = document.getElementById('intimacy-pin-control');
+
+  if (hasPin) {
+    el.innerHTML = `
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span style="font-size:13px;color:var(--muted);">✅ Mot de passe défini</span>
+        <button type="button" class="small" id="intimacy-change-pin-btn">Changer</button>
+        <button type="button" class="small danger" id="intimacy-remove-pin-btn">Supprimer</button>
+      </div>
+    `;
+    document.getElementById('intimacy-change-pin-btn').addEventListener('click', promptIntimacyPin);
+    document.getElementById('intimacy-remove-pin-btn').addEventListener('click', () => {
+      if (confirm('Supprimer le mot de passe ?')) {
+        localStorage.removeItem('bm_intimacy_pin');
+        renderIntimacyPinControl();
+        showToast('Mot de passe supprimé.');
+      }
+    });
+  } else {
+    el.innerHTML = `
+      <button type="button" class="small" id="intimacy-set-pin-btn" style="background:var(--accent);">🔐 Définir un mot de passe</button>
+    `;
+    document.getElementById('intimacy-set-pin-btn').addEventListener('click', promptIntimacyPin);
+  }
+}
+
+function promptIntimacyPin() {
+  const pin = prompt('Entre un mot de passe (4-20 caractères) pour protéger cette section:');
+  if (pin === null) return;
+  if (pin.length < 4 || pin.length > 20) {
+    showToast('Le mot de passe doit contenir entre 4 et 20 caractères.');
+    return;
+  }
+  localStorage.setItem('bm_intimacy_pin', btoa(pin)); // Stockage simple (pas chiffré)
+  renderIntimacyPinControl();
+  showToast('Mot de passe défini ✅');
+}
+
+// --- Enregistrement audio ---
+function initIntimacyAudioRecorder() {
+  const recordBtn = document.getElementById('intimacy-record-btn');
+  
+  recordBtn.addEventListener('click', async () => {
+    if (!mediaRecorder) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        recordingStartTime = Date.now();
+        
+        mediaRecorder.addEventListener('dataavailable', (e) => {
+          audioChunks.push(e.data);
+        });
+
+        mediaRecorder.addEventListener('stop', () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          saveIntimacyAudio(audioBlob);
+          mediaRecorder = null;
+        });
+
+        mediaRecorder.start();
+        recordBtn.textContent = '⏹️ Arrêter l\'enregistrement';
+        recordBtn.style.background = '#d32f2f';
+        startRecordingTimer();
+        showToast('Enregistrement en cours...');
+      } catch (err) {
+        showToast('Accès au micro refusé: ' + err.message);
+      }
+    } else {
+      mediaRecorder.stop();
+      recordBtn.textContent = '🎤 Commencer l\'enregistrement';
+      recordBtn.style.background = '';
+      clearInterval(recordingTimer);
+    }
+  });
+}
+
+function startRecordingTimer() {
+  const timeEl = document.getElementById('intimacy-recorder-time');
+  recordingTimer = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+    const mm = Math.floor(elapsed / 60);
+    const ss = elapsed % 60;
+    timeEl.textContent = `${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+  }, 100);
+}
+
+async function saveIntimacyAudio(blob) {
+  try {
+    const audio = await blobToDataUrl(blob);
+    const audioObj = {
+      id: 'audio_' + Date.now(),
+      data: audio,
+      date: new Date().toLocaleDateString('fr-FR'),
+      duration: Math.floor((Date.now() - recordingStartTime) / 1000)
+    };
+    
+    const audios = JSON.parse(localStorage.getItem('bm_intimacy_audios') || '[]');
+    audios.push(audioObj);
+    localStorage.setItem('bm_intimacy_audios', JSON.stringify(audios));
+    
+    loadIntimacyAudios();
+    showToast('Enregistrement sauvegardé ✅');
+  } catch (err) {
+    showToast('Erreur: ' + err.message);
+  }
+}
+
+async function loadIntimacyAudios() {
+  const audios = JSON.parse(localStorage.getItem('bm_intimacy_audios') || '[]');
+  const listEl = document.getElementById('intimacy-audio-list');
+  
+  listEl.innerHTML = audios.length ? audios.map(a => {
+    const mm = Math.floor(a.duration / 60);
+    const ss = a.duration % 60;
+    return `
+      <div class="card" style="display:flex;align-items:center;gap:10px;">
+        <audio controls style="flex:1;" src="${a.data}"></audio>
+        <span class="meta" style="font-size:12px;">${a.date} (${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')})</span>
+        <button class="small danger" data-del-audio="${a.id}">✕</button>
+      </div>
+    `;
+  }).join('') : '<p class="meta">Aucun enregistrement pour l\'instant.</p>';
+  
+  document.querySelectorAll('[data-del-audio]').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.delAudio;
+      const audios = JSON.parse(localStorage.getItem('bm_intimacy_audios') || '[]');
+      const filtered = audios.filter(a => a.id !== id);
+      localStorage.setItem('bm_intimacy_audios', JSON.stringify(filtered));
+      loadIntimacyAudios();
+    };
+  });
+}
+
+// --- Gestion des photos ---
+function initIntimacyPhotos() {
+  const uploadBtn = document.getElementById('intimacy-photo-upload-btn');
+  const cameraBtn = document.getElementById('intimacy-camera-btn');
+  const uploadInput = document.getElementById('intimacy-photo-input');
+  const cameraInput = document.getElementById('intimacy-camera-input');
+
+  uploadBtn.addEventListener('click', () => uploadInput.click());
+  cameraBtn.addEventListener('click', () => cameraInput.click());
+
+  uploadInput.addEventListener('change', (e) => {
+    if (e.target.files[0]) handleIntimacyPhotoFile(e.target.files[0]);
+  });
+
+  cameraInput.addEventListener('change', (e) => {
+    if (e.target.files[0]) handleIntimacyPhotoFile(e.target.files[0]);
+  });
+
+  loadIntimacyPhotos();
+}
+
+async function handleIntimacyPhotoFile(file) {
+  try {
+    const photo = await resizeImageToDataUrl(file, 600, 0.8);
+    const photoObj = {
+      id: 'photo_' + Date.now(),
+      data: photo,
+      date: new Date().toLocaleDateString('fr-FR')
+    };
+    
+    const photos = JSON.parse(localStorage.getItem('bm_intimacy_photos') || '[]');
+    photos.push(photoObj);
+    localStorage.setItem('bm_intimacy_photos', JSON.stringify(photos));
+    
+    loadIntimacyPhotos();
+    showToast('Photo sauvegardée ✅');
+  } catch (err) {
+    showToast('Erreur: ' + err.message);
+  }
+}
+
+async function loadIntimacyPhotos() {
+  const photos = JSON.parse(localStorage.getItem('bm_intimacy_photos') || '[]');
+  const galleryEl = document.getElementById('intimacy-photo-gallery');
+  
+  galleryEl.innerHTML = photos.length ? photos.map(p => `
+    <div style="position:relative;border-radius:10px;overflow:hidden;background:var(--surface);">
+      <img src="${p.data}" style="width:100%;aspect-ratio:1;object-fit:cover;cursor:pointer;" 
+           title="${p.date}" data-view-photo="${p.id}" />
+      <button class="small danger" data-del-photo="${p.id}" 
+              style="position:absolute;top:4px;right:4px;padding:2px 6px;">✕</button>
+    </div>
+  `).join('') : '<p class="meta">Aucune photo pour l\'instant.</p>';
+
+  document.querySelectorAll('[data-del-photo]').forEach(btn => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = btn.dataset.delPhoto;
+      const photos = JSON.parse(localStorage.getItem('bm_intimacy_photos') || '[]');
+      const filtered = photos.filter(p => p.id !== id);
+      localStorage.setItem('bm_intimacy_photos', JSON.stringify(filtered));
+      loadIntimacyPhotos();
+    };
+  });
+
+  document.querySelectorAll('[data-view-photo]').forEach(img => {
+    img.addEventListener('click', () => {
+      const id = img.dataset.viewPhoto;
+      const photo = photos.find(p => p.id === id);
+      if (photo) {
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:9999;';
+        modal.innerHTML = `<img src="${photo.data}" style="max-width:90vw;max-height:90vh;border-radius:10px;" />`;
+        modal.addEventListener('click', () => modal.remove());
+        document.body.appendChild(modal);
+      }
+    });
+  });
+}
+
+// --- Journal intime ---
+function initIntimacyJournal() {
+  const form = document.getElementById('intimacy-journal-form');
+  
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const text = document.getElementById('intimacy-journal-input').value.trim();
+    if (!text) return;
+
+    try {
+      const entry = {
+        id: 'journal_' + Date.now(),
+        text,
+        date: new Date().toLocaleString('fr-FR'),
+        timestamp: Date.now()
+      };
+      
+      const entries = JSON.parse(localStorage.getItem('bm_intimacy_journal') || '[]');
+      entries.push(entry);
+      localStorage.setItem('bm_intimacy_journal', JSON.stringify(entries));
+      
+      document.getElementById('intimacy-journal-input').value = '';
+      loadIntimacyJournal();
+      showToast('Entrée sauvegardée ✅');
+    } catch (err) {
+      showToast('Erreur: ' + err.message);
+    }
+  });
+
+  loadIntimacyJournal();
+}
+
+async function loadIntimacyJournal() {
+  const entries = JSON.parse(localStorage.getItem('bm_intimacy_journal') || '[]')
+    .sort((a, b) => b.timestamp - a.timestamp);
+  const listEl = document.getElementById('intimacy-journal-list');
+  
+  listEl.innerHTML = entries.length ? entries.map(e => `
+    <div class="card" style="flex-direction:column;gap:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="meta">${e.date}</span>
+        <button class="small danger" data-del-journal="${e.id}">Supprimer</button>
+      </div>
+      <div style="white-space:pre-wrap;line-height:1.5;">${escapeHtml(e.text)}</div>
+    </div>
+  `).join('') : '<p class="meta">Aucune entrée pour l\'instant.</p>';
+
+  document.querySelectorAll('[data-del-journal]').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.delJournal;
+      const entries = JSON.parse(localStorage.getItem('bm_intimacy_journal') || '[]');
+      const filtered = entries.filter(e => e.id !== id);
+      localStorage.setItem('bm_intimacy_journal', JSON.stringify(filtered));
+      loadIntimacyJournal();
+    };
+  });
+}
+
+// --- Chargement des données Intimité ---
+async function loadIntimacyData() {
+  try {
+    // Topics & suggestions
+    const topics = await api('/intimacy/topics').catch(() => null);
+    if (topics) {
+      const topicsEl = document.getElementById('intimacy-topics');
+      topicsEl.innerHTML = topics.map(t => `<div class="badge">${escapeHtml(t)}</div>`).join('');
+    }
+  } catch (err) {
+    // Silencieusement ignorer si l'API n'existe pas
+  }
+
+  // Suggestions de messages
+  document.querySelectorAll('[data-intimacy-tone]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      try {
+        const tone = btn.dataset.intimacyTone;
+        const data = await api('/intimacy/message-suggestion?tone=' + tone);
+        const resultEl = document.getElementById('intimacy-message-result');
+        resultEl.innerHTML = `<p style="padding:12px;background:var(--surface);border-radius:8px;">${escapeHtml(data.message)}</p>`;
+        resultEl.innerHTML += speakerHTML(data.message);
+      } catch (err) {
+        showToast('Erreur: ' + err.message);
+      }
+    });
+  });
+}
+
+// --- Utilitaires ---
+function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+// --- Initialisation automatique ---
+document.addEventListener('DOMContentLoaded', () => {
+  // Vérifie si on est dans la vue intimacy
+  const checkIntimacy = setInterval(() => {
+    if (document.getElementById('view-intimacy')) {
+      clearInterval(checkIntimacy);
+      // Initialise quand l'utilisateur accède à la section
+      const observer = new MutationObserver(() => {
+        const intimacyView = document.getElementById('view-intimacy');
+        if (intimacyView && !intimacyView.classList.contains('hidden')) {
+          initIntimacy();
+          initIntimacyAudioRecorder();
+          initIntimacyPhotos();
+          initIntimacyJournal();
+          observer.disconnect();
+        }
+      });
+      observer.observe(document.getElementById('view-intimacy'), { attributes: true });
+    }
+  }, 100);
+});
