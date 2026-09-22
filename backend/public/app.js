@@ -129,6 +129,12 @@ document.addEventListener('click', (e) => {
   }
 });
 
+const DOMAIN_LABELS = {
+  emotionnel: 'Émotionnel', relationnel: 'Relationnel', physique: 'Physique', mental: 'Mental',
+  financier: 'Financier', professionnel: 'Professionnel', social: 'Social', communication: 'Communication',
+  discipline: 'Discipline', intime: 'Intimité', spirituel: 'Spirituel'
+};
+
 // --- Auth screen ---
 const authScreen = document.getElementById('auth-screen');
 const mainScreen = document.getElementById('main-screen');
@@ -1293,11 +1299,6 @@ document.getElementById('investment-form').addEventListener('submit', async (e) 
 });
 
 // --- DOMAINES ---
-const DOMAIN_LABELS = {
-  emotionnel: 'Émotionnel', relationnel: 'Relationnel', physique: 'Physique', mental: 'Mental',
-  financier: 'Financier', professionnel: 'Professionnel', social: 'Social', communication: 'Communication',
-  discipline: 'Discipline', intime: 'Intimité', spirituel: 'Spirituel'
-};
 
 async function loadDomains() {
   const data = await api('/domains/scores');
