@@ -2633,6 +2633,17 @@ async function initIntimacy() {
           showToast('Mot de passe incorrect.');
         }
       });
+
+      // Bouton "Oublié le mot de passe?"
+      document.getElementById('intimacy-forgot-pin-btn').addEventListener('click', () => {
+        if (confirm('Réinitialiser le mot de passe? Tu pourras en définir un nouveau en accédant.')) {
+          localStorage.removeItem('bm_intimacy_pin');
+          pinGateEl.classList.add('hidden');
+          contentEl.classList.remove('hidden');
+          loadIntimacyData();
+          showToast('Mot de passe réinitialisé. Bienvenue! 🔓');
+        }
+      });
     } else {
       // Pas de PIN - accès direct
       ageGateEl.classList.add('hidden');
