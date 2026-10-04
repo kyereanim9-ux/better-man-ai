@@ -81,7 +81,7 @@
       <button data-view="videos" class="nav-btn">🎬 Vidéos</button>
       <button data-view="teach" class="nav-btn">🎓 Teach Me</button>
       <button data-view="search" class="nav-btn">🌐 Recherche</button>
-      <button data-view="intimacy" class="nav-btn">🔞 Intimité</button>
+
       <button data-view="finance" class="nav-btn">💰 Finance</button>
       <button data-view="physique" class="nav-btn">💪 Physique</button>
       <button data-view="style" class="nav-btn">👔 Style</button>
@@ -382,79 +382,6 @@
     </div>
 
     <!-- INTIMACY -->
-    <div class="view hidden" id="view-intimacy">
-      <h2>🔞 Intimité</h2>
-
-      <div class="card-block hidden" id="intimacy-age-gate">
-        <p>Cette section aborde la communication et l'intimité entre adultes consentants. Réservée aux 18 ans et plus.</p>
-        <form id="intimacy-confirm-form">
-          <label><input type="checkbox" id="intimacy-age-check" /> J'ai 18 ans ou plus</label><br/>
-          <label><input type="checkbox" id="intimacy-consent-check" /> Je souhaite activer cette section volontairement</label><br/>
-          <button type="submit">Activer l'accès</button>
-        </form>
-      </div>
-
-      <div class="card-block hidden" id="intimacy-pin-gate">
-        <h3>🔐 Accès protégé</h3>
-        <p class="meta">Entre ton mot de passe pour accéder à cette section.</p>
-        <form id="intimacy-pin-verify-form">
-          <input type="password" id="intimacy-pin-input" placeholder="Mot de passe" required style="margin-bottom:12px;" />
-          <button type="submit">Accéder</button>
-        </form>
-        <div id="intimacy-pin-error" style="color:#d32f2f;margin-top:8px;font-size:13px;"></div>
-        <button type="button" id="intimacy-forgot-pin-btn" class="small" style="margin-top:12px;background:transparent;color:var(--accent);text-decoration:underline;">Oublié le mot de passe?</button>
-      </div>
-
-      <div class="hidden" id="intimacy-content">
-        <div class="card-block">
-          <button id="intimacy-revoke-btn" class="small danger">Désactiver l'accès à cette section</button>
-        </div>
-
-        <div class="card-block">
-          <h3>🎤 Enregistrements audio</h3>
-          <p class="meta">Enregistre des messages vocaux privés.</p>
-          <div id="intimacy-recorder-controls">
-            <button id="intimacy-record-btn" class="small" style="background:var(--accent);">🎤 Commencer l'enregistrement</button>
-            <span id="intimacy-recorder-time" style="margin-left:10px;font-size:13px;color:var(--muted);">00:00</span>
-          </div>
-          <div id="intimacy-audio-list"></div>
-        </div>
-
-        <div class="card-block">
-          <h3>📸 Photos privées</h3>
-          <p class="meta">Galerie privée avec upload et capture.</p>
-          <div style="display:flex;gap:8px;margin-bottom:12px;">
-            <button id="intimacy-photo-upload-btn" class="small">📤 Télécharger une photo</button>
-            <button id="intimacy-camera-btn" class="small">📷 Prendre une photo</button>
-          </div>
-          <input type="file" id="intimacy-photo-input" accept="image/*" style="display:none;" />
-          <input type="file" id="intimacy-camera-input" accept="image/*" capture="environment" style="display:none;" />
-          <div id="intimacy-photo-gallery" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;"></div>
-        </div>
-
-        <div class="card-block">
-          <h3>📝 Journal intime</h3>
-          <form id="intimacy-journal-form">
-            <textarea id="intimacy-journal-input" placeholder="Espace privé pour tes pensées et sentiments..."></textarea>
-            <button type="submit">Enregistrer</button>
-          </form>
-          <div id="intimacy-journal-list"></div>
-        </div>
-
-        <div class="card-block">
-          <h3>💬 Sujets &amp; Suggestions</h3>
-          <p class="meta">Aide et suggestions pour la communication intime.</p>
-          <div id="intimacy-topics">Chargement...</div>
-          <div class="badge-row" style="margin-top:12px;">
-            <button class="small" data-intimacy-tone="romantique">Romantique</button>
-            <button class="small" data-intimacy-tone="suggestif">Suggestif</button>
-            <button class="small" data-intimacy-tone="affectueux">Affectueux</button>
-          </div>
-          <div id="intimacy-message-result"></div>
-        </div>
-      </div>
-    </div>
-
     <!-- SEARCH -->
     <div class="view hidden" id="view-search">
       <h2>🌐 Recherche web</h2>
