@@ -2598,7 +2598,6 @@ async function initIntimacy() {
         ageGateEl.classList.add('hidden');
         contentEl.classList.remove('hidden');
         await loadIntimacyData();
-        renderIntimacyPinControl();
       } else {
         showToast('Tu dois accepter les deux conditions.');
       }
@@ -2626,7 +2625,6 @@ async function initIntimacy() {
           document.getElementById('intimacy-pin-input').value = ''; // Vider le champ
           document.getElementById('intimacy-pin-error').textContent = '';
           loadIntimacyData();
-          renderIntimacyPinControl();
           showToast('Accès autorisé ✅');
         } else {
           // PIN incorrect
@@ -2641,7 +2639,6 @@ async function initIntimacy() {
       pinGateEl.classList.add('hidden');
       contentEl.classList.remove('hidden');
       await loadIntimacyData();
-      renderIntimacyPinControl();
     }
   }
 
@@ -2662,45 +2659,7 @@ async function initIntimacy() {
 }
 
 // --- Gestion du PIN/mot de passe ---
-function renderIntimacyPinControl() {
-  const hasPin = localStorage.getItem('bm_intimacy_pin') !== null;
-  const el = document.getElementById('intimacy-pin-control');
 
-  if (hasPin) {
-    el.innerHTML = `
-      <div style="display:flex;gap:8px;align-items:center;">
-        <span style="font-size:13px;color:var(--muted);">✅ Mot de passe défini</span>
-        <button type="button" class="small" id="intimacy-change-pin-btn">Changer</button>
-        <button type="button" class="small danger" id="intimacy-remove-pin-btn">Supprimer</button>
-      </div>
-    `;
-    document.getElementById('intimacy-change-pin-btn').addEventListener('click', promptIntimacyPin);
-    document.getElementById('intimacy-remove-pin-btn').addEventListener('click', () => {
-      if (confirm('Supprimer le mot de passe ?')) {
-        localStorage.removeItem('bm_intimacy_pin');
-        renderIntimacyPinControl();
-        showToast('Mot de passe supprimé.');
-      }
-    });
-  } else {
-    el.innerHTML = `
-      <button type="button" class="small" id="intimacy-set-pin-btn" style="background:var(--accent);">🔐 Définir un mot de passe</button>
-    `;
-    document.getElementById('intimacy-set-pin-btn').addEventListener('click', promptIntimacyPin);
-  }
-}
-
-function promptIntimacyPin() {
-  const pin = prompt('Entre un mot de passe (4-20 caractères) pour protéger cette section:');
-  if (pin === null) return;
-  if (pin.length < 4 || pin.length > 20) {
-    showToast('Le mot de passe doit contenir entre 4 et 20 caractères.');
-    return;
-  }
-  localStorage.setItem('bm_intimacy_pin', btoa(pin)); // Stockage simple (pas chiffré)
-  renderIntimacyPinControl();
-  showToast('Mot de passe défini ✅');
-}
 
 // --- Enregistrement audio ---
 function initIntimacyAudioRecorder() {
