@@ -340,7 +340,6 @@ function switchView(view) {
   if (view === 'videos') loadVideos();
   if (view === 'teach') loadTeach();
   if (view === 'search') loadSearchStatus();
-  
   if (view === 'progress') loadProgress();
   if (view === 'situation') loadSituation();
   if (view === 'communication') { /* rien à précharger */ }
@@ -1397,6 +1396,25 @@ function renderAccountAvatar() {
   }
 }
 
+function resizeImageToDataUrl(file, maxSize = 240, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = () => { img.src = reader.result; };
+    reader.onerror = reject;
+    img.onload = () => {
+      const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 
 async function loadAccount() {
   renderLockControls();
@@ -1941,48 +1959,6 @@ document.getElementById('search-form').addEventListener('submit', async (e) => {
   `;
 });
 
-// --- INTIMITÉ 18+ ---
-
-
-document.getElementById('intimacy-confirm-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const ageConfirmed = document.getElementById('intimacy-age-check').checked;
-  const consentConfirmed = document.getElementById('intimacy-consent-check').checked;
-  if (!ageConfirmed || !consentConfirmed) return;
-  try {
-    await api('/intimacy/confirm-access', { method: 'POST', body: { ageConfirmed, consentConfirmed } });
-} catch (err) {
-    alert(err.message);
-  }
-});
-
-document.getElementById('intimacy-revoke-btn').onclick = async () => {
-  await api('/intimacy/revoke-access', { method: 'POST' });
-};
-
-
-
-document.querySelectorAll('[data-intimacy-tone]').forEach(btn => {
-  btn.onclick = async () => {
-    const data = await api('/intimacy/message-suggestions', { method: 'POST', body: { tone: btn.dataset.intimacyTone } });
-    document.getElementById('intimacy-message-result').innerHTML = `
-      <div class="card">${escapeHtml(data.suggestion)}</div>
-      <p class="meta">${escapeHtml(data.note)}</p>
-    `;
-  };
-});
-
-document.getElementById('intimacy-journal-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const input = document.getElementById('intimacy-journal-input');
-  if (!input.value.trim()) return;
-  await api('/intimacy/journal', { method: 'POST', body: { content: input.value } });
-  input.value = '';
-  loadIntimacyJournal();
-});
-
-
-
 // --- PHYSIQUE ---
 async function loadPhysique() {
   const [summary, measurements, workouts, goals] = await Promise.all([
@@ -2505,114 +2481,60 @@ async function loadImageAnalysisHistory() {
 checkAppLock();
 if (state.token && state.user) showMain();
 
-// Variables globales pour l'enregistrement audio
+// --- PERSONNALISER MON MENU (afficher / masquer des sections) ---
+(function initMenuCustomization() {
+  const STORAGE_KEY = 'bm_hidden_sections';
+  const LOCKED = ['daily', 'account', 'admin']; // toujours visibles
 
-// Variables globales pour les photos privées
-
-// --- Initialisation de la section Intimité ---
- else {
-    // Étape 2: Vérifier le PIN s'il existe
-    const hasPin = localStorage.getItem('bm_intimacy_pin') !== null;
-
-    if (hasPin) {
-      // Afficher le gate de PIN
-      ageGateEl.classList.add('hidden');
-      pinGateEl.classList.remove('hidden');
-      contentEl.classList.add('hidden');
-
-      // Gérer la vérification du PIN
-      document.getElementById('intimacy-pin-verify-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const inputPin = document.getElementById('intimacy-pin-input').value;
-        const storedPin = atob(localStorage.getItem('bm_intimacy_pin'));
-        
-        if (inputPin === storedPin) {
-          // PIN correct - accès autorisé
-          pinGateEl.classList.add('hidden');
-          contentEl.classList.remove('hidden');
-          document.getElementById('intimacy-pin-input').value = ''; // Vider le champ
-          document.getElementById('intimacy-pin-error').textContent = '';
-showToast('Accès autorisé ✅');
-        } else {
-          // PIN incorrect
-          document.getElementById('intimacy-pin-error').textContent = '❌ Mot de passe incorrect';
-          document.getElementById('intimacy-pin-input').value = '';
-          showToast('Mot de passe incorrect.');
-        }
-      });
-
-      // Bouton "Oublié le mot de passe?"
-      document.getElementById('intimacy-forgot-pin-btn').addEventListener('click', () => {
-        if (confirm('Réinitialiser le mot de passe? Tu pourras en définir un nouveau en accédant.')) {
-          localStorage.removeItem('bm_intimacy_pin');
-          pinGateEl.classList.add('hidden');
-          contentEl.classList.remove('hidden');
-showToast('Mot de passe réinitialisé. Bienvenue! 🔓');
-        }
-      });
-    } else {
-      // Pas de PIN - accès direct
-      ageGateEl.classList.add('hidden');
-      pinGateEl.classList.add('hidden');
-      contentEl.classList.remove('hidden');
-      await
-}
+  function getHidden() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+  }
+  function setHidden(list) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); } catch {}
   }
 
-  // Revocation
-  const revokeBtn = document.getElementById('intimacy-revoke-btn');
-  if (revokeBtn) {
-    revokeBtn.addEventListener('click', () => {
-      if (confirm('Désactiver l\'accès à cette section ? Tu devras recommencer la procédure pour la réactiver.')) {
-        localStorage.removeItem('bm_intimacy_activated');
-        localStorage.removeItem('bm_intimacy_pin');
-        ageGateEl.classList.remove('hidden');
-        pinGateEl.classList.add('hidden');
-        contentEl.classList.add('hidden');
-        showToast('Section Intimité désactivée.');
-      }
+  function navButtons() {
+    return Array.from(document.querySelectorAll('.nav-btn[data-view]'))
+      .filter(b => !LOCKED.includes(b.dataset.view));
+  }
+
+  function applyHidden() {
+    const hidden = getHidden();
+    navButtons().forEach(btn => {
+      btn.style.display = hidden.includes(btn.dataset.view) ? 'none' : '';
     });
   }
-}
 
-// --- Gestion du PIN/mot de passe ---
+  function renderList() {
+    const listEl = document.getElementById('menu-custom-list');
+    if (!listEl) return;
+    const hidden = getHidden();
+    listEl.innerHTML = navButtons().map(btn => `
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+        <input type="checkbox" data-menu-toggle="${btn.dataset.view}" ${hidden.includes(btn.dataset.view) ? '' : 'checked'} />
+        <span>${btn.textContent.trim()}</span>
+      </label>
+    `).join('');
+    listEl.querySelectorAll('[data-menu-toggle]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const view = cb.dataset.menuToggle;
+        let list = getHidden().filter(v => v !== view);
+        if (!cb.checked) list.push(view);
+        setHidden(list);
+        applyHidden();
+      });
+    });
+  }
 
+  const resetBtn = document.getElementById('menu-custom-reset');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      setHidden([]);
+      applyHidden();
+      renderList();
+    });
+  }
 
-// --- Enregistrement audio ---
-
-
-function startRecordingTimer() {
-  const timeEl = document.getElementById('intimacy-recorder-time');
-  recordingTimer = setInterval(() => {
-    const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
-    const mm = Math.floor(elapsed / 60);
-    const ss = elapsed % 60;
-    timeEl.textContent = `${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
-  }, 100);
-}
-
-
-
-
-
-// --- Gestion des photos ---
-
-
-
-
-
-
-// --- Journal intime ---
-
-
-
-
-// --- Chargement des données Intimité ---
-
-
-// --- Utilitaires ---
-
-
-    }
-  }, 100);
-});
+  applyHidden();
+  renderList();
+})();

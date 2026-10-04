@@ -771,10 +771,11 @@
     <div class="view hidden" id="view-account">
       <h2>⚙️ Mon compte</h2>
 
-      <div class="card-block">
-        <h3>🔞 Section privée</h3>
-        <p class="meta">Retirée de l'accueil pour rester discrète — accessible uniquement ici.</p>
-        <button type="button" data-view="intimacy" class="small">Ouvrir Intimité</button>
+      <div class="card-block" id="menu-custom-card">
+        <h3>🧩 Personnaliser mon menu</h3>
+        <p class="meta">Coche les sections que tu veux voir dans le menu. Décoche pour les masquer (tes données sont conservées).</p>
+        <div id="menu-custom-list" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;"></div>
+        <button type="button" class="small" id="menu-custom-reset" style="margin-top:12px;">Tout réafficher</button>
       </div>
 
       <div class="card-block" id="appearance-card">
