@@ -368,6 +368,7 @@ document.querySelectorAll('#view-account [data-view]').forEach(btn => {
 });
 const CATEGORIES = {
   'cat-moi': [
+    { view: 'ideas', icon: '💡', name: 'Mes idées', desc: 'Tes projets : micro, photos, tâches' },
     { view: 'profile-setup', icon: '👤', name: 'Profil', desc: 'Ce que tu es, ce que tu vises' },
     { view: 'journal', icon: '📔', name: 'Journal', desc: 'Écris librement' },
     { view: 'goals', icon: '🎯', name: 'Objectifs', desc: 'Ce que tu veux atteindre' },
@@ -400,12 +401,20 @@ const CATEGORIES = {
     { view: 'finance', icon: '💰', name: 'Finance', desc: 'Dépenses et épargne' }
   ]
 };
+function getHiddenSections() {
+  try { return JSON.parse(localStorage.getItem('bm_hidden_sections') || '[]'); } catch (e) { return []; }
+}
 function renderCategories(domainScores) {
+  window._lastDomainScores = domainScores;
+  const hiddenSections = getHiddenSections();
   const DOMAIN_MAP = { physique: 'physique', finance: 'financier', bible: 'spirituel', communication: 'communication', intimacy: 'intime' };
   for (const [gridId, items] of Object.entries(CATEGORIES)) {
     const el = document.getElementById(gridId);
     if (!el) continue;
-    el.innerHTML = items.map(it => {
+    const visibleItems = items.filter(it => !hiddenSections.includes(it.view));
+    const block = el.closest('.category-block');
+    if (block) block.style.display = visibleItems.length ? '' : 'none';
+    el.innerHTML = visibleItems.map(it => {
       const domainKey = DOMAIN_MAP[it.view];
       const score = domainScores && domainKey ? domainScores[domainKey] : null;
       return `
@@ -2482,47 +2491,37 @@ async function loadImageAnalysisHistory() {
 checkAppLock();
 if (state.token && state.user) showMain();
 
-// --- PERSONNALISER MON MENU (afficher / masquer des sections) ---
+// --- PERSONNALISER MON MENU (afficher / masquer les cartes de l'Accueil) ---
 (function initMenuCustomization() {
   const STORAGE_KEY = 'bm_hidden_sections';
-  const LOCKED = ['daily', 'account', 'admin']; // toujours visibles
+  const CAT_TITLES = { 'cat-moi': 'Moi', 'cat-coaching': 'Coaching', 'cat-apprendre': 'Apprendre', 'cat-corps': 'Corps & Style', 'cat-vie': 'Vie' };
 
-  function getHidden() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
-  }
   function setHidden(list) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); } catch {}
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); } catch (e) {}
   }
-
-  function navButtons() {
-    return Array.from(document.querySelectorAll('.nav-btn[data-view]'))
-      .filter(b => !LOCKED.includes(b.dataset.view));
-  }
-
-  function applyHidden() {
-    const hidden = getHidden();
-    navButtons().forEach(btn => {
-      btn.style.display = hidden.includes(btn.dataset.view) ? 'none' : '';
-    });
+  function refreshHome() {
+    try { renderCategories(window._lastDomainScores); } catch (e) {}
   }
 
   function renderList() {
     const listEl = document.getElementById('menu-custom-list');
     if (!listEl) return;
-    const hidden = getHidden();
-    listEl.innerHTML = navButtons().map(btn => `
-      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-        <input type="checkbox" data-menu-toggle="${btn.dataset.view}" ${hidden.includes(btn.dataset.view) ? '' : 'checked'} />
-        <span>${btn.textContent.trim()}</span>
-      </label>
+    const hidden = getHiddenSections();
+    listEl.innerHTML = Object.entries(CATEGORIES).map(([catId, items]) => `
+      <div class="meta" style="margin-top:6px;font-weight:700;">${escapeHtml(CAT_TITLES[catId] || catId)}</div>
+      ${items.map(it => `
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <input type="checkbox" data-menu-toggle="${it.view}" ${hidden.includes(it.view) ? '' : 'checked'} />
+          <span>${it.icon} ${escapeHtml(it.name)}</span>
+        </label>`).join('')}
     `).join('');
     listEl.querySelectorAll('[data-menu-toggle]').forEach(cb => {
       cb.addEventListener('change', () => {
         const view = cb.dataset.menuToggle;
-        let list = getHidden().filter(v => v !== view);
+        const list = getHiddenSections().filter(v => v !== view);
         if (!cb.checked) list.push(view);
         setHidden(list);
-        applyHidden();
+        refreshHome();
       });
     });
   }
@@ -2531,12 +2530,11 @@ if (state.token && state.user) showMain();
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
       setHidden([]);
-      applyHidden();
+      refreshHome();
       renderList();
+      showToast('Toutes les sections sont réaffichées');
     });
   }
-
-  applyHidden();
   renderList();
 })();
 
