@@ -352,6 +352,7 @@ function switchView(view) {
   if (view === 'image-analysis') loadImageAnalysisHistory();
   if (view === 'adaptation') { /* chargé au clic sur "Analyser" */ }
   if (view === 'domains') loadDomains();
+  if (view === 'ideas') loadIdeas();
   if (view === 'profile-setup') loadOnboarding();
   if (view === 'whats-new') loadWhatsNew();
   if (view === 'account') loadAccount();
@@ -2538,3 +2539,438 @@ if (state.token && state.user) showMain();
   applyHidden();
   renderList();
 })();
+
+// --- MES IDÉES : chaque idée devient une mini-section avec les éléments choisis ---
+var IDEA_MODULES = [
+  { key: 'notes',     label: '📝 Notes / texte' },
+  { key: 'micro',     label: '🎤 Micro (enregistrer sa voix)' },
+  { key: 'photos',    label: '📸 Photos (galerie + appareil photo)' },
+  { key: 'checklist', label: '✅ Liste de tâches à cocher' },
+  { key: 'links',     label: '🔗 Liens (vidéos, sites, documents)' },
+  { key: 'deadline',  label: '📅 Date limite / rappel' },
+  { key: 'progress',  label: '📈 Suivi d\'avancement (statut + %)' }
+];
+var ideasDbPromise = null;
+var ideaRecorder = null;
+var ideaRecChunks = [];
+var ideaRecStart = 0;
+var ideaRecTimer = null;
+
+function ideasDb() {
+  if (!ideasDbPromise) {
+    ideasDbPromise = new Promise((resolve, reject) => {
+      const req = indexedDB.open('bm_ideas_db', 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains('ideas')) db.createObjectStore('ideas', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains('media')) {
+          const m = db.createObjectStore('media', { keyPath: 'id' });
+          m.createIndex('ideaId', 'ideaId');
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  return ideasDbPromise;
+}
+async function idbDo(store, mode, fn) {
+  const db = await ideasDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, mode);
+    const r = fn(tx.objectStore(store));
+    tx.oncomplete = () => resolve(r && 'result' in r ? r.result : undefined);
+    tx.onerror = () => reject(tx.error);
+  });
+}
+const ideasGetAll = () => idbDo('ideas', 'readonly', s => s.getAll());
+const ideaGet = (id) => idbDo('ideas', 'readonly', s => s.get(id));
+const ideaPut = (idea) => idbDo('ideas', 'readwrite', s => s.put(idea));
+const ideaDel = (id) => idbDo('ideas', 'readwrite', s => s.delete(id));
+const mediaPut = (m) => idbDo('media', 'readwrite', s => s.put(m));
+const mediaDel = (id) => idbDo('media', 'readwrite', s => s.delete(id));
+const mediaForIdea = (ideaId) => idbDo('media', 'readonly', s => s.index('ideaId').getAll(ideaId));
+
+function newId(prefix) { return prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7); }
+
+async function loadIdeas() {
+  document.getElementById('ideas-home').classList.remove('hidden');
+  document.getElementById('idea-detail').classList.add('hidden');
+
+  const picker = document.getElementById('idea-module-picker');
+  picker.innerHTML = IDEA_MODULES.map(m => `
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+      <input type="checkbox" data-idea-mod="${m.key}" ${m.key === 'notes' ? 'checked' : ''} /> <span>${m.label}</span>
+    </label>`).join('');
+
+  document.getElementById('idea-create-btn').onclick = async () => {
+    const title = document.getElementById('idea-title').value.trim();
+    if (!title) { showToast('Donne un nom à ton idée 🙂'); return; }
+    const modules = Array.from(picker.querySelectorAll('[data-idea-mod]:checked')).map(c => c.dataset.ideaMod);
+    const idea = {
+      id: newId('idea'), title, description: document.getElementById('idea-desc').value.trim(),
+      modules, notes: '', checklist: [], links: [], deadline: '', status: 'À démarrer', percent: 0,
+      improvements: [], createdAt: Date.now()
+    };
+    try {
+      await ideaPut(idea);
+      document.getElementById('idea-title').value = '';
+      document.getElementById('idea-desc').value = '';
+      showToast('Idée créée ✨');
+      openIdea(idea.id);
+    } catch (err) { showToast('Erreur : ' + err.message); }
+  };
+
+  const listEl = document.getElementById('ideas-list');
+  try {
+    const ideas = (await ideasGetAll()).sort((a, b) => b.createdAt - a.createdAt);
+    listEl.innerHTML = ideas.length ? ideas.map(i => `
+      <div class="card" style="cursor:pointer;" data-open-idea="${i.id}">
+        <div>
+          <div><strong>💡 ${escapeHtml(i.title)}</strong></div>
+          <div class="meta">${i.modules.map(k => (IDEA_MODULES.find(m => m.key === k) || {label: k}).label.split(' ')[0]).join(' ')} · ${escapeHtml(i.status || '')}</div>
+        </div>
+      </div>`).join('') : '<p class="meta">Aucune idée pour l\'instant. Crée la première au-dessus !</p>';
+    listEl.querySelectorAll('[data-open-idea]').forEach(el => { el.onclick = () => openIdea(el.dataset.openIdea); });
+  } catch (err) {
+    listEl.innerHTML = '<p class="meta">Impossible de charger les idées sur ce navigateur.</p>';
+  }
+}
+
+async function openIdea(id) {
+  const idea = await ideaGet(id);
+  if (!idea) { loadIdeas(); return; }
+  stopIdeaRecording(true);
+  document.getElementById('ideas-home').classList.add('hidden');
+  const el = document.getElementById('idea-detail');
+  el.classList.remove('hidden');
+  const has = (k) => idea.modules.includes(k);
+  const save = async () => { await ideaPut(idea); };
+
+  el.innerHTML = `
+    <div class="card-block">
+      <button type="button" class="small" id="idea-back">← Retour à mes idées</button>
+      <h3 style="margin-top:12px;text-transform:none;font-size:18px;color:inherit;">💡 ${escapeHtml(idea.title)}</h3>
+      ${idea.description ? `<p>${escapeHtml(idea.description)}</p>` : ''}
+    </div>
+
+    ${has('progress') ? `
+    <div class="card-block">
+      <h3>📈 Avancement</h3>
+      <select id="idea-status" style="width:100%;margin-bottom:8px;">
+        ${['À démarrer', 'En cours', 'En pause', 'Terminé'].map(s => `<option ${s === idea.status ? 'selected' : ''}>${s}</option>`).join('')}
+      </select>
+      <input type="range" id="idea-percent" min="0" max="100" step="5" value="${idea.percent || 0}" style="width:100%;" />
+      <div class="meta" id="idea-percent-label">${idea.percent || 0} %</div>
+    </div>` : ''}
+
+    ${has('deadline') ? `
+    <div class="card-block">
+      <h3>📅 Date limite</h3>
+      <input type="date" id="idea-deadline" value="${idea.deadline || ''}" style="width:100%;" />
+      <div class="meta" id="idea-deadline-info"></div>
+    </div>` : ''}
+
+    ${has('notes') ? `
+    <div class="card-block">
+      <h3>📝 Notes</h3>
+      <textarea id="idea-notes" placeholder="Écris librement...">${escapeHtml(idea.notes || '')}</textarea>
+      <div class="meta" id="idea-notes-saved"></div>
+    </div>` : ''}
+
+    ${has('micro') ? `
+    <div class="card-block">
+      <h3>🎤 Enregistrements</h3>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button type="button" id="idea-rec-btn">🎤 Enregistrer</button>
+        <span class="meta" id="idea-rec-time">00:00</span>
+      </div>
+      <div id="idea-audio-list" style="margin-top:10px;"></div>
+    </div>` : ''}
+
+    ${has('photos') ? `
+    <div class="card-block">
+      <h3>📸 Photos</h3>
+      <div style="display:flex;gap:8px;">
+        <button type="button" class="small" id="idea-photo-pick">📤 Galerie</button>
+        <button type="button" class="small" id="idea-photo-cam">📷 Appareil photo</button>
+      </div>
+      <input type="file" id="idea-photo-input" accept="image/*" multiple style="display:none;" />
+      <input type="file" id="idea-cam-input" accept="image/*" capture="environment" style="display:none;" />
+      <div id="idea-photo-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:10px;"></div>
+    </div>` : ''}
+
+    ${has('checklist') ? `
+    <div class="card-block">
+      <h3>✅ Tâches</h3>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="idea-task-input" placeholder="Nouvelle tâche..." style="flex:1;" />
+        <button type="button" class="small" id="idea-task-add">Ajouter</button>
+      </div>
+      <div id="idea-task-list" style="margin-top:10px;"></div>
+    </div>` : ''}
+
+    ${has('links') ? `
+    <div class="card-block">
+      <h3>🔗 Liens</h3>
+      <input type="text" id="idea-link-label" placeholder="Titre (facultatif)" style="width:100%;margin-bottom:6px;" />
+      <div style="display:flex;gap:8px;">
+        <input type="url" id="idea-link-url" placeholder="https://..." style="flex:1;" />
+        <button type="button" class="small" id="idea-link-add">Ajouter</button>
+      </div>
+      <div id="idea-link-list" style="margin-top:10px;"></div>
+    </div>` : ''}
+
+    <div class="card-block">
+      <h3>🛠️ Améliorations souhaitées</h3>
+      <p class="meta">Note ici ce que tu voudrais ajouter plus tard à cette idée. Le bouton "Copier pour Claude" prépare un message à me coller.</p>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="idea-imp-input" placeholder="Ex : pouvoir partager les photos" style="flex:1;" />
+        <button type="button" class="small" id="idea-imp-add">Ajouter</button>
+      </div>
+      <div id="idea-imp-list" style="margin-top:10px;"></div>
+      <button type="button" class="small" id="idea-copy-claude" style="margin-top:10px;">📋 Copier pour Claude</button>
+    </div>
+
+    <div class="card-block">
+      <h3>⚙️ Éléments de cette idée</h3>
+      <div id="idea-edit-mods" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <button type="button" class="small danger" id="idea-delete" style="margin-top:14px;">🗑️ Supprimer cette idée</button>
+    </div>
+  `;
+
+  document.getElementById('idea-back').onclick = () => { stopIdeaRecording(true); loadIdeas(); };
+
+  // Avancement
+  if (has('progress')) {
+    document.getElementById('idea-status').onchange = async (e) => { idea.status = e.target.value; await save(); };
+    const pr = document.getElementById('idea-percent');
+    pr.oninput = () => { document.getElementById('idea-percent-label').textContent = pr.value + ' %'; };
+    pr.onchange = async () => { idea.percent = Number(pr.value); await save(); };
+  }
+
+  // Date limite
+  if (has('deadline')) {
+    const dl = document.getElementById('idea-deadline');
+    const info = () => {
+      const box = document.getElementById('idea-deadline-info');
+      if (!dl.value) { box.textContent = ''; return; }
+      const days = Math.ceil((new Date(dl.value + 'T23:59:59') - new Date()) / 86400000);
+      box.textContent = days > 0 ? `Encore ${days} jour(s)` : days === 0 ? "C'est aujourd'hui !" : `Dépassée de ${-days} jour(s)`;
+    };
+    info();
+    dl.onchange = async () => { idea.deadline = dl.value; await save(); info(); };
+  }
+
+  // Notes (sauvegarde auto)
+  if (has('notes')) {
+    let t = null;
+    const ta = document.getElementById('idea-notes');
+    ta.oninput = () => {
+      clearTimeout(t);
+      t = setTimeout(async () => { idea.notes = ta.value; await save(); document.getElementById('idea-notes-saved').textContent = 'Enregistré ✓'; }, 600);
+    };
+  }
+
+  // Micro
+  if (has('micro')) {
+    document.getElementById('idea-rec-btn').onclick = () => toggleIdeaRecording(idea.id);
+    renderIdeaAudios(idea.id);
+  }
+
+  // Photos
+  if (has('photos')) {
+    const pickIn = document.getElementById('idea-photo-input');
+    const camIn = document.getElementById('idea-cam-input');
+    document.getElementById('idea-photo-pick').onclick = () => pickIn.click();
+    document.getElementById('idea-photo-cam').onclick = () => camIn.click();
+    const handle = async (files) => {
+      for (const f of Array.from(files)) {
+        try {
+          const dataUrl = await resizeImageToDataUrl(f, 1280, 0.85);
+          await mediaPut({ id: newId('ph'), ideaId: idea.id, type: 'photo', data: dataUrl, createdAt: Date.now() });
+        } catch (err) { showToast('Photo non ajoutée : ' + err.message); }
+      }
+      pickIn.value = ''; camIn.value = '';
+      renderIdeaPhotos(idea.id);
+    };
+    pickIn.onchange = (e) => handle(e.target.files);
+    camIn.onchange = (e) => handle(e.target.files);
+    renderIdeaPhotos(idea.id);
+  }
+
+  // Liste simple réutilisable (tâches, améliorations)
+  const setupList = (listKey, inputId, addId, listId) => {
+    const render = () => {
+      const box = document.getElementById(listId);
+      const items = idea[listKey];
+      box.innerHTML = items.length ? items.map((it, i) => `
+        <div class="card">
+          <label style="display:flex;align-items:center;gap:10px;flex:1;">
+            <input type="checkbox" data-li-done="${i}" ${it.done ? 'checked' : ''} />
+            <span style="${it.done ? 'text-decoration:line-through;opacity:.6;' : ''}">${escapeHtml(it.text)}</span>
+          </label>
+          <button class="small danger" data-li-del="${i}">✕</button>
+        </div>`).join('') : '<p class="meta">Rien pour l\'instant.</p>';
+      box.querySelectorAll('[data-li-done]').forEach(cb => {
+        cb.onchange = async () => { items[cb.dataset.liDone].done = cb.checked; await save(); render(); };
+      });
+      box.querySelectorAll('[data-li-del]').forEach(b => {
+        b.onclick = async () => { items.splice(Number(b.dataset.liDel), 1); await save(); render(); };
+      });
+    };
+    const add = async () => {
+      const inp = document.getElementById(inputId);
+      if (!inp.value.trim()) return;
+      idea[listKey].push({ text: inp.value.trim(), done: false });
+      inp.value = '';
+      await save(); render();
+    };
+    document.getElementById(addId).onclick = add;
+    document.getElementById(inputId).onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); add(); } };
+    render();
+  };
+  if (has('checklist')) setupList('checklist', 'idea-task-input', 'idea-task-add', 'idea-task-list');
+  setupList('improvements', 'idea-imp-input', 'idea-imp-add', 'idea-imp-list');
+
+  // Liens
+  if (has('links')) {
+    const render = () => {
+      const box = document.getElementById('idea-link-list');
+      box.innerHTML = idea.links.length ? idea.links.map((l, i) => `
+        <div class="card">
+          <a href="${escapeHtml(l.url)}" target="_blank" rel="noopener" style="flex:1;word-break:break-all;">${escapeHtml(l.label || l.url)}</a>
+          <button class="small danger" data-link-del="${i}">✕</button>
+        </div>`).join('') : '<p class="meta">Aucun lien.</p>';
+      box.querySelectorAll('[data-link-del]').forEach(b => {
+        b.onclick = async () => { idea.links.splice(Number(b.dataset.linkDel), 1); await save(); render(); };
+      });
+    };
+    document.getElementById('idea-link-add').onclick = async () => {
+      let url = document.getElementById('idea-link-url').value.trim();
+      if (!url) return;
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      idea.links.push({ url, label: document.getElementById('idea-link-label').value.trim() });
+      document.getElementById('idea-link-url').value = '';
+      document.getElementById('idea-link-label').value = '';
+      await save(); render();
+    };
+    render();
+  }
+
+  // Copier pour Claude
+  document.getElementById('idea-copy-claude').onclick = async () => {
+    const mods = idea.modules.map(k => (IDEA_MODULES.find(m => m.key === k) || {label: k}).label).join(', ');
+    const imps = idea.improvements.filter(i => !i.done).map(i => '- ' + i.text).join('\n') || '- (aucune pour l\'instant)';
+    const text = `Better Man AI, section "Mes idées"\nIdée : ${idea.title}\nDescription : ${idea.description || '-'}\nÉléments actuels : ${mods || '-'}\nAméliorations que je veux :\n${imps}`;
+    try { await navigator.clipboard.writeText(text); showToast('Copié ! Colle-le dans ta conversation avec Claude 📋'); }
+    catch { prompt('Copie ce texte :', text); }
+  };
+
+  // Ajouter / retirer des éléments à cette idée
+  const modsBox = document.getElementById('idea-edit-mods');
+  modsBox.innerHTML = IDEA_MODULES.map(m => `
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+      <input type="checkbox" data-edit-mod="${m.key}" ${has(m.key) ? 'checked' : ''} /> <span>${m.label}</span>
+    </label>`).join('');
+  modsBox.querySelectorAll('[data-edit-mod]').forEach(cb => {
+    cb.onchange = async () => {
+      idea.modules = IDEA_MODULES.map(m => m.key).filter(k => modsBox.querySelector(`[data-edit-mod="${k}"]`).checked);
+      await save();
+      openIdea(idea.id);
+    };
+  });
+
+  // Supprimer l'idée
+  document.getElementById('idea-delete').onclick = async () => {
+    if (!confirm(`Supprimer l'idée "${idea.title}" et tout son contenu ?`)) return;
+    const media = await mediaForIdea(idea.id);
+    for (const m of media) await mediaDel(m.id);
+    await ideaDel(idea.id);
+    showToast('Idée supprimée');
+    loadIdeas();
+  };
+}
+
+async function toggleIdeaRecording(ideaId) {
+  const btn = document.getElementById('idea-rec-btn');
+  if (ideaRecorder) { stopIdeaRecording(false); return; }
+  if (!navigator.mediaDevices || !window.MediaRecorder) { showToast('Enregistrement non supporté sur ce navigateur.'); return; }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    ideaRecChunks = [];
+    ideaRecorder = new MediaRecorder(stream);
+    ideaRecorder.ondataavailable = (e) => { if (e.data.size) ideaRecChunks.push(e.data); };
+    ideaRecorder.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop());
+      const discard = ideaRecorder && ideaRecorder._discard;
+      const duration = Math.round((Date.now() - ideaRecStart) / 1000);
+      const blob = new Blob(ideaRecChunks, { type: ideaRecChunks[0]?.type || 'audio/webm' });
+      ideaRecorder = null;
+      if (discard || !blob.size) return;
+      await mediaPut({ id: newId('au'), ideaId, type: 'audio', blob, duration, createdAt: Date.now() });
+      showToast('Enregistrement sauvegardé 🎤');
+      if (document.getElementById('idea-audio-list')) renderIdeaAudios(ideaId);
+    };
+    ideaRecStart = Date.now();
+    ideaRecorder.start();
+    btn.textContent = '⏹️ Arrêter';
+    ideaRecTimer = setInterval(() => {
+      const s = Math.floor((Date.now() - ideaRecStart) / 1000);
+      const t = document.getElementById('idea-rec-time');
+      if (t) t.textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+    }, 250);
+  } catch (err) {
+    showToast('Micro refusé : autorise le micro dans ton navigateur.');
+  }
+}
+
+function stopIdeaRecording(discard) {
+  clearInterval(ideaRecTimer);
+  if (ideaRecorder && ideaRecorder.state !== 'inactive') {
+    ideaRecorder._discard = !!discard;
+    ideaRecorder.stop();
+  }
+  const btn = document.getElementById('idea-rec-btn');
+  if (btn) btn.textContent = '🎤 Enregistrer';
+  const t = document.getElementById('idea-rec-time');
+  if (t) t.textContent = '00:00';
+}
+
+async function renderIdeaAudios(ideaId) {
+  const box = document.getElementById('idea-audio-list');
+  if (!box) return;
+  const items = (await mediaForIdea(ideaId)).filter(m => m.type === 'audio').sort((a, b) => b.createdAt - a.createdAt);
+  box.innerHTML = items.length ? items.map(a => `
+    <div class="card" style="flex-wrap:wrap;gap:8px;">
+      <audio controls src="${URL.createObjectURL(a.blob)}" style="flex:1;min-width:200px;"></audio>
+      <span class="meta">${new Date(a.createdAt).toLocaleString('fr-FR')} · ${a.duration || 0}s</span>
+      <button class="small danger" data-del-au="${a.id}">✕</button>
+    </div>`).join('') : '<p class="meta">Aucun enregistrement.</p>';
+  box.querySelectorAll('[data-del-au]').forEach(b => {
+    b.onclick = async () => { if (confirm('Supprimer cet enregistrement ?')) { await mediaDel(b.dataset.delAu); renderIdeaAudios(ideaId); } };
+  });
+}
+
+async function renderIdeaPhotos(ideaId) {
+  const box = document.getElementById('idea-photo-grid');
+  if (!box) return;
+  const items = (await mediaForIdea(ideaId)).filter(m => m.type === 'photo').sort((a, b) => b.createdAt - a.createdAt);
+  box.innerHTML = items.length ? items.map(p => `
+    <div style="position:relative;border-radius:10px;overflow:hidden;">
+      <img src="${p.data}" data-view-ph="${p.id}" style="width:100%;aspect-ratio:1;object-fit:cover;object-position:center;cursor:pointer;display:block;" />
+      <button class="small danger" data-del-ph="${p.id}" style="position:absolute;top:4px;right:4px;padding:2px 7px;">✕</button>
+    </div>`).join('') : '<p class="meta">Aucune photo.</p>';
+  box.querySelectorAll('[data-view-ph]').forEach(img => {
+    img.onclick = () => {
+      const ov = document.createElement('div');
+      ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;z-index:9999;';
+      ov.innerHTML = `<img src="${img.src}" style="max-width:94vw;max-height:90vh;border-radius:10px;" />`;
+      ov.onclick = () => ov.remove();
+      document.body.appendChild(ov);
+    };
+  });
+  box.querySelectorAll('[data-del-ph]').forEach(b => {
+    b.onclick = async (e) => { e.stopPropagation(); if (confirm('Supprimer cette photo ?')) { await mediaDel(b.dataset.delPh); renderIdeaPhotos(ideaId); } };
+  });
+}

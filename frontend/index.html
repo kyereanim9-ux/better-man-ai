@@ -87,6 +87,7 @@
       <button data-view="style" class="nav-btn">👔 Style</button>
       <button data-view="adaptation" class="nav-btn">⚙️ Adaptation</button>
       <button data-view="communication" class="nav-btn">🗣️ Communication</button>
+      <button data-view="ideas" class="nav-btn">💡 Mes idées</button>
       <button data-view="domains" class="nav-btn">📊 Domaines</button>
       <button data-view="progress" class="nav-btn">📈 Progression</button>
       <button data-view="profile-setup" class="nav-btn">📝 Profil</button>
@@ -382,6 +383,28 @@
     </div>
 
     <!-- INTIMACY -->
+    <!-- MES IDÉES -->
+    <div class="view hidden" id="view-ideas">
+      <h2>💡 Mes idées</h2>
+
+      <div id="ideas-home">
+        <div class="card-block">
+          <h3>Nouvelle idée</h3>
+          <input type="text" id="idea-title" placeholder="Nom de l'idée (ex : Mes sermons)" style="width:100%;margin-bottom:8px;" />
+          <textarea id="idea-desc" placeholder="Décris ton idée en quelques mots..."></textarea>
+          <p class="meta" style="margin:10px 0 6px;">Que veux-tu dans cette idée ?</p>
+          <div id="idea-module-picker" style="display:flex;flex-direction:column;gap:8px;"></div>
+          <button type="button" id="idea-create-btn" style="margin-top:12px;">✨ Créer l'idée</button>
+        </div>
+        <div class="card-block">
+          <h3>Mes idées</h3>
+          <div id="ideas-list"><p class="meta">Chargement...</p></div>
+        </div>
+      </div>
+
+      <div id="idea-detail" class="hidden"></div>
+    </div>
+
     <!-- SEARCH -->
     <div class="view hidden" id="view-search">
       <h2>🌐 Recherche web</h2>
