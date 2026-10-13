@@ -1802,5 +1802,405 @@
   "text": "Une équipe qui ne sait pas où elle va ni ce qu'on attend d'elle s'épuise. Dire clairement l'objectif, les rôles et les priorités est l'un des plus grands services qu'un leader puisse rendre.",
   "source": "Principe de leadership courant",
   "action": "Écris en 3 lignes l'objectif, les rôles et la priorité de ton équipe ou de ta famille."
+ },
+ {
+  "id": "p208",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Moi et ma maison",
+  "text": "Josué déclare : « Moi et ma maison, nous servirons l'Éternel. » Le chef de famille ne décide pas pour la foi des autres, mais il donne une direction claire par ses choix et son exemple.",
+  "source": "Bible — Josué 24:15",
+  "action": "Écris en une phrase ce que tu veux que ta famille représente.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p209",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Si l'Éternel ne bâtit la maison",
+  "text": "« Si l'Éternel ne bâtit la maison, ceux qui la bâtissent travaillent en vain. » Une famille solide ne repose pas seulement sur l'argent et l'organisation, mais sur des fondations spirituelles et morales.",
+  "source": "Bible — Psaume 127:1",
+  "action": "Prie ou réfléchis cette semaine aux fondations de ta famille.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p210",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Honorer ses parents",
+  "text": "Honorer son père et sa mère est le premier commandement accompagné d'une promesse. Honorer ne veut pas dire tout accepter, mais garder respect, reconnaissance et soin, même adulte.",
+  "source": "Bible — Exode 20:12 ; Éphésiens 6:2-3",
+  "action": "Appelle ou écris à un de tes parents (ou à une figure parentale) cette semaine.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p211",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Ne pas décourager ses enfants",
+  "text": "« Pères, n'irritez pas vos enfants, de peur qu'ils ne se découragent. » Des critiques constantes, des règles injustes ou de la colère éteignent un enfant. L'autorité doit être juste et chaleureuse.",
+  "source": "Bible — Colossiens 3:21 ; Éphésiens 6:4",
+  "action": "Cette semaine, remplace une critique envers ton enfant par un encouragement.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p212",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Instruire l'enfant",
+  "text": "« Instruis l'enfant selon la voie qu'il doit suivre ; et quand il sera vieux, il ne s'en détournera pas. » L'éducation est un investissement à long terme : les graines plantées aujourd'hui portent du fruit des années plus tard.",
+  "source": "Bible — Proverbes 22:6",
+  "action": "Choisis une valeur que tu veux transmettre à tes enfants ce mois-ci.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p213",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Prendre soin des siens",
+  "text": "Paul écrit que celui qui ne prend pas soin des siens, et surtout de sa famille, a renié la foi. La foi se prouve aussi par la responsabilité concrète envers ceux qui dépendent de nous.",
+  "source": "Bible — 1 Timothée 5:8",
+  "action": "Y a-t-il un membre de ta famille qui a besoin de ton aide en ce moment ?",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p214",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Le père qui court",
+  "text": "Dans la parabole du fils prodigue, le père voit son fils de loin, est ému, court vers lui et l'embrasse avant même ses excuses. Une famille où l'on peut revenir est un refuge.",
+  "source": "Bible — Luc 15:20",
+  "action": "Fais savoir à un proche éloigné que ta porte reste ouverte.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p215",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Les enfants copient, ils n'écoutent pas",
+  "text": "Les enfants apprennent bien plus de ce que tu fais que de ce que tu dis. Ta façon de parler à ta femme, de gérer la colère ou l'argent devient leur modèle.",
+  "source": "Idée issue de la psychologie du développement",
+  "action": "Observe un comportement que tu ne voudrais pas que tes enfants copient, et change-le.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p216",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Les repas en famille",
+  "text": "Manger ensemble régulièrement, sans écrans, est l'un des moments les plus simples pour se parler, transmettre des valeurs et renforcer les liens.",
+  "source": "Idée issue des recherches sur la vie familiale",
+  "action": "Organise au moins 3 repas en famille sans téléphone cette semaine.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p217",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Du temps seul avec chaque enfant",
+  "text": "Chaque enfant a besoin de se sentir unique. Un moment régulier en tête-à-tête, même court (une balade, une glace), lui dit : « Tu comptes pour moi. »",
+  "source": "Conseil courant en éducation positive",
+  "action": "Planifie 20 minutes en tête-à-tête avec un de tes enfants.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p218",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "La connexion avant la correction",
+  "text": "Un enfant qui se sent compris accepte mieux les règles. Avant de corriger, prends un instant pour te connecter : « Je vois que tu es en colère. » Puis pose la limite.",
+  "source": "Inspiré de : la Discipline positive — Jane Nelsen",
+  "action": "Au prochain conflit avec un enfant, nomme son émotion avant de corriger.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p219",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Accompagner les émotions des enfants",
+  "text": "Un enfant n'apprend pas à gérer ses émotions si on les nie (« ce n'est rien »). Les reconnaître et l'aider à les nommer développe son intelligence émotionnelle.",
+  "source": "Inspiré de : John Gottman, l'intelligence émotionnelle des enfants",
+  "action": "Aide aujourd'hui un enfant à mettre un mot sur ce qu'il ressent.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p220",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Féliciter l'effort, pas le talent",
+  "text": "« Tu as beaucoup travaillé » encourage à persévérer. « Tu es tellement intelligent » peut rendre l'enfant peur d'échouer. Félicite l'effort et la stratégie.",
+  "source": "Inspiré de : Mindset — Carol Dweck",
+  "action": "Félicite un enfant pour un effort précis aujourd'hui.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p221",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "S'excuser auprès de ses enfants",
+  "text": "Un parent qui dit « Je me suis énervé, je suis désolé » n'affaiblit pas son autorité. Il apprend à son enfant que les adultes aussi réparent leurs erreurs.",
+  "source": "Idée issue de la psychologie de l'attachement",
+  "action": "Si tu t'es emporté récemment, présente des excuses à ton enfant.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p222",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Les traditions familiales",
+  "text": "Les petites traditions (repas du dimanche, prière du soir, sortie annuelle) créent un sentiment d'appartenance et de beaux souvenirs que les enfants garderont toute leur vie.",
+  "source": "Idée issue des recherches sur la vie familiale",
+  "action": "Crée ou relance une tradition familiale ce mois-ci.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p223",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Le conseil de famille",
+  "text": "Une réunion de famille courte et régulière permet de planifier, régler les conflits et donner la parole à chacun, même aux plus jeunes. Tout le monde se sent écouté.",
+  "source": "Inspiré de : la Discipline positive",
+  "action": "Organise un premier conseil de famille de 20 minutes ce week-end.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p224",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Être présent, pas seulement là",
+  "text": "Être à la maison les yeux sur son téléphone, ce n'est pas être présent. Quelques minutes d'attention totale valent plus qu'une soirée à moitié là.",
+  "source": "Idée issue des recherches sur l'attention et la parentalité",
+  "action": "Ce soir, range ton téléphone pendant le temps en famille.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p225",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Les grands-parents, une richesse",
+  "text": "Les aînés portent l'histoire, la sagesse et les racines de la famille. Faire du lien entre les générations enrichit les enfants comme les grands-parents.",
+  "source": "Idée issue des recherches sur les liens intergénérationnels",
+  "action": "Demande à un aîné de ta famille de te raconter un souvenir de sa jeunesse.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p226",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Laisser un héritage",
+  "text": "L'homme de bien laisse un héritage aux enfants de ses enfants. L'héritage n'est pas que matériel : ce sont aussi les valeurs, la foi, l'exemple et les souvenirs.",
+  "source": "Bible — Proverbes 13:22",
+  "action": "Écris 3 choses que tu veux laisser à tes enfants, au-delà de l'argent.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p227",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Poser des limites saines",
+  "text": "Aimer sa famille ne veut pas dire tout accepter. On peut honorer ses parents ou ses frères et sœurs tout en posant des limites claires et respectueuses face aux comportements blessants.",
+  "source": "Idée issue de la thérapie familiale",
+  "action": "Identifie une limite que tu dois poser avec respect dans ta famille.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p228",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Le budget 50/30/20",
+  "text": "Une règle simple pour débuter : 50 % du revenu pour les besoins (logement, nourriture, transport), 30 % pour les envies, 20 % pour l'épargne et le remboursement des dettes. À adapter selon ta situation.",
+  "source": "Inspiré de : Elizabeth Warren, All Your Worth",
+  "action": "Calcule tes trois catégories avec ton revenu actuel.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p229",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Savoir où va l'argent",
+  "text": "On ne peut pas gérer ce qu'on ne mesure pas. Noter toutes ses dépenses pendant un mois révèle souvent des fuites insoupçonnées.",
+  "source": "Principe de base de gestion budgétaire",
+  "action": "Note toutes tes dépenses pendant 30 jours dans l'onglet Finance.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p230",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Calculer avant de bâtir",
+  "text": "Jésus parle d'un homme qui veut bâtir une tour : il s'assoit d'abord pour calculer la dépense. Planifier avant de s'engager évite de commencer ce qu'on ne pourra pas finir.",
+  "source": "Bible — Luc 14:28-30",
+  "action": "Avant ton prochain gros achat, écris son coût total réel.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p231",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "L'emprunteur est esclave",
+  "text": "« Le riche domine sur les pauvres, et celui qui emprunte est l'esclave de celui qui prête. » La dette réduit ta liberté de choix. Moins de dettes, plus de liberté.",
+  "source": "Bible — Proverbes 22:7",
+  "action": "Liste toutes tes dettes avec leur montant et leur taux.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p232",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "La boule de neige des dettes",
+  "text": "Rembourse le minimum sur toutes tes dettes, et mets tout le reste sur la plus petite. Une fois soldée, ajoute son paiement à la suivante. Les petites victoires donnent l'élan pour continuer.",
+  "source": "Inspiré de : Dave Ramsey, la méthode « boule de neige »",
+  "action": "Identifie ta plus petite dette et décide d'un montant en plus chaque mois.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p233",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Peu à peu",
+  "text": "« La richesse mal acquise diminue, mais celui qui amasse peu à peu l'augmente. » La richesse durable se construit lentement, avec patience, pas avec des coups rapides.",
+  "source": "Bible — Proverbes 13:11",
+  "action": "Choisis un petit montant à épargner chaque semaine, même modeste.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p234",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "La sagesse de la fourmi",
+  "text": "La fourmi prépare en été sa nourriture pour l'hiver, sans chef pour la commander. Épargner dans les bonnes périodes prépare aux périodes difficiles.",
+  "source": "Bible — Proverbes 6:6-8",
+  "action": "Mets de côté une partie de ta prochaine rentrée d'argent imprévue.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p235",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Diversifier",
+  "text": "« Donne une part à sept et même à huit, car tu ne sais pas quel malheur peut arriver sur la terre. » Ne pas tout mettre au même endroit protège contre les imprévus.",
+  "source": "Bible — Ecclésiaste 11:2",
+  "action": "Vérifie si ton épargne dépend d'une seule source ou d'un seul placement.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p236",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Faire fructifier ses talents",
+  "text": "Dans la parabole des talents, celui qui enterre son argent par peur est blâmé ; ceux qui le font fructifier sont félicités. Gérer, c'est faire grandir ce qu'on a reçu.",
+  "source": "Bible — Matthieu 25:14-30",
+  "action": "Quel « talent » (argent, compétence, temps) laisses-tu dormir ?",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p237",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Donner avec joie",
+  "text": "« Que chacun donne comme il l'a résolu en son cœur, sans tristesse ni contrainte ; car Dieu aime celui qui donne avec joie. » La générosité libère du pouvoir de l'argent.",
+  "source": "Bible — 2 Corinthiens 9:7",
+  "action": "Décide d'un don régulier, même petit, à ton église ou à une cause.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p238",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "L'amour de l'argent",
+  "text": "Ce n'est pas l'argent qui est la racine de tous les maux, mais l'amour de l'argent. L'argent est un bon serviteur, mais un mauvais maître.",
+  "source": "Bible — 1 Timothée 6:10",
+  "action": "Demande-toi honnêtement : l'argent me sert-il, ou est-ce moi qui le sers ?",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p239",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Le contentement",
+  "text": "« Ne vous livrez pas à l'amour de l'argent ; contentez-vous de ce que vous avez. » Le contentement n'empêche pas l'ambition : il empêche d'être prisonnier de ce qu'on n'a pas.",
+  "source": "Bible — Hébreux 13:5",
+  "action": "Écris 5 choses que tu possèdes déjà et pour lesquelles tu es reconnaissant.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p240",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Le sage garde des réserves",
+  "text": "« De précieux trésors et de l'huile sont dans la demeure du sage ; mais l'homme insensé les engloutit. » Dépenser tout ce qu'on gagne, c'est vivre sans filet.",
+  "source": "Bible — Proverbes 21:20",
+  "action": "Vérifie combien de mois tu pourrais tenir sans revenu.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p241",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Investir en soi",
+  "text": "La compétence est l'investissement qui rapporte le plus : une formation, un livre, une nouvelle compétence peuvent augmenter tes revenus pendant toute ta vie.",
+  "source": "Principe courant en finances personnelles",
+  "action": "Choisis une compétence à apprendre qui pourrait augmenter tes revenus.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p242",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Plusieurs sources de revenus",
+  "text": "Dépendre d'un seul revenu est risqué. Un petit revenu complémentaire (service, vente, compétence) apporte sécurité et liberté.",
+  "source": "Idée courante en finances personnelles",
+  "action": "Note une compétence que tu pourrais transformer en petit revenu.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p243",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Ne pas investir dans ce qu'on ne comprend pas",
+  "text": "Si tu ne peux pas expliquer simplement comment un placement rapporte de l'argent, ne mets pas ton argent dedans. La complexité cache souvent le risque.",
+  "source": "Inspiré de : Warren Buffett",
+  "action": "Pour chaque placement que tu as, explique en une phrase comment il rapporte.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p244",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Trop beau pour être vrai",
+  "text": "Rendement garanti très élevé, urgence à décider, pression d'amis pour recruter : ce sont les signes classiques d'une arnaque. Si c'est trop beau pour être vrai, c'est probablement faux.",
+  "source": "Message de prévention contre les arnaques financières",
+  "action": "Avant tout investissement proposé par un proche, prends 48 heures pour vérifier.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p245",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Parler d'argent en famille",
+  "text": "Enseigner l'argent aux enfants (épargner, donner, choisir) les prépare mieux que n'importe quelle école. Un peu d'argent de poche géré seul est une excellente leçon.",
+  "source": "Conseil courant en éducation financière",
+  "action": "Explique à un enfant (ou un jeune) une règle simple sur l'argent cette semaine.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p246",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Se protéger : assurances et papiers",
+  "text": "Une assurance adaptée et des papiers en ordre (contrats, testament, bénéficiaires) protègent ta famille si quelque chose t'arrive. C'est un acte d'amour, pas de pessimisme.",
+  "source": "Conseil courant en finances personnelles",
+  "action": "Vérifie tes assurances et rassemble tes papiers importants au même endroit.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p247",
+  "domain": "financier",
+  "theme": "Argent",
+  "title": "Riche de temps",
+  "text": "Le vrai luxe, c'est de pouvoir choisir comment on passe son temps. Chaque dépense peut se mesurer en heures de travail : cet achat vaut-il vraiment ces heures de ta vie ?",
+  "source": "Idée issue du mouvement de l'indépendance financière",
+  "action": "Convertis ton prochain achat non essentiel en heures de travail.",
+  "addedAt": "2026-10-13"
  }
 ]

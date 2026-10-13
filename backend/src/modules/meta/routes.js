@@ -9,6 +9,18 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.8.4',
+    date: '2026-10-13',
+    title: 'Pépites — Famille, Argent et Nouveautés',
+    features: [
+      "40 nouvelles pépites (247 au total) : famille (enfants, parents, traditions, héritage) et argent (budget, dettes, épargne, générosité, arnaques)",
+      "Nouveaux thèmes filtrables : Famille et Argent",
+      "Badge « 🆕 Nouveau » et filtre « Nouveautés » pour les pépites ajoutées ces 7 derniers jours"
+    ],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.8.3',
     date: '2026-10-13',
     title: 'Pépites — Bible et Leadership',
