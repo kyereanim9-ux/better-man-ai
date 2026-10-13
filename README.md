@@ -380,12 +380,13 @@ Automatisations et nouvelles intégrations restent hors scope pour une app
 - **✨ Pépites** (onglet dédié + « Pépite du jour » sur l'Accueil) : des
   idées courtes à lire en 1 minute, sur le principe d'apps comme Deepstash,
   mais 100 % gratuit, sans abonnement ni limite.
-  - **247 pépites** rédigées pour l'app (paraphrases inspirées de livres et
+  - **287 pépites** rédigées pour l'app (paraphrases inspirées de livres et
     principes connus, source toujours indiquée), réparties sur les 11
     domaines de vie, avec des **thèmes** filtrables (Écouter sans juger,
     Parler à tout le monde, Santé mentale, Organiser ses pensées, Prendre
     soin de son corps, Pour les hommes, Soutenir les femmes, Couple, Foi,
-    Prière, Bible, Leadership, Famille, Argent). Les pépites ajoutées
+    Prière, Bible, Leadership, Famille, Argent, Confiance en soi,
+    Surmonter les difficultés). Les pépites ajoutées
     depuis moins de 7 jours (champ `addedAt`) portent un badge « 🆕 Nouveau »
     et apparaissent dans le filtre « Nouveautés ».
     Ajoute-en librement dans
@@ -403,7 +404,28 @@ Automatisations et nouvelles intégrations restent hors scope pour une app
 
 ---
 
-## 15. À propos du déploiement en ligne (Vercel)
+## 15. Coach IA avec Claude (v0.9)
+
+Le Coach IA peut utiliser **Claude** (Anthropic) comme moteur principal :
+
+1. Crée une clé API sur https://console.anthropic.com (rubrique *API Keys*).
+   **Attention** : l'API est facturée à l'usage, **séparément** de
+   l'abonnement Claude.ai (Pro/Max) — il faut ajouter des crédits dans la
+   console.
+2. Ajoute la variable `ANTHROPIC_API_KEY` (dans `.env` en local, ou dans
+   Vercel → Settings → Environment Variables), puis **redéploie**.
+3. Optionnel : `CLAUDE_MODEL` pour choisir un autre modèle (par défaut
+   `claude-opus-5-5`).
+
+Ne mets jamais la clé dans le code ni dans un message. Si la clé est absente,
+invalide ou si Claude ne répond pas, le Coach passe automatiquement aux
+fournisseurs gratuits (Gemini, Mistral...) puis au coach local. Chaque
+réponse indique quel fournisseur l'a produite. L'admin peut voir l'état des
+fournisseurs via `/api/chat/text-provider-status`.
+
+---
+
+## 16. À propos du déploiement en ligne (Vercel)
 
 Cette app peut être déployée sur Vercel (voir `vercel.json`, `api/index.js`)
 pour obtenir un lien public permanent, en plus de l'usage local. Si tu as

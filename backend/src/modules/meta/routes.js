@@ -9,6 +9,18 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.9.0',
+    date: '2026-10-13',
+    title: 'Coach IA avec Claude + Pépites Confiance en soi et Surmonter les difficultés',
+    features: [
+      "Coach IA : Claude (Anthropic) devient le fournisseur prioritaire dès qu'une clé ANTHROPIC_API_KEY est configurée, avec repli automatique sur les fournisseurs gratuits puis le coach local",
+      "40 nouvelles pépites (287 au total) : confiance en soi et surmonter les difficultés",
+      "Nouveaux thèmes filtrables : Confiance en soi et Surmonter les difficultés"
+    ],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.8.4',
     date: '2026-10-13',
     title: 'Pépites — Famille, Argent et Nouveautés',

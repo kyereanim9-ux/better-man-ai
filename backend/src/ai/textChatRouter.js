@@ -1,4 +1,5 @@
 import { TEXT_AI_PROVIDERS } from '../config/textProviders.js';
+import { claudeChat } from './providers/claude.js';
 
 // Compteurs en mémoire, même esprit que ai/aiRouter.js (vision) — remis à
 // zéro à chaque redémarrage, indicateur honnête plutôt qu'un quota exact
@@ -20,6 +21,8 @@ class AllProvidersFailedError extends Error {
 async function callProvider(provider, messages) {
   const apiKey = process.env[provider.apiKeyEnvVar];
   if (!apiKey) throw new Error(`Clé API manquante (${provider.apiKeyEnvVar})`);
+  // Claude passe par le SDK Anthropic (format et délai propres).
+  if (provider.sdk === 'anthropic') return claudeChat(messages);
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 10000);
