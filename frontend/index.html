@@ -87,6 +87,7 @@
       <button data-view="style" class="nav-btn">👔 Style</button>
       <button data-view="adaptation" class="nav-btn">⚙️ Adaptation</button>
       <button data-view="communication" class="nav-btn">🗣️ Communication</button>
+      <button data-view="pepites" class="nav-btn">✨ Pépites</button>
       <button data-view="ideas" class="nav-btn">💡 Mes idées</button>
       <button data-view="domains" class="nav-btn">📊 Domaines</button>
       <button data-view="progress" class="nav-btn">📈 Progression</button>
@@ -126,6 +127,12 @@
         <div class="fc-sub">Apprends, mémorise et applique.</div>
         <div id="daily-bible-verse" style="margin-bottom:12px;font-size:14px;"></div>
         <button data-view="bible">Lire aujourd'hui</button>
+      </div>
+
+      <div class="feature-card pepite" id="daily-pepite-card">
+        <div class="fc-title">✨ Pépite du jour</div>
+        <div id="daily-pepite" class="fc-sub">Chargement...</div>
+        <button data-view="pepites">Découvrir plus d'idées</button>
       </div>
 
       <div class="category-block">
@@ -383,6 +390,54 @@
     </div>
 
     <!-- INTIMACY -->
+    <!-- PÉPITES : idées courtes à lire en 1 minute -->
+    <div class="view hidden" id="view-pepites">
+      <h2>✨ Pépites</h2>
+      <p class="meta">Des idées puissantes à lire en 1 minute, à garder, réviser et appliquer. 100 % gratuit.</p>
+      <div class="pep-stats" id="pep-stats"></div>
+      <div class="pep-tabs" id="pep-tabs">
+        <button class="pep-tab active" data-pep-tab="feed">Découvrir</button>
+        <button class="pep-tab" data-pep-tab="review">Réviser <span id="pep-review-count"></span></button>
+        <button class="pep-tab" data-pep-tab="stashes">Mes collections</button>
+        <button class="pep-tab" data-pep-tab="create">Créer</button>
+      </div>
+
+      <div data-pep-panel="feed">
+        <div class="pep-chips" id="pep-theme-chips"></div>
+        <div class="pep-chips" id="pep-domain-chips"></div>
+        <p class="meta" id="pep-focus"></p>
+        <div id="pep-feed"></div>
+        <button type="button" id="pep-more" class="secondary">Afficher plus</button>
+      </div>
+
+      <div data-pep-panel="review" class="hidden">
+        <div id="pep-review"></div>
+      </div>
+
+      <div data-pep-panel="stashes" class="hidden">
+        <div id="pep-stashes"></div>
+      </div>
+
+      <div data-pep-panel="create" class="hidden">
+        <div class="card-block">
+          <h3>Ma pépite</h3>
+          <form id="pep-create-form" class="pep-form">
+            <input type="text" id="pep-c-title" placeholder="Titre (ex : Le pouvoir de l'écoute)" maxlength="120" required />
+            <textarea id="pep-c-text" placeholder="L'idée en 2-3 phrases, avec tes mots..." maxlength="1200" required></textarea>
+            <input type="text" id="pep-c-source" placeholder="Source (livre, podcast, sermon...)" maxlength="160" />
+            <input type="text" id="pep-c-action" placeholder="Action concrète à faire (optionnel)" maxlength="200" />
+            <select id="pep-c-domain"></select>
+            <button type="submit">✨ Enregistrer la pépite</button>
+          </form>
+        </div>
+        <div class="card-block">
+          <h3>Extraire d'un livre de ma bibliothèque</h3>
+          <select id="pep-book-select"><option value="">Choisis un livre...</option></select>
+          <div id="pep-book-drafts"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- MES IDÉES -->
     <div class="view hidden" id="view-ideas">
       <h2>💡 Mes idées</h2>
@@ -886,6 +941,6 @@
 
 </div>
 
-<script src="app.js?v=20260920-2"></script>
+<script src="app.js?v=20261013-1"></script>
 </body>
 </html>

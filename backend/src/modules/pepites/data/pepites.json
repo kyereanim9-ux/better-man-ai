@@ -1,0 +1,1072 @@
+[
+ {
+  "id": "p001",
+  "domain": "discipline",
+  "title": "La règle des 2 minutes",
+  "text": "Quand une habitude te paraît trop lourde, réduis-la à une version qui prend moins de deux minutes : « lire » devient « lire une page ». Le but n'est pas la performance, c'est de devenir quelqu'un qui se présente chaque jour.",
+  "source": "Inspiré de : Atomic Habits — James Clear",
+  "action": "Choisis une habitude et écris sa version de 2 minutes."
+ },
+ {
+  "id": "p002",
+  "domain": "discipline",
+  "title": "Vise un système, pas un objectif",
+  "text": "Les gagnants et les perdants ont souvent le même objectif. Ce qui les sépare, c'est le système quotidien. Tu ne montes pas au niveau de tes objectifs, tu descends au niveau de tes systèmes.",
+  "source": "Inspiré de : Atomic Habits — James Clear",
+  "action": "Écris la routine quotidienne qui rendrait ton objectif presque inévitable."
+ },
+ {
+  "id": "p003",
+  "domain": "discipline",
+  "title": "L'empilement d'habitudes",
+  "text": "Accroche une nouvelle habitude à une habitude déjà solide : « Après avoir fait mon café, je prie 2 minutes. » Le déclencheur existe déjà, tu n'as plus besoin de t'en souvenir.",
+  "source": "Inspiré de : Atomic Habits — James Clear",
+  "action": "Complète : « Après ______, je vais ______. »"
+ },
+ {
+  "id": "p004",
+  "domain": "discipline",
+  "title": "Ne rate jamais deux fois",
+  "text": "Rater un jour, c'est un accident. Rater deux jours de suite, c'est le début d'une nouvelle habitude. La force ne vient pas de la perfection, mais de la vitesse à laquelle tu reviens.",
+  "source": "Inspiré de : Atomic Habits — James Clear",
+  "action": "Si tu as raté hier, fais aujourd'hui la version minimale de ton habitude."
+ },
+ {
+  "id": "p005",
+  "domain": "discipline",
+  "title": "Mange la grenouille",
+  "text": "Commence ta journée par la tâche la plus importante et la plus désagréable. Une fois faite, le reste de la journée paraît léger et tu as déjà gagné.",
+  "source": "Inspiré de : Avale le crapaud — Brian Tracy",
+  "action": "Identifie ce soir ta « grenouille » de demain matin."
+ },
+ {
+  "id": "p006",
+  "domain": "discipline",
+  "title": "La friction décide",
+  "text": "On fait ce qui est facile. Rends les bonnes habitudes visibles et simples (livre sur l'oreiller), et les mauvaises invisibles et pénibles (téléphone dans une autre pièce).",
+  "source": "Inspiré de : la psychologie du comportement",
+  "action": "Ajoute un obstacle à une mauvaise habitude aujourd'hui."
+ },
+ {
+  "id": "p007",
+  "domain": "discipline",
+  "title": "La discipline est une forme d'amour",
+  "text": "Se discipliner, c'est choisir ce que tu veux le plus plutôt que ce que tu veux maintenant. C'est un cadeau que ton toi d'aujourd'hui fait à ton toi de demain.",
+  "source": "Idée classique de développement personnel",
+  "action": "Écris une chose que ton « toi dans 5 ans » te remerciera d'avoir faite."
+ },
+ {
+  "id": "p008",
+  "domain": "discipline",
+  "title": "La règle des 5 secondes",
+  "text": "Quand tu sens l'élan d'agir, compte 5-4-3-2-1 et bouge avant que ton cerveau ne trouve une excuse. L'hésitation tue l'action.",
+  "source": "Inspiré de : The 5 Second Rule — Mel Robbins",
+  "action": "Utilise le compte à rebours la prochaine fois que tu hésites à te lever."
+ },
+ {
+  "id": "p009",
+  "domain": "mental",
+  "title": "Le cercle d'influence",
+  "text": "Sépare ce qui te préoccupe de ce sur quoi tu as réellement prise. Mettre ton énergie dans ton cercle d'influence l'agrandit ; te plaindre du reste le rétrécit.",
+  "source": "Inspiré de : Les 7 habitudes — Stephen Covey",
+  "action": "Liste 3 soucis et entoure ceux sur lesquels tu peux agir."
+ },
+ {
+  "id": "p010",
+  "domain": "mental",
+  "title": "Dichotomie du contrôle",
+  "text": "Les stoïciens distinguaient ce qui dépend de nous (nos jugements, nos actions) de ce qui n'en dépend pas (l'opinion des autres, la météo). La paix vient de ce tri.",
+  "source": "Inspiré de : Épictète, Manuel",
+  "action": "Face à une contrariété aujourd'hui, demande-toi : « Est-ce que ça dépend de moi ? »"
+ },
+ {
+  "id": "p011",
+  "domain": "mental",
+  "title": "État d'esprit de croissance",
+  "text": "Croire que tes capacités peuvent se développer change ta réaction à l'échec : ce n'est plus un verdict sur toi, c'est une information pour progresser. Ajoute « pas encore » à « je n'y arrive pas ».",
+  "source": "Inspiré de : Mindset — Carol Dweck",
+  "action": "Reformule un « je suis nul en… » en « je ne maîtrise pas encore… »."
+ },
+ {
+  "id": "p012",
+  "domain": "mental",
+  "title": "Le travail en profondeur",
+  "text": "La concentration sans distraction sur une tâche difficile est rare, donc précieuse. Bloque des plages de 60 à 90 minutes, téléphone hors de la pièce.",
+  "source": "Inspiré de : Deep Work — Cal Newport",
+  "action": "Programme un bloc de 60 minutes sans téléphone demain."
+ },
+ {
+  "id": "p013",
+  "domain": "mental",
+  "title": "Premeditatio malorum",
+  "text": "Imagine calmement ce qui pourrait mal tourner, puis comment tu réagirais. Ce n'est pas du pessimisme : c'est retirer à la peur son effet de surprise.",
+  "source": "Inspiré de : Sénèque",
+  "action": "Avant un moment important, écris le pire scénario et ton plan B."
+ },
+ {
+  "id": "p014",
+  "domain": "mental",
+  "title": "Tu n'es pas tes pensées",
+  "text": "Une pensée n'est qu'un événement mental, pas un fait. Remarquer « je suis en train de penser que je vais échouer » crée une distance qui te rend ta liberté.",
+  "source": "Inspiré de : la pleine conscience",
+  "action": "Note une pensée négative récurrente et ajoute devant : « J'ai la pensée que… »"
+ },
+ {
+  "id": "p015",
+  "domain": "mental",
+  "title": "La loi de Parkinson",
+  "text": "Le travail s'étend pour occuper tout le temps disponible. Donne-toi des délais courts et réalistes : tu seras surpris de ce que tu fais en moins de temps.",
+  "source": "Inspiré de : C. Northcote Parkinson",
+  "action": "Divise par deux le temps prévu pour une tâche aujourd'hui."
+ },
+ {
+  "id": "p016",
+  "domain": "mental",
+  "title": "Le principe 80/20",
+  "text": "Environ 20 % de tes efforts produisent 80 % de tes résultats. Trouve ces 20 % et protège-les ; réduis ou délègue le reste.",
+  "source": "Inspiré de : le principe de Pareto",
+  "action": "Quelles 2 activités de ta semaine ont le plus d'impact ?"
+ },
+ {
+  "id": "p017",
+  "domain": "mental",
+  "title": "Ennui et créativité",
+  "text": "Remplir chaque minute vide avec le téléphone prive ton cerveau du temps libre où naissent les idées et la réflexion. L'ennui est un espace, pas un problème.",
+  "source": "Idée issue des recherches sur la créativité",
+  "action": "Fais un trajet ou une attente aujourd'hui sans écran."
+ },
+ {
+  "id": "p018",
+  "domain": "emotionnel",
+  "title": "Nommer pour apprivoiser",
+  "text": "Mettre un mot précis sur une émotion (« je me sens humilié » plutôt que « ça va pas ») diminue son intensité. Ce qui est nommé devient gérable.",
+  "source": "Inspiré des recherches en neurosciences affectives",
+  "action": "Ce soir, nomme précisément 3 émotions ressenties dans la journée."
+ },
+ {
+  "id": "p019",
+  "domain": "emotionnel",
+  "title": "L'espace entre stimulus et réponse",
+  "text": "Entre ce qui t'arrive et ta réaction, il y a un espace. Dans cet espace se trouve ta liberté de choisir ta réponse.",
+  "source": "Inspiré de : Viktor Frankl",
+  "action": "À ta prochaine irritation, respire 3 fois avant de répondre."
+ },
+ {
+  "id": "p020",
+  "domain": "emotionnel",
+  "title": "La colère est un messager",
+  "text": "La colère signale souvent une limite franchie ou un besoin ignoré. Le but n'est pas de l'écraser, mais d'écouter ce qu'elle dit, puis d'agir calmement.",
+  "source": "Idée issue de la psychologie des émotions",
+  "action": "Après une colère, écris : « Quel besoin n'a pas été respecté ? »"
+ },
+ {
+  "id": "p021",
+  "domain": "emotionnel",
+  "title": "La vulnérabilité est du courage",
+  "text": "Oser se montrer tel qu'on est, sans garantie du résultat, n'est pas une faiblesse : c'est la base de la connexion et de la confiance.",
+  "source": "Inspiré de : Brené Brown",
+  "action": "Partage une chose vraie sur toi avec une personne de confiance."
+ },
+ {
+  "id": "p022",
+  "domain": "emotionnel",
+  "title": "Respiration 4-7-8",
+  "text": "Inspire 4 secondes, retiens 7 secondes, expire lentement 8 secondes. L'expiration longue active le système nerveux de calme. Trois cycles suffisent souvent.",
+  "source": "Technique de respiration popularisée par Andrew Weil",
+  "action": "Fais 3 cycles 4-7-8 maintenant."
+ },
+ {
+  "id": "p023",
+  "domain": "emotionnel",
+  "title": "Les émotions passent",
+  "text": "Une vague émotionnelle monte, culmine, puis redescend — souvent en quelques minutes si on ne la nourrit pas. Ne prends pas de décision au sommet de la vague.",
+  "source": "Idée issue des thérapies comportementales",
+  "action": "Règle personnelle : pas de message important sous le coup de l'émotion."
+ },
+ {
+  "id": "p024",
+  "domain": "emotionnel",
+  "title": "Gratitude précise",
+  "text": "Écrire trois choses précises pour lesquelles tu es reconnaissant entraîne ton attention à voir ce qui va bien. Plus c'est précis, plus c'est efficace.",
+  "source": "Idée issue de la psychologie positive",
+  "action": "Écris 3 gratitudes très précises sur aujourd'hui."
+ },
+ {
+  "id": "p025",
+  "domain": "relationnel",
+  "title": "Les langages de l'amour",
+  "text": "Les gens expriment et reçoivent l'amour différemment : paroles valorisantes, moments de qualité, cadeaux, services rendus, toucher. Aimer bien, c'est parler la langue de l'autre.",
+  "source": "Inspiré de : Les 5 langages de l'amour — Gary Chapman",
+  "action": "Demande à un proche ce qui le fait se sentir le plus aimé."
+ },
+ {
+  "id": "p026",
+  "domain": "relationnel",
+  "title": "Les petites demandes d'attention",
+  "text": "Dans un couple, les petits « regarde ça » sont des invitations à la connexion. Se tourner vers elles, même brièvement, construit la relation plus que les grands gestes.",
+  "source": "Inspiré des recherches de John Gottman",
+  "action": "Aujourd'hui, réponds pleinement à chaque petite demande d'attention."
+ },
+ {
+  "id": "p027",
+  "domain": "relationnel",
+  "title": "Le ratio 5 pour 1",
+  "text": "Les relations solides compensent chaque interaction négative par environ cinq positives. Les reproches pèsent plus lourd que les compliments.",
+  "source": "Inspiré des recherches de John Gottman",
+  "action": "Fais 5 remarques positives sincères à un proche aujourd'hui."
+ },
+ {
+  "id": "p028",
+  "domain": "relationnel",
+  "title": "Chercher d'abord à comprendre",
+  "text": "Avant d'être compris, cherche à comprendre. La plupart des gens écoutent pour répondre, pas pour comprendre.",
+  "source": "Inspiré de : Les 7 habitudes — Stephen Covey",
+  "action": "Dans ta prochaine discussion, reformule l'autre avant de répondre."
+ },
+ {
+  "id": "p029",
+  "domain": "relationnel",
+  "title": "Réparer vite",
+  "text": "Les couples qui durent ne sont pas ceux qui ne se disputent pas, mais ceux qui savent réparer : un mot doux, de l'humour, une excuse sincère pendant ou après le conflit.",
+  "source": "Inspiré des recherches de John Gottman",
+  "action": "Y a-t-il une petite réparation à faire avec quelqu'un cette semaine ?"
+ },
+ {
+  "id": "p030",
+  "domain": "relationnel",
+  "title": "Le pardon te libère",
+  "text": "Pardonner ne veut pas dire excuser ou oublier. C'est refuser de laisser l'offense continuer à diriger ta vie intérieure.",
+  "source": "Idée présente dans de nombreuses traditions, dont la Bible (Éphésiens 4:32)",
+  "action": "Écris le nom d'une personne que tu choisis de commencer à pardonner."
+ },
+ {
+  "id": "p031",
+  "domain": "communication",
+  "title": "Communication non violente",
+  "text": "Observation sans jugement, sentiment, besoin, demande : « Quand tu arrives en retard (observation), je me sens frustré (sentiment) car j'ai besoin de fiabilité (besoin). Peux-tu me prévenir ? (demande) »",
+  "source": "Inspiré de : Marshall Rosenberg",
+  "action": "Reformule un reproche récent selon ces 4 étapes."
+ },
+ {
+  "id": "p032",
+  "domain": "communication",
+  "title": "Le pouvoir du prénom",
+  "text": "Le prénom d'une personne est pour elle un son très agréable. L'utiliser avec naturel montre que tu la vois vraiment.",
+  "source": "Inspiré de : Comment se faire des amis — Dale Carnegie",
+  "action": "Retiens et utilise le prénom de chaque nouvelle personne rencontrée."
+ },
+ {
+  "id": "p033",
+  "domain": "communication",
+  "title": "Le silence est un outil",
+  "text": "Après une question ou une réponse importante, tais-toi quelques secondes. Le silence pousse l'autre à préciser sa pensée et te donne l'air posé.",
+  "source": "Idée issue de la négociation",
+  "action": "Laisse 3 secondes de silence avant de répondre aujourd'hui."
+ },
+ {
+  "id": "p034",
+  "domain": "communication",
+  "title": "L'empathie tactique",
+  "text": "Nommer l'émotion de l'autre (« On dirait que ça te frustre ») désamorce les tensions mieux que n'importe quel argument.",
+  "source": "Inspiré de : Never Split the Difference — Chris Voss",
+  "action": "Dans un désaccord, commence par « On dirait que… »."
+ },
+ {
+  "id": "p035",
+  "domain": "communication",
+  "title": "Parle en « je »",
+  "text": "« Tu ne m'écoutes jamais » attaque. « Je me sens ignoré quand… » invite au dialogue. Le « je » parle de toi, le « tu » accuse l'autre.",
+  "source": "Idée issue de la communication relationnelle",
+  "action": "Transforme une phrase en « tu » en phrase en « je »."
+ },
+ {
+  "id": "p036",
+  "domain": "communication",
+  "title": "Moins de mots, plus d'impact",
+  "text": "Les phrases courtes sont plus claires et plus fortes. Dis ce que tu penses, puis arrête-toi. Se justifier à l'excès affaiblit le message.",
+  "source": "Idée classique de rhétorique",
+  "action": "Réécris ton dernier long message en deux fois moins de mots."
+ },
+ {
+  "id": "p037",
+  "domain": "physique",
+  "title": "Le sommeil est ton premier entraînement",
+  "text": "Le manque de sommeil réduit la force, la concentration, la maîtrise de soi et augmente les fringales. Protéger 7 à 9 heures, c'est améliorer tout le reste.",
+  "source": "Inspiré de : Pourquoi nous dormons — Matthew Walker",
+  "action": "Fixe une heure de coucher et un rappel 30 min avant."
+ },
+ {
+  "id": "p038",
+  "domain": "physique",
+  "title": "Surcharge progressive",
+  "text": "Le corps ne progresse que s'il est un peu plus sollicité qu'avant : un peu plus de poids, de répétitions ou de temps. Petites augmentations, régulièrement.",
+  "source": "Principe de base de l'entraînement",
+  "action": "Note tes chiffres et ajoute 1 répétition à ta prochaine séance."
+ },
+ {
+  "id": "p039",
+  "domain": "physique",
+  "title": "Marcher change tout",
+  "text": "Une simple marche quotidienne de 30 minutes améliore l'humeur, la santé cardiaque et la créativité. C'est l'exercice le plus sous-estimé.",
+  "source": "Recommandation de santé publique largement partagée",
+  "action": "Marche 20 minutes aujourd'hui, idéalement après un repas."
+ },
+ {
+  "id": "p040",
+  "domain": "physique",
+  "title": "La lumière du matin",
+  "text": "S'exposer à la lumière naturelle dans l'heure qui suit le réveil aide à régler l'horloge interne, à être plus éveillé le jour et à mieux dormir le soir.",
+  "source": "Idée popularisée par la chronobiologie",
+  "action": "Sors 10 minutes à la lumière du jour demain matin."
+ },
+ {
+  "id": "p041",
+  "domain": "physique",
+  "title": "L'eau avant le café",
+  "text": "On se réveille légèrement déshydraté. Un grand verre d'eau au réveil est le geste le plus simple pour démarrer la journée.",
+  "source": "Conseil de bon sens en nutrition",
+  "action": "Pose un verre d'eau à côté de ton lit ce soir."
+ },
+ {
+  "id": "p042",
+  "domain": "physique",
+  "title": "La posture influence l'esprit",
+  "text": "Se tenir droit, épaules ouvertes, change la façon dont les autres te perçoivent — et dont tu te perçois toi-même.",
+  "source": "Idée issue de la communication non verbale",
+  "action": "Toutes les heures aujourd'hui, redresse-toi et respire profondément."
+ },
+ {
+  "id": "p043",
+  "domain": "financier",
+  "title": "Paie-toi en premier",
+  "text": "Avant de payer les factures et les envies, mets de côté une part de ton revenu, même petite. Ce qui reste est ce que tu dépenses — pas l'inverse.",
+  "source": "Inspiré de : L'homme le plus riche de Babylone — George Clason",
+  "action": "Programme un virement automatique d'épargne le jour de ta paie."
+ },
+ {
+  "id": "p044",
+  "domain": "financier",
+  "title": "Les intérêts composés",
+  "text": "Un petit montant placé régulièrement grossit de façon spectaculaire avec le temps, car les gains produisent eux-mêmes des gains. Le temps est ton meilleur allié.",
+  "source": "Principe financier de base",
+  "action": "Calcule ce que deviendraient 50 € par mois pendant 20 ans."
+ },
+ {
+  "id": "p045",
+  "domain": "financier",
+  "title": "La règle des 48 heures",
+  "text": "Pour tout achat non essentiel, attends 48 heures. Si l'envie est toujours là, tu peux réfléchir. Souvent, elle a disparu.",
+  "source": "Conseil courant de gestion budgétaire",
+  "action": "Applique la règle à ton prochain achat impulsif."
+ },
+ {
+  "id": "p046",
+  "domain": "financier",
+  "title": "Le fonds d'urgence",
+  "text": "Avoir 3 à 6 mois de dépenses de côté transforme une crise en simple contrariété. C'est la base avant tout investissement.",
+  "source": "Conseil courant en finances personnelles",
+  "action": "Calcule ton mois de dépenses et ton objectif de fonds d'urgence."
+ },
+ {
+  "id": "p047",
+  "domain": "financier",
+  "title": "Les actifs et les passifs",
+  "text": "Un actif met de l'argent dans ta poche, un passif en retire. Beaucoup de gens achètent des passifs en pensant acheter des actifs.",
+  "source": "Inspiré de : Père riche, père pauvre — Robert Kiyosaki",
+  "action": "Classe tes 5 plus grosses dépenses : actif ou passif ?"
+ },
+ {
+  "id": "p048",
+  "domain": "financier",
+  "title": "Le style de vie qui gonfle",
+  "text": "Quand le revenu augmente, les dépenses suivent souvent. Garder le même train de vie après une augmentation est le moyen le plus rapide de s'enrichir.",
+  "source": "Idée courante en finances personnelles",
+  "action": "Décide à l'avance quel pourcentage de ta prochaine hausse tu épargneras."
+ },
+ {
+  "id": "p049",
+  "domain": "professionnel",
+  "title": "Devenir excellent",
+  "text": "Le moyen le plus sûr d'avoir de bonnes opportunités est de devenir si bon qu'on ne peut pas t'ignorer. Les compétences rares et précieuses ouvrent des portes.",
+  "source": "Inspiré de : So Good They Can't Ignore You — Cal Newport",
+  "action": "Quelle compétence rare veux-tu développer cette année ?"
+ },
+ {
+  "id": "p050",
+  "domain": "professionnel",
+  "title": "La matrice d'Eisenhower",
+  "text": "Classe tes tâches selon urgence et importance. Le vrai progrès se fait dans « important mais pas urgent » : apprentissage, santé, relations, planification.",
+  "source": "Inspiré de : Dwight Eisenhower / Stephen Covey",
+  "action": "Bloque 30 minutes pour une tâche importante non urgente."
+ },
+ {
+  "id": "p051",
+  "domain": "professionnel",
+  "title": "Une chose à la fois",
+  "text": "Le multitâche est une illusion : le cerveau bascule entre les tâches et perd de l'énergie à chaque fois. Fais une chose, termine-la, passe à la suivante.",
+  "source": "Inspiré de : The ONE Thing — Gary Keller",
+  "action": "Quelle est LA chose qui rendrait tout le reste plus facile ?"
+ },
+ {
+  "id": "p052",
+  "domain": "professionnel",
+  "title": "Livre avant d'être prêt",
+  "text": "La perfection retarde. Une version imparfaite publiée t'apprend plus qu'une version parfaite jamais terminée.",
+  "source": "Idée issue de l'entrepreneuriat",
+  "action": "Termine et partage aujourd'hui une chose que tu repousses."
+ },
+ {
+  "id": "p053",
+  "domain": "professionnel",
+  "title": "Le pouvoir des 1 %",
+  "text": "S'améliorer de 1 % par jour pendant un an rend environ 37 fois meilleur. Les petits progrès invisibles finissent par devenir énormes.",
+  "source": "Inspiré de : Atomic Habits — James Clear",
+  "action": "Quelle petite amélioration de 1 % peux-tu faire aujourd'hui ?"
+ },
+ {
+  "id": "p054",
+  "domain": "social",
+  "title": "Tu es la moyenne de ton entourage",
+  "text": "Les personnes que tu fréquentes le plus influencent tes ambitions, tes habitudes et tes standards. Choisis ton cercle avec intention.",
+  "source": "Idée attribuée à Jim Rohn",
+  "action": "Liste les 5 personnes avec qui tu passes le plus de temps."
+ },
+ {
+  "id": "p055",
+  "domain": "social",
+  "title": "Donne avant de demander",
+  "text": "Les relations les plus solides se construisent en apportant de la valeur sans compter. Aider sincèrement crée naturellement de la réciprocité.",
+  "source": "Inspiré de : Give and Take — Adam Grant",
+  "action": "Rends un service sans rien attendre en retour cette semaine."
+ },
+ {
+  "id": "p056",
+  "domain": "social",
+  "title": "Intéresse-toi aux autres",
+  "text": "Tu te feras plus d'amis en deux mois en t'intéressant aux autres qu'en deux ans à essayer de les intéresser à toi.",
+  "source": "Inspiré de : Comment se faire des amis — Dale Carnegie",
+  "action": "Pose 3 questions sincères à quelqu'un aujourd'hui."
+ },
+ {
+  "id": "p057",
+  "domain": "social",
+  "title": "Les liens faibles",
+  "text": "Les opportunités viennent souvent des connaissances éloignées, pas des amis proches, car elles ont accès à d'autres informations et réseaux.",
+  "source": "Inspiré de : Mark Granovetter, « La force des liens faibles »",
+  "action": "Reprends contact avec une ancienne connaissance."
+ },
+ {
+  "id": "p058",
+  "domain": "spirituel",
+  "title": "Le repos est sacré",
+  "text": "Le sabbat rappelle que l'homme n'est pas une machine. S'arrêter régulièrement, c'est reconnaître que tout ne dépend pas de toi.",
+  "source": "Inspiré de la Bible (Exode 20:8-10)",
+  "action": "Réserve un moment cette semaine sans travail ni écran."
+ },
+ {
+  "id": "p059",
+  "domain": "spirituel",
+  "title": "Prends chaque pensée captive",
+  "text": "Ne laisse pas toutes les pensées s'installer. Examine-les : sont-elles vraies, justes, utiles ? Garde celles qui construisent.",
+  "source": "Inspiré de la Bible (2 Corinthiens 10:5 ; Philippiens 4:8)",
+  "action": "Examine une pensée négative à la lumière de Philippiens 4:8."
+ },
+ {
+  "id": "p060",
+  "domain": "spirituel",
+  "title": "Fidèle dans les petites choses",
+  "text": "Celui qui est fidèle dans les petites choses l'est aussi dans les grandes. Le caractère se construit dans les gestes que personne ne voit.",
+  "source": "Inspiré de la Bible (Luc 16:10)",
+  "action": "Fais une petite chose bien aujourd'hui, même si personne ne la voit."
+ },
+ {
+  "id": "p061",
+  "domain": "spirituel",
+  "title": "Le silence intérieur",
+  "text": "Quelques minutes de silence, de prière ou de méditation chaque jour recentrent l'esprit et remettent les priorités à leur place.",
+  "source": "Pratique présente dans de nombreuses traditions spirituelles",
+  "action": "Commence demain par 5 minutes de silence ou de prière."
+ },
+ {
+  "id": "p062",
+  "domain": "spirituel",
+  "title": "Servir, c'est grandir",
+  "text": "La grandeur véritable se mesure à la capacité de servir. Le leader qui sert inspire plus qu'il ne commande.",
+  "source": "Inspiré de la Bible (Marc 10:43-45)",
+  "action": "Trouve une façon concrète de servir quelqu'un aujourd'hui."
+ },
+ {
+  "id": "p063",
+  "domain": "intime",
+  "title": "Le consentement est continu",
+  "text": "Le consentement se demande, s'écoute et peut changer à tout moment. Un vrai « oui » est libre, enthousiaste et éclairé.",
+  "source": "Principe de base de l'éducation à la sexualité",
+  "action": "Réfléchis à comment tu vérifies le confort de l'autre."
+ },
+ {
+  "id": "p064",
+  "domain": "intime",
+  "title": "L'intimité commence hors de la chambre",
+  "text": "La proximité physique se nourrit de la proximité émotionnelle : attention, tendresse, écoute et confiance au quotidien.",
+  "source": "Idée issue de la thérapie de couple",
+  "action": "Fais un geste de tendresse non sexuel aujourd'hui."
+ },
+ {
+  "id": "p065",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Écouter pour comprendre, pas pour répondre",
+  "text": "La plupart du temps, pendant que l'autre parle, on prépare déjà notre réponse. Écouter vraiment, c'est mettre ta réponse de côté et chercher à comprendre ce que la personne vit, pas seulement ce qu'elle dit.",
+  "source": "Inspiré de : Les 7 habitudes — Stephen Covey",
+  "action": "Dans ta prochaine conversation, attends que l'autre ait fini avant de penser à ta réponse."
+ },
+ {
+  "id": "p066",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Ne répare pas tout de suite",
+  "text": "Quand quelqu'un partage une difficulté, notre réflexe est de donner une solution. Souvent, la personne veut d'abord se sentir comprise. Le conseil trop rapide peut donner l'impression qu'on veut clore le sujet.",
+  "source": "Idée issue de l'écoute active",
+  "action": "Demande : « Tu veux que je t'écoute, ou que je t'aide à trouver une solution ? »"
+ },
+ {
+  "id": "p067",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Reformuler pour que l'autre se sente entendu",
+  "text": "Redire avec tes mots ce que tu as compris (« Si je comprends bien, tu te sens… ») prouve à l'autre que tu l'as écouté. C'est souvent à ce moment-là qu'il se détend et s'ouvre.",
+  "source": "Inspiré de : Carl Rogers, l'écoute active",
+  "action": "Reformule au moins une fois ce que dit ton interlocuteur aujourd'hui."
+ },
+ {
+  "id": "p068",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Accueillir l'émotion avant les faits",
+  "text": "« Ça a dû être blessant » touche plus qu'une analyse de qui avait raison. Valider une émotion, ce n'est pas dire que l'autre a raison : c'est reconnaître ce qu'il ressent.",
+  "source": "Idée issue de la psychologie de la validation émotionnelle",
+  "action": "Remplace « Tu n'aurais pas dû… » par « Je comprends que tu te sois senti… »."
+ },
+ {
+  "id": "p069",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Le langage du corps qui écoute",
+  "text": "Pose ton téléphone, tourne-toi vers la personne, regarde-la avec douceur, hoche la tête. Ton corps dit « tu comptes pour moi » avant même que tu parles.",
+  "source": "Idée issue de la communication non verbale",
+  "action": "Lors de ta prochaine discussion importante, range ton téléphone hors de vue."
+ },
+ {
+  "id": "p070",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Les questions ouvertes",
+  "text": "« Comment tu l'as vécu ? » ouvre la porte. « Ça va ? » la ferme souvent avec un simple « oui ». Les questions qui commencent par comment, qu'est-ce que, raconte-moi invitent à se confier.",
+  "source": "Idée issue de l'entretien d'aide",
+  "action": "Pose une question qui commence par « Comment… » ou « Raconte-moi… »."
+ },
+ {
+  "id": "p071",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Suspendre son jugement",
+  "text": "Juger, c'est décider trop vite. Quand tu sens un jugement monter (« c'est ridicule »), remplace-le par la curiosité : « Qu'est-ce qui l'amène à voir les choses comme ça ? »",
+  "source": "Idée issue de l'écoute bienveillante",
+  "action": "Quand un jugement te vient aujourd'hui, transforme-le en question."
+ },
+ {
+  "id": "p072",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Supporter le silence",
+  "text": "Quand quelqu'un se tait après avoir dit quelque chose de lourd, ne remplis pas le vide. Ce silence est souvent l'espace où il trouve le courage de dire le plus important.",
+  "source": "Idée issue de l'accompagnement et de la relation d'aide",
+  "action": "Laisse 5 secondes de silence après une confidence avant de parler."
+ },
+ {
+  "id": "p073",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Ne ramène pas tout à toi",
+  "text": "« Moi aussi, une fois… » part d'une bonne intention, mais déplace l'attention vers toi. Garde ton histoire pour plus tard ; d'abord, reste avec la sienne.",
+  "source": "Idée issue de l'écoute active",
+  "action": "Aujourd'hui, écoute une histoire jusqu'au bout sans raconter la tienne."
+ },
+ {
+  "id": "p074",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Merci de m'en avoir parlé",
+  "text": "Quand quelqu'un se confie, la première phrase compte. « Merci de me faire confiance » rassure et donne envie de revenir vers toi.",
+  "source": "Idée issue de la relation d'aide",
+  "action": "Utilise cette phrase la prochaine fois que quelqu'un se confie à toi."
+ },
+ {
+  "id": "p075",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "Tout le monde aime parler de soi",
+  "text": "Pour lancer une conversation avec n'importe qui, pas besoin d'être brillant : sois curieux. Les gens apprécient ceux qui s'intéressent sincèrement à leur vie.",
+  "source": "Inspiré de : Comment se faire des amis — Dale Carnegie",
+  "action": "Pose une question sur la vie de quelqu'un que tu connais peu."
+ },
+ {
+  "id": "p076",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "La méthode FORD",
+  "text": "Si tu ne sais pas de quoi parler : Famille, Occupation (travail, études), Récréation (loisirs), Dreams (rêves, projets). Ces quatre sujets marchent avec presque tout le monde.",
+  "source": "Technique de conversation courante",
+  "action": "Utilise un des 4 sujets FORD avec une nouvelle personne."
+ },
+ {
+  "id": "p077",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "Commencer par l'environnement",
+  "text": "Le plus simple pour briser la glace, c'est ce que vous vivez ensemble à l'instant : le lieu, l'événement, la file d'attente. « C'est votre première fois ici ? » suffit souvent.",
+  "source": "Technique de conversation courante",
+  "action": "Engage une petite conversation avec un inconnu aujourd'hui (caissier, voisin...)."
+ },
+ {
+  "id": "p078",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "S'adapter sans se renier",
+  "text": "On ne parle pas pareil à un enfant, à un ancien, à son patron ou à un ami. Adapter son vocabulaire et son rythme est une forme de respect, tant que tu restes toi-même.",
+  "source": "Idée issue de la communication interpersonnelle",
+  "action": "Observe le rythme de parole de ton interlocuteur et ralentis ou accélère un peu."
+ },
+ {
+  "id": "p079",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "Trouver le point commun",
+  "text": "Les gens se rapprochent quand ils découvrent ce qu'ils partagent : une ville, une passion, une épreuve. Cherche activement ce point commun dans les premières minutes.",
+  "source": "Idée issue de la psychologie sociale",
+  "action": "Trouve un point commun avec quelqu'un de nouveau cette semaine."
+ },
+ {
+  "id": "p080",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "Le trac est normal",
+  "text": "Presque tout le monde ressent une gêne en parlant à un inconnu, même ceux qui ont l'air à l'aise. La gêne diminue avec la pratique, pas avec l'attente.",
+  "source": "Idée issue des thérapies de l'anxiété sociale",
+  "action": "Fais une micro-conversation par jour pendant une semaine."
+ },
+ {
+  "id": "p081",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "Sourire et prénom",
+  "text": "Un sourire sincère et l'usage du prénom de la personne créent une chaleur immédiate, quelle que soit sa culture ou son âge.",
+  "source": "Inspiré de : Dale Carnegie",
+  "action": "Salue chaque personne aujourd'hui par son prénom avec un sourire."
+ },
+ {
+  "id": "p082",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "Parler à quelqu'un d'important",
+  "text": "Face à une personne intimidante (patron, pasteur, personnalité), rappelle-toi que c'est un être humain avec les mêmes besoins que toi. Sois bref, clair, et respectueux de son temps.",
+  "source": "Idée issue de la communication professionnelle",
+  "action": "Prépare en 2 phrases ce que tu dirais à une personne que tu admires."
+ },
+ {
+  "id": "p083",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "Terminer une conversation avec élégance",
+  "text": "Savoir finir est aussi important que commencer : « J'ai été content de parler avec toi, je te laisse » laisse une bonne impression et donne envie de se revoir.",
+  "source": "Technique de conversation courante",
+  "action": "Termine ta prochaine conversation par une phrase positive."
+ },
+ {
+  "id": "p084",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "Demander de l'aide est une force",
+  "text": "Parler à un médecin, un psychologue ou une personne de confiance n'est pas une faiblesse. C'est le même réflexe que d'aller chez le médecin pour une blessure physique.",
+  "source": "Message de santé publique",
+  "action": "Note le nom d'une personne ou d'un professionnel à qui tu pourrais parler si ça ne va pas."
+ },
+ {
+  "id": "p085",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "En cas de détresse, appelle",
+  "text": "Si tu as des idées noires ou si tu penses à te faire du mal, tu n'es pas seul : appelle tout de suite le numéro d'urgence de ton pays ou un proche. En France, le 3114 répond 24h/24, gratuitement.",
+  "source": "Numéro national de prévention du suicide (France)",
+  "action": "Enregistre dès maintenant un numéro d'aide dans ton téléphone."
+ },
+ {
+  "id": "p086",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "Le stress chronique use",
+  "text": "Un peu de stress aide à agir. Mais un stress permanent fatigue le corps et l'esprit : sommeil perturbé, irritabilité, difficulté à se concentrer. Ce sont des signaux à écouter, pas à ignorer.",
+  "source": "Idée issue de la psychologie de la santé",
+  "action": "Liste 3 signes qui t'indiquent que tu es trop stressé."
+ },
+ {
+  "id": "p087",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "La bienveillance envers soi",
+  "text": "Parle-toi comme tu parlerais à un ami qui traverse un moment difficile. Se critiquer durement ne rend pas plus fort ; la bienveillance aide à se relever plus vite.",
+  "source": "Inspiré de : Kristin Neff, l'autocompassion",
+  "action": "Réécris une critique que tu te fais en phrase qu'un ami te dirait."
+ },
+ {
+  "id": "p088",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "Le temps des soucis",
+  "text": "Si les inquiétudes tournent en boucle, donne-leur un rendez-vous : 15 minutes par jour pour les écrire. Quand elles reviennent hors de ce créneau, dis-toi « je verrai ça à mon rendez-vous ».",
+  "source": "Technique issue des thérapies cognitives et comportementales",
+  "action": "Fixe un créneau de 15 minutes « soucis » demain."
+ },
+ {
+  "id": "p089",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "Les pensées ne sont pas des faits",
+  "text": "« Je suis un échec » est une pensée, pas une vérité. Demande-toi : quelles preuves pour ? quelles preuves contre ? que dirait quelqu'un qui m'aime ?",
+  "source": "Technique issue des thérapies cognitives",
+  "action": "Passe une pensée négative au test des preuves aujourd'hui."
+ },
+ {
+  "id": "p090",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "Le burn-out ne prévient pas toujours",
+  "text": "Épuisement, cynisme, sentiment d'inefficacité : le burn-out s'installe lentement chez ceux qui donnent beaucoup. Se reposer avant d'être vidé est une responsabilité, pas un luxe.",
+  "source": "Idée issue des recherches sur l'épuisement professionnel",
+  "action": "Note sur 10 ton niveau d'énergie chaque soir cette semaine."
+ },
+ {
+  "id": "p091",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "Couper l'info en continu",
+  "text": "Les nouvelles et les réseaux sociaux en boucle augmentent l'anxiété. S'informer une fois par jour suffit pour rester au courant sans se noyer.",
+  "source": "Idée issue des recherches sur la consommation médiatique",
+  "action": "Choisis un seul moment de la journée pour lire les infos."
+ },
+ {
+  "id": "p092",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "Le lien humain protège",
+  "text": "Les relations proches sont l'un des meilleurs protecteurs de la santé mentale. Un appel, un repas partagé, une marche avec quelqu'un font plus de bien qu'on ne le croit.",
+  "source": "Inspiré de l'étude de Harvard sur le développement adulte",
+  "action": "Appelle ou vois quelqu'un qui compte pour toi cette semaine."
+ },
+ {
+  "id": "p093",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "Vider sa tête sur papier",
+  "text": "Ton cerveau sert à avoir des idées, pas à les stocker. Écris tout ce qui t'occupe l'esprit (tâches, soucis, idées) sur une feuille : tu libères de la place et tu y vois plus clair.",
+  "source": "Inspiré de : S'organiser pour réussir (GTD) — David Allen",
+  "action": "Fais un « vidage de tête » de 10 minutes ce soir."
+ },
+ {
+  "id": "p094",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "Un seul endroit pour tout noter",
+  "text": "Des idées éparpillées entre papiers, messages et mémoire se perdent. Choisis un seul carnet ou une seule appli (par exemple « Mes idées ») et note tout au même endroit.",
+  "source": "Inspiré de : GTD — David Allen",
+  "action": "Décide aujourd'hui de ton unique endroit de capture."
+ },
+ {
+  "id": "p095",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "Trier : faire, planifier, déléguer, jeter",
+  "text": "Après avoir tout noté, passe chaque élément au crible : je le fais maintenant (moins de 2 minutes), je le planifie, je le délègue, ou je l'abandonne.",
+  "source": "Inspiré de : la matrice d'Eisenhower et GTD",
+  "action": "Trie ta liste en 4 colonnes : faire, planifier, déléguer, jeter."
+ },
+ {
+  "id": "p096",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "La carte mentale",
+  "text": "Écris l'idée centrale au milieu d'une feuille, puis dessine des branches pour chaque sous-idée. Voir ses pensées sous forme d'arbre aide à les relier et à les hiérarchiser.",
+  "source": "Inspiré de : Tony Buzan, le mind mapping",
+  "action": "Fais une carte mentale d'un projet ou d'un problème actuel."
+ },
+ {
+  "id": "p097",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "Les 3 priorités du jour",
+  "text": "Une longue liste paralyse. Chaque matin, choisis seulement 3 choses qui, si elles sont faites, rendront ta journée réussie.",
+  "source": "Technique de productivité courante",
+  "action": "Écris tes 3 priorités pour demain avant de dormir."
+ },
+ {
+  "id": "p098",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "Écrire pour penser",
+  "text": "On croit qu'on écrit ce qu'on pense ; souvent, on découvre ce qu'on pense en l'écrivant. Le journal transforme un brouillard d'émotions en phrases claires.",
+  "source": "Idée issue des recherches sur l'écriture expressive (James Pennebaker)",
+  "action": "Écris 10 minutes dans ton journal sur ce qui t'occupe l'esprit."
+ },
+ {
+  "id": "p099",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "Une idée à la fois",
+  "text": "Quand tout se bouscule, choisis une seule pensée à traiter jusqu'au bout avant de passer à la suivante. Sauter d'une idée à l'autre donne l'impression d'avancer sans rien finir.",
+  "source": "Idée issue de la gestion de l'attention",
+  "action": "Pendant 25 minutes, travaille sur un seul sujet sans changer."
+ },
+ {
+  "id": "p100",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "Clarifier avec une question",
+  "text": "Une pensée floue (« ma vie n'avance pas ») devient gérable quand on la transforme en question précise : « Quelle petite étape puis-je faire cette semaine pour mon travail ? »",
+  "source": "Idée issue du coaching",
+  "action": "Transforme un souci flou en question précise et actionnable."
+ },
+ {
+  "id": "p101",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "La revue de la semaine",
+  "text": "Une fois par semaine, relis tes notes, ferme ce qui est fini et choisis tes priorités. C'est ce rituel qui empêche ta tête de redevenir encombrée.",
+  "source": "Inspiré de : GTD — David Allen",
+  "action": "Bloque 30 minutes ce week-end pour ta revue hebdomadaire."
+ },
+ {
+  "id": "p102",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "L'assiette équilibrée",
+  "text": "Une moitié de légumes, un quart de protéines (œufs, poisson, viande, légumineuses), un quart de féculents complets. Simple à retenir, sans compter les calories.",
+  "source": "Inspiré des recommandations nutritionnelles courantes",
+  "action": "Compose un repas aujourd'hui selon ce modèle."
+ },
+ {
+  "id": "p103",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "Boire assez d'eau",
+  "text": "La fatigue, les maux de tête et le manque de concentration viennent parfois d'un simple manque d'eau. Garde une bouteille près de toi toute la journée.",
+  "source": "Conseil de santé courant",
+  "action": "Garde une bouteille d'eau à portée de main aujourd'hui."
+ },
+ {
+  "id": "p104",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "Bouger un peu, souvent",
+  "text": "Rester assis des heures est mauvais pour le corps. Se lever et marcher quelques minutes toutes les heures fait une vraie différence.",
+  "source": "Recommandation de santé publique",
+  "action": "Lève-toi et marche 3 minutes toutes les heures aujourd'hui."
+ },
+ {
+  "id": "p105",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "S'étirer chaque jour",
+  "text": "Cinq minutes d'étirements le matin ou le soir réduisent les tensions, améliorent la posture et aident à se détendre avant de dormir.",
+  "source": "Conseil courant de bien-être physique",
+  "action": "Fais 5 minutes d'étirements ce soir."
+ },
+ {
+  "id": "p106",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "Les bilans de santé",
+  "text": "Beaucoup d'hommes ne voient un médecin qu'en cas d'urgence. Un bilan régulier (tension, sang, dents, yeux) permet de prévenir au lieu de réparer.",
+  "source": "Message de prévention santé",
+  "action": "Prends rendez-vous pour un bilan si le dernier date de plus d'un an."
+ },
+ {
+  "id": "p107",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "Les écrans avant de dormir",
+  "text": "La lumière et la stimulation des écrans retardent l'endormissement. Poser le téléphone 30 à 60 minutes avant le coucher améliore la qualité du sommeil.",
+  "source": "Conseil issu de la recherche sur le sommeil",
+  "action": "Ce soir, pose ton téléphone 30 minutes avant de dormir."
+ },
+ {
+  "id": "p108",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "Moins de sucre ajouté",
+  "text": "Les boissons sucrées et les snacks transformés donnent de l'énergie rapide puis un coup de fatigue. Remplacer les sodas par de l'eau est l'un des changements les plus efficaces.",
+  "source": "Recommandation nutritionnelle courante",
+  "action": "Remplace une boisson sucrée par de l'eau aujourd'hui."
+ },
+ {
+  "id": "p109",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "Écouter les signaux du corps",
+  "text": "Douleurs qui durent, fatigue anormale, essoufflement : le corps parle avant de crier. Ignorer ces signaux par fierté peut coûter cher.",
+  "source": "Message de prévention santé",
+  "action": "Note un signal de ton corps que tu ignores depuis trop longtemps."
+ },
+ {
+  "id": "p110",
+  "domain": "emotionnel",
+  "theme": "Pour les hommes",
+  "title": "Un homme a le droit de ressentir",
+  "text": "Tristesse, peur, doute : ce ne sont pas des faiblesses, ce sont des émotions humaines. Les cacher toujours ne les fait pas disparaître, elles ressortent en colère, en fatigue ou en isolement.",
+  "source": "Idée issue de la psychologie masculine",
+  "action": "Dis à une personne de confiance comment tu te sens vraiment aujourd'hui."
+ },
+ {
+  "id": "p111",
+  "domain": "social",
+  "theme": "Pour les hommes",
+  "title": "Les amitiés d'homme",
+  "text": "Beaucoup d'hommes perdent leurs amis avec l'âge, absorbés par le travail et la famille. Entretenir quelques amitiés profondes protège contre la solitude et le stress.",
+  "source": "Idée issue des recherches sur la solitude masculine",
+  "action": "Propose à un ami une activité ensemble cette semaine."
+ },
+ {
+  "id": "p112",
+  "domain": "discipline",
+  "theme": "Pour les hommes",
+  "title": "La force au service des autres",
+  "text": "La vraie force d'un homme ne se mesure pas à sa domination, mais à sa capacité à protéger, à tenir parole et à prendre ses responsabilités.",
+  "source": "Idée présente dans de nombreuses traditions, dont la Bible (Éphésiens 5:25)",
+  "action": "Tiens une promesse que tu as faite, même petite."
+ },
+ {
+  "id": "p113",
+  "domain": "professionnel",
+  "theme": "Pour les hommes",
+  "title": "Tu n'es pas que ton travail",
+  "text": "Si ta valeur dépend seulement de ton salaire ou de ton poste, un échec professionnel devient un effondrement personnel. Cultive aussi tes relations, ta foi, ta santé.",
+  "source": "Idée issue de la psychologie de l'identité",
+  "action": "Écris 3 choses qui font ta valeur en dehors du travail."
+ },
+ {
+  "id": "p114",
+  "domain": "relationnel",
+  "theme": "Soutenir les femmes",
+  "title": "Croire ce qu'elle vit",
+  "text": "Quand une femme parle d'une situation difficile (harcèlement, injustice, fatigue), la première aide est de la croire et de l'écouter, sans minimiser.",
+  "source": "Idée issue de l'accompagnement des victimes et de l'écoute bienveillante",
+  "action": "Si une femme se confie à toi, commence par « Je te crois, je t'écoute »."
+ },
+ {
+  "id": "p115",
+  "domain": "relationnel",
+  "theme": "Soutenir les femmes",
+  "title": "Partager la charge mentale",
+  "text": "Penser aux rendez-vous, aux courses, aux anniversaires, à l'organisation : cette charge invisible pèse souvent sur les femmes. La partager, c'est anticiper sans attendre qu'on te le demande.",
+  "source": "Idée issue des recherches sur la charge mentale",
+  "action": "Prends en charge une tâche complète à la maison, de A à Z, sans qu'on te le demande."
+ },
+ {
+  "id": "p116",
+  "domain": "social",
+  "theme": "Soutenir les femmes",
+  "title": "Respecter son « non »",
+  "text": "Un « non » ou une hésitation se respecte, sans insister ni culpabiliser. Le respect crée la confiance et la sécurité dans toutes les relations.",
+  "source": "Principe de base du respect et du consentement",
+  "action": "Réfléchis à une situation où tu as insisté alors qu'on t'a dit non."
+ },
+ {
+  "id": "p117",
+  "domain": "professionnel",
+  "theme": "Soutenir les femmes",
+  "title": "Donner la parole et le crédit",
+  "text": "En réunion ou en groupe, remarque qui parle peu ou qui est coupé. Redonner la parole (« Tu voulais dire quelque chose ? ») et reconnaître l'idée de chacune est un vrai soutien.",
+  "source": "Idée issue des recherches sur la dynamique de groupe",
+  "action": "À ta prochaine réunion, redonne la parole à quelqu'un qui a été interrompu."
+ },
+ {
+  "id": "p118",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Les rituels de connexion",
+  "text": "Un baiser en partant, un message à midi, 15 minutes pour parler de la journée le soir : ces petits rituels réguliers protègent le couple plus que les grandes occasions.",
+  "source": "Inspiré des recherches de John Gottman",
+  "action": "Crée un petit rituel quotidien avec ton/ta partenaire."
+ },
+ {
+  "id": "p119",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Se disputer sans se blesser",
+  "text": "Critiquer la personne (« tu es égoïste ») blesse ; parler du comportement (« quand tu as annulé, j'ai été déçu ») ouvre le dialogue. Évite le mépris, l'ironie et les « toujours/jamais ».",
+  "source": "Inspiré de : John Gottman, les « quatre cavaliers »",
+  "action": "Lors du prochain désaccord, parle d'un fait précis, pas de la personne."
+ },
+ {
+  "id": "p120",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "La pause quand ça chauffe",
+  "text": "Quand le cœur s'accélère et que la colère monte, on n'écoute plus. Proposer une pause de 20 minutes (« je reviens, je t'aime ») évite de dire ce qu'on regrettera.",
+  "source": "Inspiré des recherches de John Gottman",
+  "action": "Convenez ensemble d'un mot pour demander une pause."
+ },
+ {
+  "id": "p121",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Parler d'argent en couple",
+  "text": "L'argent est l'une des premières sources de conflit. En parler calmement et régulièrement (objectifs, dépenses, épargne) évite les non-dits et les surprises.",
+  "source": "Conseil courant en finances de couple",
+  "action": "Planifiez un moment pour parler de vos objectifs financiers communs."
+ },
+ {
+  "id": "p122",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Exprimer ses attentes",
+  "text": "Ton/ta partenaire ne peut pas deviner ce dont tu as besoin. Attendre qu'il ou elle devine mène à la déception ; le dire clairement et gentiment mène à la connexion.",
+  "source": "Idée issue de la thérapie de couple",
+  "action": "Exprime clairement un besoin à ton/ta partenaire aujourd'hui."
+ },
+ {
+  "id": "p123",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Les rendez-vous ne s'arrêtent pas",
+  "text": "Le couple a besoin de moments à deux, même après des années ou avec des enfants. Un rendez-vous régulier entretient la complicité et le désir.",
+  "source": "Conseil courant en thérapie de couple",
+  "action": "Planifiez un moment à deux cette semaine, même simple."
+ },
+ {
+  "id": "p124",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "S'excuser vraiment",
+  "text": "Une vraie excuse nomme ce qu'on a fait, reconnaît l'impact sur l'autre et dit ce qu'on va changer, sans « mais ». « Je suis désolé si tu t'es senti blessé » n'est pas une excuse.",
+  "source": "Idée issue de la psychologie relationnelle",
+  "action": "Pense à une excuse que tu dois encore et formule-la sans « mais »."
+ },
+ {
+  "id": "p125",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Rester deux individus",
+  "text": "Un couple sain, c'est deux personnes entières, pas deux moitiés. Garder ses amis, ses passions et son temps personnel nourrit aussi la relation.",
+  "source": "Idée issue de la thérapie de couple",
+  "action": "Encourage ton/ta partenaire à prendre du temps pour une passion."
+ },
+ {
+  "id": "p126",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Dire merci au quotidien",
+  "text": "Avec le temps, on remarque ce qui manque plus que ce qui est donné. Remercier son/sa partenaire pour les petites choses entretient l'affection et le respect.",
+  "source": "Idée issue de la psychologie positive appliquée au couple",
+  "action": "Remercie ton/ta partenaire pour une chose précise aujourd'hui."
+ }
+]
