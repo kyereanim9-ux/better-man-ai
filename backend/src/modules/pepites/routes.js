@@ -65,9 +65,15 @@ function weakDomains(uid) {
   return Object.entries(score).sort((a, b) => a[1] - b[1]).slice(0, 3).map(([d]) => d);
 }
 
+// Pépites ajoutées ces 7 derniers jours (champ `addedAt`) : badge « Nouveau »
+// et pseudo-thème « Nouveautés », pour que les ajouts réguliers se voient.
+const NEW_THEME = '__new';
+const NEW_DAYS = 7;
+const isNew = (p) => !!p.addedAt && p.addedAt >= addDays(-NEW_DAYS);
+
 function decorate(uid, p) {
   const save = savesOf(uid).find(s => s.pepiteId === p.id);
-  return { ...p, saved: !!save, stash: save?.stash || null, saveId: save?.id || null };
+  return { ...p, isNew: isNew(p), saved: !!save, stash: save?.stash || null, saveId: save?.id || null };
 }
 
 // Fil : les pépites non lues d'abord, en mettant en avant tes domaines les
@@ -83,7 +89,8 @@ router.get('/feed', async (req, res) => {
 
   let list = allPepites(uid);
   if (domain && domain !== 'all') list = list.filter(p => p.domain === domain);
-  if (theme) list = list.filter(p => p.theme === theme);
+  if (theme === NEW_THEME) list = list.filter(isNew);
+  else if (theme) list = list.filter(p => p.theme === theme);
 
   const ranked = list
     .map(p => ({
@@ -122,7 +129,10 @@ router.get('/domains', (req, res) => {
 router.get('/themes', (req, res) => {
   const counts = {};
   for (const p of CATALOG) if (p.theme) counts[p.theme] = (counts[p.theme] || 0) + 1;
-  res.json(Object.entries(counts).map(([theme, count]) => ({ theme, count })));
+  const themes = Object.entries(counts).map(([theme, count]) => ({ theme, label: theme, count }));
+  const fresh = CATALOG.filter(isNew).length;
+  if (fresh) themes.unshift({ theme: NEW_THEME, label: '🆕 Nouveautés', count: fresh });
+  res.json(themes);
 });
 
 // Statistiques de lecture : idées lues, série de jours, idées à réviser.

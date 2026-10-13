@@ -2987,6 +2987,7 @@ function pepiteCardHTML(p, opts = {}) {
       <div class="pep-top">
         <span class="pep-domain">${escapeHtml(label)}</span>
         ${p.theme ? `<span class="pep-theme">${escapeHtml(p.theme)}</span>` : ''}
+        ${p.isNew ? '<span class="pep-new">🆕 Nouveau</span>' : ''}
         ${p.seen ? '<span class="meta">déjà lue</span>' : ''}
         ${p.custom ? '<span class="meta">ma pépite</span>' : ''}
       </div>
@@ -3117,12 +3118,12 @@ async function loadPepites() {
     // Thèmes : un clic filtre, un second clic retire le filtre.
     const themeChips = document.getElementById('pep-theme-chips');
     const themes = await api('/pepites/themes').catch(() => []);
-    themeChips.innerHTML = themes.map(t => `<button class="pep-chip theme" data-pep-theme="${escapeHtml(t.theme)}">${escapeHtml(t.theme)} (${t.count})</button>`).join('');
+    themeChips.innerHTML = themes.map(t => `<button class="pep-chip theme" data-pep-theme="${escapeHtml(t.theme)}" data-label="${escapeHtml(t.label || t.theme)}">${escapeHtml(t.label || t.theme)} (${t.count})</button>`).join('');
     themeChips.querySelectorAll('[data-pep-theme]').forEach(c => {
       c.onclick = () => {
         const on = pepState.theme !== c.dataset.pepTheme;
         themeChips.querySelectorAll('.pep-chip').forEach(x => x.classList.toggle('active', on && x === c));
-        pepState.theme = on ? c.dataset.pepTheme : ''; pepState.limit = 10;
+        pepState.theme = on ? c.dataset.pepTheme : ''; pepState.themeLabel = c.dataset.label; pepState.limit = 10;
         loadPepiteFeed();
       };
     });
@@ -3137,7 +3138,7 @@ async function loadPepiteFeed() {
     rememberPepites(data.items);
     document.getElementById('pep-focus').textContent = data.focusDomains.length
       ? `Mis en avant pour toi : ${data.focusDomains.map(d => DOMAIN_LABELS[d] || d).join(', ')} (domaines peu travaillés ces 14 derniers jours). ${data.unseen} idée(s) jamais lue(s).`
-      : `${pepState.theme ? `Thème « ${pepState.theme} » — ` : ''}${data.unseen} idée(s) jamais lue(s) sur ${data.total}.`;
+      : `${pepState.theme ? `Thème « ${pepState.themeLabel || pepState.theme} » — ` : ''}${data.unseen} idée(s) jamais lue(s) sur ${data.total}.`;
     el.innerHTML = data.items.map(p => pepiteCardHTML(p)).join('') || '<p class="meta">Aucune pépite ici pour l\'instant.</p>';
     document.getElementById('pep-more').classList.toggle('hidden', data.items.length >= data.total);
     bindPepiteButtons(el, loadPepiteFeed);
