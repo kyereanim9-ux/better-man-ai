@@ -9,6 +9,17 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.8.1',
+    date: '2026-10-13',
+    title: 'Pépites — 62 nouvelles idées et filtres par thème',
+    features: [
+      "62 nouvelles pépites (126 au total) : écouter sans juger, parler à tout le monde, santé mentale, organiser ses pensées, prendre soin de son corps, pour les hommes, soutenir les femmes, couple",
+      "Filtre par thème dans le fil des Pépites"
+    ],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.8.0',
     date: '2026-10-13',
     title: 'Pépites — des idées puissantes en 1 minute',

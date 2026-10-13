@@ -510,5 +510,563 @@
   "text": "La proximité physique se nourrit de la proximité émotionnelle : attention, tendresse, écoute et confiance au quotidien.",
   "source": "Idée issue de la thérapie de couple",
   "action": "Fais un geste de tendresse non sexuel aujourd'hui."
+ },
+ {
+  "id": "p065",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Écouter pour comprendre, pas pour répondre",
+  "text": "La plupart du temps, pendant que l'autre parle, on prépare déjà notre réponse. Écouter vraiment, c'est mettre ta réponse de côté et chercher à comprendre ce que la personne vit, pas seulement ce qu'elle dit.",
+  "source": "Inspiré de : Les 7 habitudes — Stephen Covey",
+  "action": "Dans ta prochaine conversation, attends que l'autre ait fini avant de penser à ta réponse."
+ },
+ {
+  "id": "p066",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Ne répare pas tout de suite",
+  "text": "Quand quelqu'un partage une difficulté, notre réflexe est de donner une solution. Souvent, la personne veut d'abord se sentir comprise. Le conseil trop rapide peut donner l'impression qu'on veut clore le sujet.",
+  "source": "Idée issue de l'écoute active",
+  "action": "Demande : « Tu veux que je t'écoute, ou que je t'aide à trouver une solution ? »"
+ },
+ {
+  "id": "p067",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Reformuler pour que l'autre se sente entendu",
+  "text": "Redire avec tes mots ce que tu as compris (« Si je comprends bien, tu te sens… ») prouve à l'autre que tu l'as écouté. C'est souvent à ce moment-là qu'il se détend et s'ouvre.",
+  "source": "Inspiré de : Carl Rogers, l'écoute active",
+  "action": "Reformule au moins une fois ce que dit ton interlocuteur aujourd'hui."
+ },
+ {
+  "id": "p068",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Accueillir l'émotion avant les faits",
+  "text": "« Ça a dû être blessant » touche plus qu'une analyse de qui avait raison. Valider une émotion, ce n'est pas dire que l'autre a raison : c'est reconnaître ce qu'il ressent.",
+  "source": "Idée issue de la psychologie de la validation émotionnelle",
+  "action": "Remplace « Tu n'aurais pas dû… » par « Je comprends que tu te sois senti… »."
+ },
+ {
+  "id": "p069",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Le langage du corps qui écoute",
+  "text": "Pose ton téléphone, tourne-toi vers la personne, regarde-la avec douceur, hoche la tête. Ton corps dit « tu comptes pour moi » avant même que tu parles.",
+  "source": "Idée issue de la communication non verbale",
+  "action": "Lors de ta prochaine discussion importante, range ton téléphone hors de vue."
+ },
+ {
+  "id": "p070",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Les questions ouvertes",
+  "text": "« Comment tu l'as vécu ? » ouvre la porte. « Ça va ? » la ferme souvent avec un simple « oui ». Les questions qui commencent par comment, qu'est-ce que, raconte-moi invitent à se confier.",
+  "source": "Idée issue de l'entretien d'aide",
+  "action": "Pose une question qui commence par « Comment… » ou « Raconte-moi… »."
+ },
+ {
+  "id": "p071",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Suspendre son jugement",
+  "text": "Juger, c'est décider trop vite. Quand tu sens un jugement monter (« c'est ridicule »), remplace-le par la curiosité : « Qu'est-ce qui l'amène à voir les choses comme ça ? »",
+  "source": "Idée issue de l'écoute bienveillante",
+  "action": "Quand un jugement te vient aujourd'hui, transforme-le en question."
+ },
+ {
+  "id": "p072",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Supporter le silence",
+  "text": "Quand quelqu'un se tait après avoir dit quelque chose de lourd, ne remplis pas le vide. Ce silence est souvent l'espace où il trouve le courage de dire le plus important.",
+  "source": "Idée issue de l'accompagnement et de la relation d'aide",
+  "action": "Laisse 5 secondes de silence après une confidence avant de parler."
+ },
+ {
+  "id": "p073",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Ne ramène pas tout à toi",
+  "text": "« Moi aussi, une fois… » part d'une bonne intention, mais déplace l'attention vers toi. Garde ton histoire pour plus tard ; d'abord, reste avec la sienne.",
+  "source": "Idée issue de l'écoute active",
+  "action": "Aujourd'hui, écoute une histoire jusqu'au bout sans raconter la tienne."
+ },
+ {
+  "id": "p074",
+  "domain": "communication",
+  "theme": "Écouter sans juger",
+  "title": "Merci de m'en avoir parlé",
+  "text": "Quand quelqu'un se confie, la première phrase compte. « Merci de me faire confiance » rassure et donne envie de revenir vers toi.",
+  "source": "Idée issue de la relation d'aide",
+  "action": "Utilise cette phrase la prochaine fois que quelqu'un se confie à toi."
+ },
+ {
+  "id": "p075",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "Tout le monde aime parler de soi",
+  "text": "Pour lancer une conversation avec n'importe qui, pas besoin d'être brillant : sois curieux. Les gens apprécient ceux qui s'intéressent sincèrement à leur vie.",
+  "source": "Inspiré de : Comment se faire des amis — Dale Carnegie",
+  "action": "Pose une question sur la vie de quelqu'un que tu connais peu."
+ },
+ {
+  "id": "p076",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "La méthode FORD",
+  "text": "Si tu ne sais pas de quoi parler : Famille, Occupation (travail, études), Récréation (loisirs), Dreams (rêves, projets). Ces quatre sujets marchent avec presque tout le monde.",
+  "source": "Technique de conversation courante",
+  "action": "Utilise un des 4 sujets FORD avec une nouvelle personne."
+ },
+ {
+  "id": "p077",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "Commencer par l'environnement",
+  "text": "Le plus simple pour briser la glace, c'est ce que vous vivez ensemble à l'instant : le lieu, l'événement, la file d'attente. « C'est votre première fois ici ? » suffit souvent.",
+  "source": "Technique de conversation courante",
+  "action": "Engage une petite conversation avec un inconnu aujourd'hui (caissier, voisin...)."
+ },
+ {
+  "id": "p078",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "S'adapter sans se renier",
+  "text": "On ne parle pas pareil à un enfant, à un ancien, à son patron ou à un ami. Adapter son vocabulaire et son rythme est une forme de respect, tant que tu restes toi-même.",
+  "source": "Idée issue de la communication interpersonnelle",
+  "action": "Observe le rythme de parole de ton interlocuteur et ralentis ou accélère un peu."
+ },
+ {
+  "id": "p079",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "Trouver le point commun",
+  "text": "Les gens se rapprochent quand ils découvrent ce qu'ils partagent : une ville, une passion, une épreuve. Cherche activement ce point commun dans les premières minutes.",
+  "source": "Idée issue de la psychologie sociale",
+  "action": "Trouve un point commun avec quelqu'un de nouveau cette semaine."
+ },
+ {
+  "id": "p080",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "Le trac est normal",
+  "text": "Presque tout le monde ressent une gêne en parlant à un inconnu, même ceux qui ont l'air à l'aise. La gêne diminue avec la pratique, pas avec l'attente.",
+  "source": "Idée issue des thérapies de l'anxiété sociale",
+  "action": "Fais une micro-conversation par jour pendant une semaine."
+ },
+ {
+  "id": "p081",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "Sourire et prénom",
+  "text": "Un sourire sincère et l'usage du prénom de la personne créent une chaleur immédiate, quelle que soit sa culture ou son âge.",
+  "source": "Inspiré de : Dale Carnegie",
+  "action": "Salue chaque personne aujourd'hui par son prénom avec un sourire."
+ },
+ {
+  "id": "p082",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "Parler à quelqu'un d'important",
+  "text": "Face à une personne intimidante (patron, pasteur, personnalité), rappelle-toi que c'est un être humain avec les mêmes besoins que toi. Sois bref, clair, et respectueux de son temps.",
+  "source": "Idée issue de la communication professionnelle",
+  "action": "Prépare en 2 phrases ce que tu dirais à une personne que tu admires."
+ },
+ {
+  "id": "p083",
+  "domain": "social",
+  "theme": "Parler à tout le monde",
+  "title": "Terminer une conversation avec élégance",
+  "text": "Savoir finir est aussi important que commencer : « J'ai été content de parler avec toi, je te laisse » laisse une bonne impression et donne envie de se revoir.",
+  "source": "Technique de conversation courante",
+  "action": "Termine ta prochaine conversation par une phrase positive."
+ },
+ {
+  "id": "p084",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "Demander de l'aide est une force",
+  "text": "Parler à un médecin, un psychologue ou une personne de confiance n'est pas une faiblesse. C'est le même réflexe que d'aller chez le médecin pour une blessure physique.",
+  "source": "Message de santé publique",
+  "action": "Note le nom d'une personne ou d'un professionnel à qui tu pourrais parler si ça ne va pas."
+ },
+ {
+  "id": "p085",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "En cas de détresse, appelle",
+  "text": "Si tu as des idées noires ou si tu penses à te faire du mal, tu n'es pas seul : appelle tout de suite le numéro d'urgence de ton pays ou un proche. En France, le 3114 répond 24h/24, gratuitement.",
+  "source": "Numéro national de prévention du suicide (France)",
+  "action": "Enregistre dès maintenant un numéro d'aide dans ton téléphone."
+ },
+ {
+  "id": "p086",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "Le stress chronique use",
+  "text": "Un peu de stress aide à agir. Mais un stress permanent fatigue le corps et l'esprit : sommeil perturbé, irritabilité, difficulté à se concentrer. Ce sont des signaux à écouter, pas à ignorer.",
+  "source": "Idée issue de la psychologie de la santé",
+  "action": "Liste 3 signes qui t'indiquent que tu es trop stressé."
+ },
+ {
+  "id": "p087",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "La bienveillance envers soi",
+  "text": "Parle-toi comme tu parlerais à un ami qui traverse un moment difficile. Se critiquer durement ne rend pas plus fort ; la bienveillance aide à se relever plus vite.",
+  "source": "Inspiré de : Kristin Neff, l'autocompassion",
+  "action": "Réécris une critique que tu te fais en phrase qu'un ami te dirait."
+ },
+ {
+  "id": "p088",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "Le temps des soucis",
+  "text": "Si les inquiétudes tournent en boucle, donne-leur un rendez-vous : 15 minutes par jour pour les écrire. Quand elles reviennent hors de ce créneau, dis-toi « je verrai ça à mon rendez-vous ».",
+  "source": "Technique issue des thérapies cognitives et comportementales",
+  "action": "Fixe un créneau de 15 minutes « soucis » demain."
+ },
+ {
+  "id": "p089",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "Les pensées ne sont pas des faits",
+  "text": "« Je suis un échec » est une pensée, pas une vérité. Demande-toi : quelles preuves pour ? quelles preuves contre ? que dirait quelqu'un qui m'aime ?",
+  "source": "Technique issue des thérapies cognitives",
+  "action": "Passe une pensée négative au test des preuves aujourd'hui."
+ },
+ {
+  "id": "p090",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "Le burn-out ne prévient pas toujours",
+  "text": "Épuisement, cynisme, sentiment d'inefficacité : le burn-out s'installe lentement chez ceux qui donnent beaucoup. Se reposer avant d'être vidé est une responsabilité, pas un luxe.",
+  "source": "Idée issue des recherches sur l'épuisement professionnel",
+  "action": "Note sur 10 ton niveau d'énergie chaque soir cette semaine."
+ },
+ {
+  "id": "p091",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "Couper l'info en continu",
+  "text": "Les nouvelles et les réseaux sociaux en boucle augmentent l'anxiété. S'informer une fois par jour suffit pour rester au courant sans se noyer.",
+  "source": "Idée issue des recherches sur la consommation médiatique",
+  "action": "Choisis un seul moment de la journée pour lire les infos."
+ },
+ {
+  "id": "p092",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "Le lien humain protège",
+  "text": "Les relations proches sont l'un des meilleurs protecteurs de la santé mentale. Un appel, un repas partagé, une marche avec quelqu'un font plus de bien qu'on ne le croit.",
+  "source": "Inspiré de l'étude de Harvard sur le développement adulte",
+  "action": "Appelle ou vois quelqu'un qui compte pour toi cette semaine."
+ },
+ {
+  "id": "p093",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "Vider sa tête sur papier",
+  "text": "Ton cerveau sert à avoir des idées, pas à les stocker. Écris tout ce qui t'occupe l'esprit (tâches, soucis, idées) sur une feuille : tu libères de la place et tu y vois plus clair.",
+  "source": "Inspiré de : S'organiser pour réussir (GTD) — David Allen",
+  "action": "Fais un « vidage de tête » de 10 minutes ce soir."
+ },
+ {
+  "id": "p094",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "Un seul endroit pour tout noter",
+  "text": "Des idées éparpillées entre papiers, messages et mémoire se perdent. Choisis un seul carnet ou une seule appli (par exemple « Mes idées ») et note tout au même endroit.",
+  "source": "Inspiré de : GTD — David Allen",
+  "action": "Décide aujourd'hui de ton unique endroit de capture."
+ },
+ {
+  "id": "p095",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "Trier : faire, planifier, déléguer, jeter",
+  "text": "Après avoir tout noté, passe chaque élément au crible : je le fais maintenant (moins de 2 minutes), je le planifie, je le délègue, ou je l'abandonne.",
+  "source": "Inspiré de : la matrice d'Eisenhower et GTD",
+  "action": "Trie ta liste en 4 colonnes : faire, planifier, déléguer, jeter."
+ },
+ {
+  "id": "p096",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "La carte mentale",
+  "text": "Écris l'idée centrale au milieu d'une feuille, puis dessine des branches pour chaque sous-idée. Voir ses pensées sous forme d'arbre aide à les relier et à les hiérarchiser.",
+  "source": "Inspiré de : Tony Buzan, le mind mapping",
+  "action": "Fais une carte mentale d'un projet ou d'un problème actuel."
+ },
+ {
+  "id": "p097",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "Les 3 priorités du jour",
+  "text": "Une longue liste paralyse. Chaque matin, choisis seulement 3 choses qui, si elles sont faites, rendront ta journée réussie.",
+  "source": "Technique de productivité courante",
+  "action": "Écris tes 3 priorités pour demain avant de dormir."
+ },
+ {
+  "id": "p098",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "Écrire pour penser",
+  "text": "On croit qu'on écrit ce qu'on pense ; souvent, on découvre ce qu'on pense en l'écrivant. Le journal transforme un brouillard d'émotions en phrases claires.",
+  "source": "Idée issue des recherches sur l'écriture expressive (James Pennebaker)",
+  "action": "Écris 10 minutes dans ton journal sur ce qui t'occupe l'esprit."
+ },
+ {
+  "id": "p099",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "Une idée à la fois",
+  "text": "Quand tout se bouscule, choisis une seule pensée à traiter jusqu'au bout avant de passer à la suivante. Sauter d'une idée à l'autre donne l'impression d'avancer sans rien finir.",
+  "source": "Idée issue de la gestion de l'attention",
+  "action": "Pendant 25 minutes, travaille sur un seul sujet sans changer."
+ },
+ {
+  "id": "p100",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "Clarifier avec une question",
+  "text": "Une pensée floue (« ma vie n'avance pas ») devient gérable quand on la transforme en question précise : « Quelle petite étape puis-je faire cette semaine pour mon travail ? »",
+  "source": "Idée issue du coaching",
+  "action": "Transforme un souci flou en question précise et actionnable."
+ },
+ {
+  "id": "p101",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "La revue de la semaine",
+  "text": "Une fois par semaine, relis tes notes, ferme ce qui est fini et choisis tes priorités. C'est ce rituel qui empêche ta tête de redevenir encombrée.",
+  "source": "Inspiré de : GTD — David Allen",
+  "action": "Bloque 30 minutes ce week-end pour ta revue hebdomadaire."
+ },
+ {
+  "id": "p102",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "L'assiette équilibrée",
+  "text": "Une moitié de légumes, un quart de protéines (œufs, poisson, viande, légumineuses), un quart de féculents complets. Simple à retenir, sans compter les calories.",
+  "source": "Inspiré des recommandations nutritionnelles courantes",
+  "action": "Compose un repas aujourd'hui selon ce modèle."
+ },
+ {
+  "id": "p103",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "Boire assez d'eau",
+  "text": "La fatigue, les maux de tête et le manque de concentration viennent parfois d'un simple manque d'eau. Garde une bouteille près de toi toute la journée.",
+  "source": "Conseil de santé courant",
+  "action": "Garde une bouteille d'eau à portée de main aujourd'hui."
+ },
+ {
+  "id": "p104",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "Bouger un peu, souvent",
+  "text": "Rester assis des heures est mauvais pour le corps. Se lever et marcher quelques minutes toutes les heures fait une vraie différence.",
+  "source": "Recommandation de santé publique",
+  "action": "Lève-toi et marche 3 minutes toutes les heures aujourd'hui."
+ },
+ {
+  "id": "p105",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "S'étirer chaque jour",
+  "text": "Cinq minutes d'étirements le matin ou le soir réduisent les tensions, améliorent la posture et aident à se détendre avant de dormir.",
+  "source": "Conseil courant de bien-être physique",
+  "action": "Fais 5 minutes d'étirements ce soir."
+ },
+ {
+  "id": "p106",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "Les bilans de santé",
+  "text": "Beaucoup d'hommes ne voient un médecin qu'en cas d'urgence. Un bilan régulier (tension, sang, dents, yeux) permet de prévenir au lieu de réparer.",
+  "source": "Message de prévention santé",
+  "action": "Prends rendez-vous pour un bilan si le dernier date de plus d'un an."
+ },
+ {
+  "id": "p107",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "Les écrans avant de dormir",
+  "text": "La lumière et la stimulation des écrans retardent l'endormissement. Poser le téléphone 30 à 60 minutes avant le coucher améliore la qualité du sommeil.",
+  "source": "Conseil issu de la recherche sur le sommeil",
+  "action": "Ce soir, pose ton téléphone 30 minutes avant de dormir."
+ },
+ {
+  "id": "p108",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "Moins de sucre ajouté",
+  "text": "Les boissons sucrées et les snacks transformés donnent de l'énergie rapide puis un coup de fatigue. Remplacer les sodas par de l'eau est l'un des changements les plus efficaces.",
+  "source": "Recommandation nutritionnelle courante",
+  "action": "Remplace une boisson sucrée par de l'eau aujourd'hui."
+ },
+ {
+  "id": "p109",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "Écouter les signaux du corps",
+  "text": "Douleurs qui durent, fatigue anormale, essoufflement : le corps parle avant de crier. Ignorer ces signaux par fierté peut coûter cher.",
+  "source": "Message de prévention santé",
+  "action": "Note un signal de ton corps que tu ignores depuis trop longtemps."
+ },
+ {
+  "id": "p110",
+  "domain": "emotionnel",
+  "theme": "Pour les hommes",
+  "title": "Un homme a le droit de ressentir",
+  "text": "Tristesse, peur, doute : ce ne sont pas des faiblesses, ce sont des émotions humaines. Les cacher toujours ne les fait pas disparaître, elles ressortent en colère, en fatigue ou en isolement.",
+  "source": "Idée issue de la psychologie masculine",
+  "action": "Dis à une personne de confiance comment tu te sens vraiment aujourd'hui."
+ },
+ {
+  "id": "p111",
+  "domain": "social",
+  "theme": "Pour les hommes",
+  "title": "Les amitiés d'homme",
+  "text": "Beaucoup d'hommes perdent leurs amis avec l'âge, absorbés par le travail et la famille. Entretenir quelques amitiés profondes protège contre la solitude et le stress.",
+  "source": "Idée issue des recherches sur la solitude masculine",
+  "action": "Propose à un ami une activité ensemble cette semaine."
+ },
+ {
+  "id": "p112",
+  "domain": "discipline",
+  "theme": "Pour les hommes",
+  "title": "La force au service des autres",
+  "text": "La vraie force d'un homme ne se mesure pas à sa domination, mais à sa capacité à protéger, à tenir parole et à prendre ses responsabilités.",
+  "source": "Idée présente dans de nombreuses traditions, dont la Bible (Éphésiens 5:25)",
+  "action": "Tiens une promesse que tu as faite, même petite."
+ },
+ {
+  "id": "p113",
+  "domain": "professionnel",
+  "theme": "Pour les hommes",
+  "title": "Tu n'es pas que ton travail",
+  "text": "Si ta valeur dépend seulement de ton salaire ou de ton poste, un échec professionnel devient un effondrement personnel. Cultive aussi tes relations, ta foi, ta santé.",
+  "source": "Idée issue de la psychologie de l'identité",
+  "action": "Écris 3 choses qui font ta valeur en dehors du travail."
+ },
+ {
+  "id": "p114",
+  "domain": "relationnel",
+  "theme": "Soutenir les femmes",
+  "title": "Croire ce qu'elle vit",
+  "text": "Quand une femme parle d'une situation difficile (harcèlement, injustice, fatigue), la première aide est de la croire et de l'écouter, sans minimiser.",
+  "source": "Idée issue de l'accompagnement des victimes et de l'écoute bienveillante",
+  "action": "Si une femme se confie à toi, commence par « Je te crois, je t'écoute »."
+ },
+ {
+  "id": "p115",
+  "domain": "relationnel",
+  "theme": "Soutenir les femmes",
+  "title": "Partager la charge mentale",
+  "text": "Penser aux rendez-vous, aux courses, aux anniversaires, à l'organisation : cette charge invisible pèse souvent sur les femmes. La partager, c'est anticiper sans attendre qu'on te le demande.",
+  "source": "Idée issue des recherches sur la charge mentale",
+  "action": "Prends en charge une tâche complète à la maison, de A à Z, sans qu'on te le demande."
+ },
+ {
+  "id": "p116",
+  "domain": "social",
+  "theme": "Soutenir les femmes",
+  "title": "Respecter son « non »",
+  "text": "Un « non » ou une hésitation se respecte, sans insister ni culpabiliser. Le respect crée la confiance et la sécurité dans toutes les relations.",
+  "source": "Principe de base du respect et du consentement",
+  "action": "Réfléchis à une situation où tu as insisté alors qu'on t'a dit non."
+ },
+ {
+  "id": "p117",
+  "domain": "professionnel",
+  "theme": "Soutenir les femmes",
+  "title": "Donner la parole et le crédit",
+  "text": "En réunion ou en groupe, remarque qui parle peu ou qui est coupé. Redonner la parole (« Tu voulais dire quelque chose ? ») et reconnaître l'idée de chacune est un vrai soutien.",
+  "source": "Idée issue des recherches sur la dynamique de groupe",
+  "action": "À ta prochaine réunion, redonne la parole à quelqu'un qui a été interrompu."
+ },
+ {
+  "id": "p118",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Les rituels de connexion",
+  "text": "Un baiser en partant, un message à midi, 15 minutes pour parler de la journée le soir : ces petits rituels réguliers protègent le couple plus que les grandes occasions.",
+  "source": "Inspiré des recherches de John Gottman",
+  "action": "Crée un petit rituel quotidien avec ton/ta partenaire."
+ },
+ {
+  "id": "p119",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Se disputer sans se blesser",
+  "text": "Critiquer la personne (« tu es égoïste ») blesse ; parler du comportement (« quand tu as annulé, j'ai été déçu ») ouvre le dialogue. Évite le mépris, l'ironie et les « toujours/jamais ».",
+  "source": "Inspiré de : John Gottman, les « quatre cavaliers »",
+  "action": "Lors du prochain désaccord, parle d'un fait précis, pas de la personne."
+ },
+ {
+  "id": "p120",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "La pause quand ça chauffe",
+  "text": "Quand le cœur s'accélère et que la colère monte, on n'écoute plus. Proposer une pause de 20 minutes (« je reviens, je t'aime ») évite de dire ce qu'on regrettera.",
+  "source": "Inspiré des recherches de John Gottman",
+  "action": "Convenez ensemble d'un mot pour demander une pause."
+ },
+ {
+  "id": "p121",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Parler d'argent en couple",
+  "text": "L'argent est l'une des premières sources de conflit. En parler calmement et régulièrement (objectifs, dépenses, épargne) évite les non-dits et les surprises.",
+  "source": "Conseil courant en finances de couple",
+  "action": "Planifiez un moment pour parler de vos objectifs financiers communs."
+ },
+ {
+  "id": "p122",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Exprimer ses attentes",
+  "text": "Ton/ta partenaire ne peut pas deviner ce dont tu as besoin. Attendre qu'il ou elle devine mène à la déception ; le dire clairement et gentiment mène à la connexion.",
+  "source": "Idée issue de la thérapie de couple",
+  "action": "Exprime clairement un besoin à ton/ta partenaire aujourd'hui."
+ },
+ {
+  "id": "p123",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Les rendez-vous ne s'arrêtent pas",
+  "text": "Le couple a besoin de moments à deux, même après des années ou avec des enfants. Un rendez-vous régulier entretient la complicité et le désir.",
+  "source": "Conseil courant en thérapie de couple",
+  "action": "Planifiez un moment à deux cette semaine, même simple."
+ },
+ {
+  "id": "p124",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "S'excuser vraiment",
+  "text": "Une vraie excuse nomme ce qu'on a fait, reconnaît l'impact sur l'autre et dit ce qu'on va changer, sans « mais ». « Je suis désolé si tu t'es senti blessé » n'est pas une excuse.",
+  "source": "Idée issue de la psychologie relationnelle",
+  "action": "Pense à une excuse que tu dois encore et formule-la sans « mais »."
+ },
+ {
+  "id": "p125",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Rester deux individus",
+  "text": "Un couple sain, c'est deux personnes entières, pas deux moitiés. Garder ses amis, ses passions et son temps personnel nourrit aussi la relation.",
+  "source": "Idée issue de la thérapie de couple",
+  "action": "Encourage ton/ta partenaire à prendre du temps pour une passion."
+ },
+ {
+  "id": "p126",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Dire merci au quotidien",
+  "text": "Avec le temps, on remarque ce qui manque plus que ce qui est donné. Remercier son/sa partenaire pour les petites choses entretient l'affection et le respect.",
+  "source": "Idée issue de la psychologie positive appliquée au couple",
+  "action": "Remercie ton/ta partenaire pour une chose précise aujourd'hui."
  }
 ]

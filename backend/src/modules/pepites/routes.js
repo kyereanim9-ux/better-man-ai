@@ -75,7 +75,7 @@ function decorate(uid, p) {
 router.get('/feed', async (req, res) => {
   await db.read();
   const uid = req.user.id;
-  const { domain } = req.query;
+  const { domain, theme } = req.query;
   const limit = Math.min(Number(req.query.limit) || 10, 50);
   const seen = seenSet(uid);
   const weak = weakDomains(uid);
@@ -83,6 +83,7 @@ router.get('/feed', async (req, res) => {
 
   let list = allPepites(uid);
   if (domain && domain !== 'all') list = list.filter(p => p.domain === domain);
+  if (theme) list = list.filter(p => p.theme === theme);
 
   const ranked = list
     .map(p => ({
@@ -95,7 +96,7 @@ router.get('/feed', async (req, res) => {
 
   res.json({
     items: ranked,
-    focusDomains: domain && domain !== 'all' ? [] : weak,
+    focusDomains: (domain && domain !== 'all') || theme ? [] : weak,
     total: list.length,
     unseen: list.filter(p => !seen.has(p.id)).length
   });
@@ -115,6 +116,13 @@ router.get('/domains', (req, res) => {
   const counts = {};
   for (const p of CATALOG) counts[p.domain] = (counts[p.domain] || 0) + 1;
   res.json(DOMAINS.map(d => ({ domain: d, count: counts[d] || 0 })));
+});
+
+// Thèmes transversaux (Écouter sans juger, Couple, Santé mentale...).
+router.get('/themes', (req, res) => {
+  const counts = {};
+  for (const p of CATALOG) if (p.theme) counts[p.theme] = (counts[p.theme] || 0) + 1;
+  res.json(Object.entries(counts).map(([theme, count]) => ({ theme, count })));
 });
 
 // Statistiques de lecture : idées lues, série de jours, idées à réviser.

@@ -379,3 +379,5 @@ header.app-header {
 .pep-stash-item { margin-bottom: 10px; }
 #pep-more { width: 100%; }
 #view-pepites button.secondary { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); box-shadow: none; }
+.pep-theme { font-size: 11px; font-weight: 700; color: var(--success); background: var(--success-soft); border-radius: 999px; padding: 2px 8px; }
+.pep-chip.theme.active { background: var(--success-soft); color: var(--success); border-color: var(--success); }
