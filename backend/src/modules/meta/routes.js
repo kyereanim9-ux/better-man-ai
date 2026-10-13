@@ -9,6 +9,17 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.8.2',
+    date: '2026-10-13',
+    title: 'Pépites — Foi et Prière',
+    features: [
+      "41 nouvelles pépites sur la foi et la prière (167 au total), chacune avec sa référence biblique",
+      "Nouveaux thèmes filtrables : Foi et Prière"
+    ],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.8.1',
     date: '2026-10-13',
     title: 'Pépites — 62 nouvelles idées et filtres par thème',
