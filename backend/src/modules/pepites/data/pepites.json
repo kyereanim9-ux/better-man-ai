@@ -461,7 +461,8 @@
   "title": "Le repos est sacré",
   "text": "Le sabbat rappelle que l'homme n'est pas une machine. S'arrêter régulièrement, c'est reconnaître que tout ne dépend pas de toi.",
   "source": "Inspiré de la Bible (Exode 20:8-10)",
-  "action": "Réserve un moment cette semaine sans travail ni écran."
+  "action": "Réserve un moment cette semaine sans travail ni écran.",
+  "theme": "Foi"
  },
  {
   "id": "p059",
@@ -469,7 +470,8 @@
   "title": "Prends chaque pensée captive",
   "text": "Ne laisse pas toutes les pensées s'installer. Examine-les : sont-elles vraies, justes, utiles ? Garde celles qui construisent.",
   "source": "Inspiré de la Bible (2 Corinthiens 10:5 ; Philippiens 4:8)",
-  "action": "Examine une pensée négative à la lumière de Philippiens 4:8."
+  "action": "Examine une pensée négative à la lumière de Philippiens 4:8.",
+  "theme": "Foi"
  },
  {
   "id": "p060",
@@ -477,7 +479,8 @@
   "title": "Fidèle dans les petites choses",
   "text": "Celui qui est fidèle dans les petites choses l'est aussi dans les grandes. Le caractère se construit dans les gestes que personne ne voit.",
   "source": "Inspiré de la Bible (Luc 16:10)",
-  "action": "Fais une petite chose bien aujourd'hui, même si personne ne la voit."
+  "action": "Fais une petite chose bien aujourd'hui, même si personne ne la voit.",
+  "theme": "Foi"
  },
  {
   "id": "p061",
@@ -485,7 +488,8 @@
   "title": "Le silence intérieur",
   "text": "Quelques minutes de silence, de prière ou de méditation chaque jour recentrent l'esprit et remettent les priorités à leur place.",
   "source": "Pratique présente dans de nombreuses traditions spirituelles",
-  "action": "Commence demain par 5 minutes de silence ou de prière."
+  "action": "Commence demain par 5 minutes de silence ou de prière.",
+  "theme": "Prière"
  },
  {
   "id": "p062",
@@ -493,7 +497,8 @@
   "title": "Servir, c'est grandir",
   "text": "La grandeur véritable se mesure à la capacité de servir. Le leader qui sert inspire plus qu'il ne commande.",
   "source": "Inspiré de la Bible (Marc 10:43-45)",
-  "action": "Trouve une façon concrète de servir quelqu'un aujourd'hui."
+  "action": "Trouve une façon concrète de servir quelqu'un aujourd'hui.",
+  "theme": "Foi"
  },
  {
   "id": "p063",
@@ -1068,5 +1073,374 @@
   "text": "Avec le temps, on remarque ce qui manque plus que ce qui est donné. Remercier son/sa partenaire pour les petites choses entretient l'affection et le respect.",
   "source": "Idée issue de la psychologie positive appliquée au couple",
   "action": "Remercie ton/ta partenaire pour une chose précise aujourd'hui."
+ },
+ {
+  "id": "p127",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Prier dans le secret",
+  "text": "Jésus invite à entrer dans sa chambre et fermer la porte pour prier. La prière n'est pas un spectacle : c'est un rendez-vous intime avec Dieu, loin du regard des autres.",
+  "source": "Bible — Matthieu 6:6",
+  "action": "Choisis un lieu calme où tu pourras prier seul chaque jour."
+ },
+ {
+  "id": "p128",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Pas besoin de beaux mots",
+  "text": "Dieu n'écoute pas la longueur ni l'éloquence de nos prières. Il écoute le cœur. Des mots simples et sincères valent mieux que des formules répétées sans y penser.",
+  "source": "Bible — Matthieu 6:7-8",
+  "action": "Prie aujourd'hui avec tes propres mots, comme tu parlerais à un père."
+ },
+ {
+  "id": "p129",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Le Notre Père, un modèle",
+  "text": "Jésus a donné une prière modèle : honorer Dieu, désirer sa volonté, demander le pain du jour, recevoir et donner le pardon, être gardé du mal. Chaque phrase peut ouvrir un temps de prière.",
+  "source": "Bible — Matthieu 6:9-13",
+  "action": "Prie le Notre Père lentement, en t'arrêtant sur chaque phrase."
+ },
+ {
+  "id": "p130",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "La méthode ACTS",
+  "text": "Pour structurer ta prière : Adoration (qui est Dieu), Confession (ce que je dois reconnaître), action de grâce (Thanks : ce pour quoi je dis merci), Supplication (ce que je demande pour moi et les autres).",
+  "source": "Méthode de prière courante dans les Églises",
+  "action": "Fais une prière de 10 minutes en suivant les 4 étapes ACTS."
+ },
+ {
+  "id": "p131",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Le matin avant tout",
+  "text": "Jésus se levait de grand matin, quand il faisait encore sombre, pour prier dans un lieu désert. Commencer la journée avec Dieu oriente tout ce qui suit.",
+  "source": "Bible — Marc 1:35",
+  "action": "Demain, prie 5 minutes avant de regarder ton téléphone."
+ },
+ {
+  "id": "p132",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Priez sans cesse",
+  "text": "Prier sans cesse ne veut pas dire rester à genoux toute la journée, mais vivre en conversation avec Dieu : un merci dans la voiture, une demande avant une réunion, un soupir confié.",
+  "source": "Bible — 1 Thessaloniciens 5:17",
+  "action": "Fais aujourd'hui 3 courtes prières au milieu de tes activités."
+ },
+ {
+  "id": "p133",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "La prière éclair",
+  "text": "Avant de répondre au roi, Néhémie a prié le Dieu des cieux en un instant. Une prière de quelques secondes, au cœur d'un moment tendu, est une vraie prière.",
+  "source": "Bible — Néhémie 2:4-5",
+  "action": "Avant ta prochaine décision difficile, fais une prière de 5 secondes."
+ },
+ {
+  "id": "p134",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Contre l'inquiétude",
+  "text": "Au lieu de t'inquiéter, présente tes besoins à Dieu par la prière, avec des actions de grâces. La paix promise ne dépend pas des circonstances : elle garde le cœur et les pensées.",
+  "source": "Bible — Philippiens 4:6-7",
+  "action": "Écris ton plus grand souci et transforme-le en prière."
+ },
+ {
+  "id": "p135",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Décharge-toi sur lui",
+  "text": "Tu n'es pas fait pour porter seul tout le poids de tes soucis. Les confier à Dieu, c'est reconnaître qu'il prend soin de toi.",
+  "source": "Bible — 1 Pierre 5:7",
+  "action": "Nomme un fardeau précis et dis à Dieu : « Je te le confie. »"
+ },
+ {
+  "id": "p136",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Persévérer dans la prière",
+  "text": "Jésus raconte l'histoire d'une veuve qui revient sans cesse devant un juge jusqu'à obtenir justice, pour montrer qu'il faut toujours prier sans se décourager.",
+  "source": "Bible — Luc 18:1-8",
+  "action": "Choisis un sujet de prière et prie pour lui chaque jour pendant 30 jours."
+ },
+ {
+  "id": "p137",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Que ta volonté soit faite",
+  "text": "À Gethsémané, Jésus a exprimé sa détresse tout en disant « non pas ce que je veux, mais ce que tu veux ». Prier, c'est aussi aligner notre volonté sur celle de Dieu.",
+  "source": "Bible — Matthieu 26:39",
+  "action": "Termine ta prière aujourd'hui par : « Que ta volonté soit faite. »"
+ },
+ {
+  "id": "p138",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Quand on ne sait pas quoi dire",
+  "text": "Il y a des jours où les mots manquent. L'Esprit nous aide dans notre faiblesse et intercède pour nous. Un silence devant Dieu est aussi une prière.",
+  "source": "Bible — Romains 8:26",
+  "action": "Passe 3 minutes en silence devant Dieu, sans rien demander."
+ },
+ {
+  "id": "p139",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Dire sa douleur à Dieu",
+  "text": "Les Psaumes sont pleins de cris : « Jusqu'à quand, Éternel ? » Dieu n'attend pas de toi une façade pieuse. Tu peux lui dire ta colère, ta tristesse et tes doutes.",
+  "source": "Bible — Psaume 13",
+  "action": "Écris une prière honnête sur ce qui te fait mal en ce moment."
+ },
+ {
+  "id": "p140",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Prier les uns pour les autres",
+  "text": "Confesser ses fautes et prier les uns pour les autres apporte la guérison. Avoir un partenaire de prière, c'est ne plus porter ses combats seul.",
+  "source": "Bible — Jacques 5:16",
+  "action": "Propose à un frère ou un ami de prier ensemble une fois par semaine."
+ },
+ {
+  "id": "p141",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Prier pour ses ennemis",
+  "text": "Jésus demande de prier pour ceux qui nous font du mal. C'est difficile, mais c'est souvent la prière qui libère notre cœur de la rancune.",
+  "source": "Bible — Matthieu 5:44",
+  "action": "Prie pour une personne qui t'a blessé, même en une phrase."
+ },
+ {
+  "id": "p142",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Prier pour les autres",
+  "text": "Paul encourage à prier pour tous les hommes, y compris les dirigeants. Élargir sa prière au-delà de soi-même change notre regard sur le monde.",
+  "source": "Bible — 1 Timothée 2:1-2",
+  "action": "Fais une liste de 5 personnes et prie pour elles cette semaine."
+ },
+ {
+  "id": "p143",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Le carnet de prière",
+  "text": "Note tes sujets de prière et la date. Plus tard, relis-le : tu verras des réponses que tu aurais oubliées, et ta foi en sera fortifiée.",
+  "source": "Pratique spirituelle courante",
+  "action": "Commence un carnet de prière aujourd'hui (ou utilise ton journal)."
+ },
+ {
+  "id": "p144",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Un rythme de prière",
+  "text": "Daniel priait trois fois par jour, même quand c'était dangereux. Un rythme régulier protège la prière quand l'envie ou l'émotion manquent.",
+  "source": "Bible — Daniel 6:10",
+  "action": "Fixe deux moments de prière par jour et mets un rappel."
+ },
+ {
+  "id": "p145",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Demander la sagesse",
+  "text": "Si quelqu'un manque de sagesse, qu'il la demande à Dieu, qui donne à tous simplement. Avant une décision importante, la prière éclaire le chemin.",
+  "source": "Bible — Jacques 1:5",
+  "action": "Prie pour une décision que tu dois prendre cette semaine."
+ },
+ {
+  "id": "p146",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Le pouvoir de la prière ensemble",
+  "text": "Là où deux ou trois sont assemblés au nom de Jésus, il est au milieu d'eux. Prier en couple, en famille ou en groupe crée une unité profonde.",
+  "source": "Bible — Matthieu 18:20",
+  "action": "Propose à ta famille ou à ton/ta partenaire un court temps de prière."
+ },
+ {
+  "id": "p147",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Louer dans l'épreuve",
+  "text": "En prison, à minuit, Paul et Silas priaient et chantaient les louanges de Dieu. La louange au cœur de l'épreuve change l'atmosphère intérieure.",
+  "source": "Bible — Actes 16:25",
+  "action": "Dans un moment difficile aujourd'hui, mets un chant de louange."
+ },
+ {
+  "id": "p148",
+  "domain": "spirituel",
+  "theme": "Prière",
+  "title": "Le jeûne et la prière",
+  "text": "Jésus parle du jeûne comme d'une pratique discrète, entre soi et Dieu. Se priver d'un repas, d'un écran ou d'un plaisir peut aiguiser la prière. Si tu as un souci de santé, demande d'abord conseil à un médecin.",
+  "source": "Bible — Matthieu 6:16-18",
+  "action": "Choisis une chose dont te priver une journée pour te consacrer à la prière."
+ },
+ {
+  "id": "p149",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "La foi, une ferme assurance",
+  "text": "La foi est une ferme assurance des choses qu'on espère, une démonstration de celles qu'on ne voit pas. Elle ne nie pas la réalité : elle regarde plus loin.",
+  "source": "Bible — Hébreux 11:1",
+  "action": "Écris une chose que tu espères et que tu confies à Dieu."
+ },
+ {
+  "id": "p150",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Une foi grande comme une graine",
+  "text": "Jésus dit qu'une foi grande comme un grain de sénevé (moutarde) peut déplacer des montagnes. Ce n'est pas la taille de ta foi qui compte, mais la grandeur de celui en qui tu crois.",
+  "source": "Bible — Matthieu 17:20",
+  "action": "Confie à Dieu une « montagne » dans ta vie, même avec une petite foi."
+ },
+ {
+  "id": "p151",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Croire avec ses doutes",
+  "text": "Un père a dit à Jésus : « Je crois ! Viens au secours de mon incrédulité ! » Et Jésus l'a aidé. Le doute n'est pas l'opposé de la foi ; il peut devenir une prière.",
+  "source": "Bible — Marc 9:24",
+  "action": "Dis à Dieu honnêtement un doute que tu portes."
+ },
+ {
+  "id": "p152",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "La foi se nourrit",
+  "text": "La foi vient de ce qu'on entend, de la Parole. Comme le corps a besoin de nourriture chaque jour, la foi grandit en lisant et en méditant la Bible.",
+  "source": "Bible — Romains 10:17",
+  "action": "Lis un chapitre de la Bible aujourd'hui (par exemple un Psaume)."
+ },
+ {
+  "id": "p153",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Une foi qui agit",
+  "text": "La foi sans les œuvres est morte. Croire vraiment se voit dans la manière dont on traite les autres, dont on travaille et dont on aime.",
+  "source": "Bible — Jacques 2:17",
+  "action": "Fais une action concrète de bonté aujourd'hui au nom de ta foi."
+ },
+ {
+  "id": "p154",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Se confier de tout son cœur",
+  "text": "Confie-toi en l'Éternel de tout ton cœur et ne t'appuie pas sur ta propre sagesse. Reconnais-le dans toutes tes voies, et il aplanira tes sentiers.",
+  "source": "Bible — Proverbes 3:5-6",
+  "action": "Identifie un domaine où tu comptes seulement sur toi, et remets-le à Dieu."
+ },
+ {
+  "id": "p155",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Chercher d'abord le Royaume",
+  "text": "Cherchez premièrement le royaume et la justice de Dieu, et le reste vous sera donné par-dessus. Mettre Dieu en premier remet le reste à sa juste place.",
+  "source": "Bible — Matthieu 6:33",
+  "action": "Donne à Dieu les 10 premières minutes de ta journée demain."
+ },
+ {
+  "id": "p156",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Fortifie-toi et prends courage",
+  "text": "Dieu dit à Josué de ne pas être effrayé ni épouvanté, car il est avec lui partout où il va. La foi ne supprime pas la peur ; elle donne le courage d'avancer.",
+  "source": "Bible — Josué 1:9",
+  "action": "Fais aujourd'hui un pas que la peur te faisait repousser."
+ },
+ {
+  "id": "p157",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Ma grâce te suffit",
+  "text": "Paul a demandé trois fois d'être délivré d'une épreuve. La réponse : « Ma grâce te suffit, car ma puissance s'accomplit dans la faiblesse. » Tes faiblesses ne t'éloignent pas de Dieu.",
+  "source": "Bible — 2 Corinthiens 12:9",
+  "action": "Écris une faiblesse et demande à Dieu sa force dans ce domaine."
+ },
+ {
+  "id": "p158",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Ses bontés se renouvellent",
+  "text": "Les bontés de l'Éternel ne sont pas épuisées, elles se renouvellent chaque matin. Chaque jour est une nouvelle chance, quel que soit hier.",
+  "source": "Bible — Lamentations 3:22-23",
+  "action": "Ce matin, remercie Dieu pour un nouveau départ."
+ },
+ {
+  "id": "p159",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Renouveler ses forces",
+  "text": "Ceux qui se confient en l'Éternel renouvellent leur force ; ils prennent le vol comme les aigles. Quand tu es épuisé, la foi est une source qui recharge.",
+  "source": "Bible — Ésaïe 40:31",
+  "action": "Dans un moment de fatigue, lis Ésaïe 40:28-31."
+ },
+ {
+  "id": "p160",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Toutes choses concourent au bien",
+  "text": "Toutes choses concourent au bien de ceux qui aiment Dieu. Cela ne veut pas dire que tout est bien, mais que Dieu peut tirer du bien même de nos épreuves.",
+  "source": "Bible — Romains 8:28",
+  "action": "Repense à une épreuve passée : quel bien en est sorti ?"
+ },
+ {
+  "id": "p161",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Le pardon qui relève",
+  "text": "Si nous confessons nos péchés, il est fidèle et juste pour nous les pardonner. La culpabilité qui accable n'est pas la voix de Dieu ; sa voix appelle à revenir.",
+  "source": "Bible — 1 Jean 1:9 ; Psaume 51",
+  "action": "Confesse à Dieu ce qui te pèse et reçois son pardon."
+ },
+ {
+  "id": "p162",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Demeurer en lui",
+  "text": "« Sans moi vous ne pouvez rien faire », dit Jésus. Comme le sarment reste attaché au cep pour porter du fruit, la foi grandit dans une relation quotidienne, pas dans des efforts isolés.",
+  "source": "Bible — Jean 15:5",
+  "action": "Demande-toi : qu'est-ce qui m'aide à rester connecté à Dieu au quotidien ?"
+ },
+ {
+  "id": "p163",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Méditer la Parole",
+  "text": "L'homme heureux trouve son plaisir dans la loi de l'Éternel et la médite jour et nuit. Méditer, c'est relire lentement un verset et le laisser travailler en soi.",
+  "source": "Bible — Psaume 1:2",
+  "action": "Choisis un verset et relis-le 3 fois dans la journée."
+ },
+ {
+  "id": "p164",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Arrêtez, et sachez",
+  "text": "« Arrêtez, et sachez que je suis Dieu. » Dans un monde bruyant et pressé, la foi s'enracine aussi dans le calme et l'arrêt.",
+  "source": "Bible — Psaume 46:11",
+  "action": "Prends 5 minutes de calme total aujourd'hui pour te souvenir que Dieu est là."
+ },
+ {
+  "id": "p165",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "La foi se vit ensemble",
+  "text": "N'abandonnons pas notre assemblée, mais exhortons-nous les uns les autres. La foi isolée s'affaiblit ; la communauté la soutient dans les jours difficiles.",
+  "source": "Bible — Hébreux 10:24-25",
+  "action": "Contacte un frère ou une sœur de ton église pour prendre des nouvelles."
+ },
+ {
+  "id": "p166",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Une lampe à tes pieds",
+  "text": "Ta parole est une lampe à mes pieds et une lumière sur mon sentier. La Bible n'éclaire pas toujours tout le chemin, mais assez pour le prochain pas.",
+  "source": "Bible — Psaume 119:105",
+  "action": "Avant une décision, cherche un passage biblique qui parle de la situation."
+ },
+ {
+  "id": "p167",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Thomas et ses questions",
+  "text": "Thomas voulait voir pour croire. Jésus ne l'a pas rejeté : il est venu à lui. Tes questions sincères peuvent te rapprocher de Dieu plutôt que t'en éloigner.",
+  "source": "Bible — Jean 20:24-29",
+  "action": "Note une question que tu te poses sur la foi et cherche à en parler à quelqu'un de confiance."
  }
 ]
