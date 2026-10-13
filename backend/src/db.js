@@ -35,7 +35,10 @@ const defaultData = {
   physiqueProgressPhotos: [], // { id, userId, photo, note, date, createdAt } — comparaison visuelle datée, jamais notée par l'IA
   skincareLogs: [],         // { id, userId, date, amSteps: [], pmSteps: [] }
   mealLogs: [],              // { id, userId, photo, description, mealType, date, createdAt } — journal photo, aucune analyse automatique
-  imageAnalyses: []          // { id, userId, category, photo (ou null si non conservée), messages: [{role,content,createdAt}], providerUsed, modelUsed, createdAt }
+  imageAnalyses: [],         // { id, userId, category, photo (ou null si non conservée), messages: [{role,content,createdAt}], providerUsed, modelUsed, createdAt }
+  pepiteSaves: [],           // { id, userId, pepiteId, stash, stage, nextReview, mastered, savedAt }
+  pepiteViews: [],           // { id, userId, pepiteId, date, createdAt }
+  pepiteCustom: []           // { id, userId, title, text, domain, source, action, createdAt }
 };
 
 // Domaines de vie utilisés partout dans l'app (scores, objectifs, habitudes,
@@ -181,4 +184,7 @@ export function purgeUserData(userId) {
   db.data.skincareLogs = db.data.skincareLogs.filter(s => s.userId !== userId);
   db.data.mealLogs = db.data.mealLogs.filter(m => m.userId !== userId);
   db.data.imageAnalyses = db.data.imageAnalyses.filter(a => a.userId !== userId);
+  db.data.pepiteSaves = db.data.pepiteSaves.filter(s => s.userId !== userId);
+  db.data.pepiteViews = db.data.pepiteViews.filter(v => v.userId !== userId);
+  db.data.pepiteCustom = db.data.pepiteCustom.filter(c => c.userId !== userId);
 }

@@ -9,6 +9,23 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.8.0',
+    date: '2026-10-13',
+    title: 'Pépites — des idées puissantes en 1 minute',
+    features: [
+      "Pépites : 64 idées courtes (discipline, mental, émotions, couple, communication, physique, finances, travail, social, foi...), à lire en 1 minute",
+      "Fil « Pour moi » qui met en avant tes domaines les moins travaillés ces 14 derniers jours",
+      "Pépite du jour sur l'Accueil",
+      "Collections : garde tes pépites préférées par thème",
+      "Révision espacée des pépites gardées (J1 → J3 → J7 → J14 → J30 → maîtrisée)",
+      "Passer à l'action : transforme une pépite en habitude ou en objectif en un clic",
+      "Crée tes propres pépites, ou extrais-les d'un livre de ta bibliothèque",
+      "Écoute audio et partage de chaque pépite"
+    ],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.7.0',
     date: '2026-09-18',
     title: 'Phase 7 — Physique, Style, Adaptation automatique',

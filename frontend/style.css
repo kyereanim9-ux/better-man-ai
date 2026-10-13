@@ -352,3 +352,30 @@ header.app-header {
 .accent-dot[data-accent-choice="orange"] { background: linear-gradient(135deg, #ff9f43, #ff6c6c); }
 
 #lock-screen h1 { background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* ---------- Pépites ---------- */
+.feature-card.pepite { background: linear-gradient(135deg, var(--accent-soft), var(--panel)); }
+.feature-card.pepite .fc-sub { color: var(--text); line-height: 1.5; }
+.pep-stats { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; font-size: 12.5px; }
+.pep-stats span { background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px; padding: 5px 10px; }
+.pep-tabs { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 14px; padding-bottom: 2px; }
+.pep-tab { flex-shrink: 0; background: var(--panel); color: var(--muted); border: 1px solid var(--border); box-shadow: none; padding: 8px 12px; font-size: 13px; }
+.pep-tab.active { color: var(--accent-contrast); border-color: transparent; background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+.pep-chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 6px; }
+.pep-chip { flex-shrink: 0; background: transparent; color: var(--muted); border: 1px solid var(--border); box-shadow: none; padding: 5px 11px; font-size: 12px; border-radius: 999px; }
+.pep-chip.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.pep-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow-sm); }
+.pep-card input, .pep-card textarea { width: 100%; margin-bottom: 8px; box-sizing: border-box; }
+.pep-top { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.pep-domain { font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.pep-title { font-weight: 800; font-size: 17px; margin-bottom: 8px; }
+.pep-text { font-size: 15px; line-height: 1.55; margin-bottom: 10px; }
+.pep-action { background: var(--success-soft); border-radius: var(--radius-sm); padding: 8px 10px; font-size: 13.5px; margin-bottom: 8px; }
+.pep-source { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 8px; }
+.pep-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.pep-buttons button.small { padding: 6px 10px; font-size: 12.5px; background: transparent; border: 1px solid var(--border); color: var(--text); box-shadow: none; }
+.pep-buttons button.small.danger { color: var(--danger); }
+.card-block form.pep-form { display: flex; flex-direction: column; gap: 8px; }
+.pep-stash-item { margin-bottom: 10px; }
+#pep-more { width: 100%; }
+#view-pepites button.secondary { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); box-shadow: none; }

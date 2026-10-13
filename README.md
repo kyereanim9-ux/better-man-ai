@@ -37,6 +37,7 @@ better-man-ai/
 │   │       ├── finance/      → transactions, résumé mensuel, épargne
 │   │       ├── meta/         → historique des versions (What's New)
 │   │       ├── privacy/      → export et suppression des données
+│   │       ├── pepites/      → idées courtes à lire en 1 min (façon Deepstash)
 │   │       ├── library/      → bibliothèque de livres (upload, résumé, flashcards)
 │   │       ├── videos/       → vidéothèque (lien + transcription optionnelle)
 │   │       ├── teach/        → "Teach Me" (programme progressif 5 niveaux)
@@ -374,7 +375,29 @@ Automatisations et nouvelles intégrations restent hors scope pour une app
 
 ---
 
-## 14. À propos du déploiement en ligne (Vercel)
+## 14. Nouveautés — Pépites (v0.8)
+
+- **✨ Pépites** (onglet dédié + « Pépite du jour » sur l'Accueil) : des
+  idées courtes à lire en 1 minute, sur le principe d'apps comme Deepstash,
+  mais 100 % gratuit, sans abonnement ni limite.
+  - **64 pépites** rédigées pour l'app (paraphrases inspirées de livres et
+    principes connus, source toujours indiquée), réparties sur les 11
+    domaines de vie. Ajoute-en librement dans
+    `backend/src/modules/pepites/data/pepites.json`.
+  - **Fil « Pour moi »** : les idées non lues d'abord, en mettant en avant
+    les domaines où tu as le moins d'activité (habitudes/objectifs) sur 14 jours.
+  - **Collections** : 🔖 garde une pépite dans la collection de ton choix.
+  - **Révision espacée** : chaque pépite gardée revient à J1, J3, J7, J14,
+    J30, jusqu'à être maîtrisée.
+  - **Passer à l'action** : transforme l'action proposée en habitude ou en
+    objectif en un clic — ce que Deepstash ne fait pas.
+  - **Créer** : écris tes propres pépites, ou extrais des phrases clés d'un
+    livre de ta bibliothèque pour les reformuler.
+  - Lecture audio et partage sur chaque carte.
+
+---
+
+## 15. À propos du déploiement en ligne (Vercel)
 
 Cette app peut être déployée sur Vercel (voir `vercel.json`, `api/index.js`)
 pour obtenir un lien public permanent, en plus de l'usage local. Si tu as

@@ -353,6 +353,7 @@ function switchView(view) {
   if (view === 'adaptation') { /* chargé au clic sur "Analyser" */ }
   if (view === 'domains') loadDomains();
   if (view === 'ideas') loadIdeas();
+  if (view === 'pepites') loadPepites();
   if (view === 'profile-setup') loadOnboarding();
   if (view === 'whats-new') loadWhatsNew();
   if (view === 'account') loadAccount();
@@ -384,6 +385,7 @@ const CATEGORIES = {
     { view: 'domains', icon: '🧠', name: 'Domaines', desc: 'Vue d\'ensemble de ta vie' }
   ],
   'cat-apprendre': [
+    { view: 'pepites', icon: '✨', name: 'Pépites', desc: 'Une idée puissante en 1 minute' },
     { view: 'bible', icon: '📖', name: 'Bible', desc: 'Lire, mémoriser, appliquer' },
     { view: 'library', icon: '📚', name: 'Bibliothèque', desc: 'Tes livres et lectures' },
     { view: 'teach', icon: '🎓', name: 'Teach Me', desc: 'Apprends un sujet en 5 niveaux' },
@@ -432,6 +434,7 @@ function renderCategories(domainScores) {
 
 // --- DAILY : tableau de bord d'accueil ---
 async function loadDailyDashboard() {
+  loadDailyPepite();
   try {
     const [daily, gami, domains, verseOfDay] = await Promise.all([
       api('/daily'),
@@ -2972,3 +2975,268 @@ async function renderIdeaPhotos(ideaId) {
     b.onclick = async (e) => { e.stopPropagation(); if (confirm('Supprimer cette photo ?')) { await mediaDel(b.dataset.delPh); renderIdeaPhotos(ideaId); } };
   });
 }
+
+
+// --- PÉPITES : idées courtes à lire en 1 minute (façon Deepstash, gratuit) ---
+const pepState = { domain: 'all', limit: 10 };
+
+function pepiteCardHTML(p, opts = {}) {
+  const label = DOMAIN_LABELS[p.domain] || p.domain;
+  return `
+    <div class="pep-card" data-pep-id="${escapeHtml(p.id)}">
+      <div class="pep-top">
+        <span class="pep-domain">${escapeHtml(label)}</span>
+        ${p.seen ? '<span class="meta">déjà lue</span>' : ''}
+        ${p.custom ? '<span class="meta">ma pépite</span>' : ''}
+      </div>
+      <div class="pep-title">${escapeHtml(p.title)}</div>
+      <div class="pep-text">${escapeHtml(p.text)}</div>
+      ${p.action ? `<div class="pep-action">👉 ${escapeHtml(p.action)}</div>` : ''}
+      <div class="pep-source">${escapeHtml(p.source || '')}</div>
+      ${opts.compact ? '' : speakerHTML(`${p.title}. ${p.text} ${p.action ? 'Action : ' + p.action : ''}`)}
+      ${opts.compact ? '' : `
+      <div class="pep-buttons">
+        <button type="button" class="small" data-pep-save="${escapeHtml(p.id)}">${p.saved ? `🔖 ${escapeHtml(p.stash)}` : '🔖 Garder'}</button>
+        <button type="button" class="small" data-pep-apply="habit" data-id="${escapeHtml(p.id)}">✅ En habitude</button>
+        <button type="button" class="small" data-pep-apply="goal" data-id="${escapeHtml(p.id)}">🎯 En objectif</button>
+        <button type="button" class="small" data-pep-share="${escapeHtml(p.id)}">📤 Partager</button>
+        ${p.custom ? `<button type="button" class="small danger" data-pep-del="${escapeHtml(p.id)}">Supprimer</button>` : ''}
+      </div>`}
+    </div>
+  `;
+}
+
+// Les cartes affichées sont gardées en mémoire pour le partage / la sauvegarde.
+const pepCache = {};
+function rememberPepites(list) { list.forEach(p => { pepCache[p.id] = p; }); }
+
+function bindPepiteButtons(root, reload) {
+  root.querySelectorAll('[data-pep-save]').forEach(btn => {
+    btn.onclick = async () => {
+      const p = pepCache[btn.dataset.pepSave];
+      const stash = prompt('Dans quelle collection ? (ex : Favoris, Couple, Travail)', p?.stash || 'Favoris');
+      if (stash === null) return;
+      try { await api(`/pepites/${btn.dataset.pepSave}/save`, { method: 'POST', body: { stash } }); showToast('🔖 Pépite gardée — elle reviendra en révision.'); reload(); loadPepiteStats(); }
+      catch (e) { showToast(escapeHtml(e.message)); }
+    };
+  });
+  root.querySelectorAll('[data-pep-apply]').forEach(btn => {
+    btn.onclick = async () => {
+      const p = pepCache[btn.dataset.id];
+      const as = btn.dataset.pepApply;
+      const title = prompt(as === 'habit' ? 'Nom de la nouvelle habitude :' : 'Nom du nouvel objectif :', p?.action || p?.title || '');
+      if (!title) return;
+      try { await api(`/pepites/${btn.dataset.id}/apply`, { method: 'POST', body: { as, title } }); showToast(as === 'habit' ? '✅ Habitude créée !' : '🎯 Objectif créé !'); }
+      catch (e) { showToast(escapeHtml(e.message)); }
+    };
+  });
+  root.querySelectorAll('[data-pep-share]').forEach(btn => {
+    btn.onclick = async () => {
+      const p = pepCache[btn.dataset.pepShare];
+      if (!p) return;
+      const text = `✨ ${p.title}\n\n${p.text}${p.action ? `\n\n👉 ${p.action}` : ''}\n\n— ${p.source || ''}`;
+      try {
+        if (navigator.share) await navigator.share({ title: p.title, text });
+        else { await navigator.clipboard.writeText(text); showToast('📋 Copiée dans le presse-papier.'); }
+      } catch (e) { /* partage annulé */ }
+    };
+  });
+  root.querySelectorAll('[data-pep-del]').forEach(btn => {
+    btn.onclick = async () => {
+      if (!confirm('Supprimer cette pépite ?')) return;
+      await api(`/pepites/custom/${btn.dataset.pepDel}`, { method: 'DELETE' });
+      reload(); loadPepiteStats();
+    };
+  });
+}
+
+// Marque comme lues les cartes réellement affichées à l'écran.
+let pepObserver = null;
+function observePepitesSeen(root) {
+  if (!('IntersectionObserver' in window)) return;
+  if (pepObserver) pepObserver.disconnect();
+  pepObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const id = entry.target.dataset.pepId;
+      pepObserver.unobserve(entry.target);
+      setTimeout(() => api(`/pepites/${id}/seen`, { method: 'POST' }).then(loadPepiteStats).catch(() => {}), 1500);
+    });
+  }, { threshold: 0.6 });
+  root.querySelectorAll('.pep-card').forEach(c => pepObserver.observe(c));
+}
+
+async function loadDailyPepite() {
+  const el = document.getElementById('daily-pepite');
+  if (!el) return;
+  try {
+    const p = await api('/pepites/daily');
+    el.innerHTML = `<strong>${escapeHtml(p.title)}</strong><br>${escapeHtml(p.text)}${p.action ? `<br><em>👉 ${escapeHtml(p.action)}</em>` : ''}`;
+  } catch (e) { el.textContent = 'Pépite indisponible pour le moment.'; }
+}
+
+async function loadPepiteStats() {
+  try {
+    const st = await api('/pepites/stats');
+    document.getElementById('pep-stats').innerHTML = `
+      <span>📖 ${st.read} lues${st.readToday ? ` (${st.readToday} aujourd'hui)` : ''}</span>
+      <span>🔥 ${st.streak} jour${st.streak > 1 ? 's' : ''} de série</span>
+      <span>🔖 ${st.saved} gardées</span>
+      <span>🏆 ${st.mastered} maîtrisées</span>`;
+    document.getElementById('pep-review-count').textContent = st.dueReview ? `(${st.dueReview})` : '';
+  } catch (e) { /* stats non bloquantes */ }
+}
+
+function switchPepTab(tab) {
+  document.querySelectorAll('.pep-tab').forEach(b => b.classList.toggle('active', b.dataset.pepTab === tab));
+  document.querySelectorAll('[data-pep-panel]').forEach(p => p.classList.toggle('hidden', p.dataset.pepPanel !== tab));
+  if (tab === 'feed') loadPepiteFeed();
+  if (tab === 'review') loadPepiteReview();
+  if (tab === 'stashes') loadPepiteStashes();
+  if (tab === 'create') loadPepiteCreate();
+}
+document.querySelectorAll('.pep-tab').forEach(b => { b.onclick = () => switchPepTab(b.dataset.pepTab); });
+
+async function loadPepites() {
+  loadPepiteStats();
+  const chips = document.getElementById('pep-domain-chips');
+  if (!chips.dataset.ready) {
+    const domains = await api('/pepites/domains').catch(() => []);
+    chips.innerHTML = `<button class="pep-chip active" data-pep-domain="all">Pour moi</button>` +
+      domains.filter(d => d.count).map(d => `<button class="pep-chip" data-pep-domain="${d.domain}">${escapeHtml(DOMAIN_LABELS[d.domain] || d.domain)}</button>`).join('');
+    chips.querySelectorAll('[data-pep-domain]').forEach(c => {
+      c.onclick = () => {
+        chips.querySelectorAll('.pep-chip').forEach(x => x.classList.toggle('active', x === c));
+        pepState.domain = c.dataset.pepDomain; pepState.limit = 10;
+        loadPepiteFeed();
+      };
+    });
+    chips.dataset.ready = '1';
+  }
+  switchPepTab('feed');
+}
+
+async function loadPepiteFeed() {
+  const el = document.getElementById('pep-feed');
+  try {
+    const data = await api(`/pepites/feed?domain=${encodeURIComponent(pepState.domain)}&limit=${pepState.limit}`);
+    rememberPepites(data.items);
+    document.getElementById('pep-focus').textContent = data.focusDomains.length
+      ? `Mis en avant pour toi : ${data.focusDomains.map(d => DOMAIN_LABELS[d] || d).join(', ')} (domaines peu travaillés ces 14 derniers jours). ${data.unseen} idée(s) jamais lue(s).`
+      : `${data.unseen} idée(s) jamais lue(s) sur ${data.total}.`;
+    el.innerHTML = data.items.map(p => pepiteCardHTML(p)).join('') || '<p class="meta">Aucune pépite ici pour l\'instant.</p>';
+    document.getElementById('pep-more').classList.toggle('hidden', data.items.length >= data.total);
+    bindPepiteButtons(el, loadPepiteFeed);
+    observePepitesSeen(el);
+  } catch (e) { el.innerHTML = `<p class="error">${escapeHtml(e.message)}</p>`; }
+}
+document.getElementById('pep-more').onclick = () => { pepState.limit += 10; loadPepiteFeed(); };
+
+async function loadPepiteReview() {
+  const el = document.getElementById('pep-review');
+  const due = await api('/pepites/review');
+  if (!due.length) {
+    el.innerHTML = '<p class="meta">Rien à réviser aujourd\'hui 🎉 Garde des pépites pour qu\'elles reviennent ici (J1 → J3 → J7 → J14 → J30).</p>';
+    return;
+  }
+  const p = due[0];
+  el.innerHTML = `
+    <p class="meta">${due.length} pépite(s) à réviser. Essaie de te rappeler l'idée avant de la révéler.</p>
+    <div class="pep-card">
+      <div class="pep-top"><span class="pep-domain">${escapeHtml(DOMAIN_LABELS[p.domain] || p.domain)}</span><span class="meta">étape ${p.stage + 1}/5</span></div>
+      <div class="pep-title">${escapeHtml(p.title)}</div>
+      <div id="pep-review-hidden" class="hidden">
+        <div class="pep-text">${escapeHtml(p.text)}</div>
+        ${p.action ? `<div class="pep-action">👉 ${escapeHtml(p.action)}</div>` : ''}
+        <p class="meta">L'as-tu appliquée ou t'en souvenais-tu ?</p>
+        <div class="pep-buttons">
+          <button type="button" data-pep-rev="1">👍 Je m'en souvenais</button>
+          <button type="button" class="secondary" data-pep-rev="0">🔁 À revoir</button>
+        </div>
+      </div>
+      <button type="button" id="pep-reveal">Révéler l'idée</button>
+    </div>`;
+  document.getElementById('pep-reveal').onclick = (e) => {
+    e.target.remove();
+    document.getElementById('pep-review-hidden').classList.remove('hidden');
+  };
+  el.querySelectorAll('[data-pep-rev]').forEach(b => {
+    b.onclick = async () => {
+      await api(`/pepites/saves/${p.saveId}/review`, { method: 'POST', body: { remembered: b.dataset.pepRev === '1' } });
+      loadPepiteStats();
+      loadPepiteReview();
+    };
+  });
+}
+
+async function loadPepiteStashes() {
+  const el = document.getElementById('pep-stashes');
+  const stashes = await api('/pepites/stashes');
+  if (!stashes.length) { el.innerHTML = '<p class="meta">Aucune collection. Appuie sur 🔖 Garder sur une pépite pour commencer.</p>'; return; }
+  el.innerHTML = stashes.map(s => `
+    <div class="card-block">
+      <h3>🔖 ${escapeHtml(s.name)} (${s.items.length})</h3>
+      ${s.items.map(p => `
+        <div class="pep-stash-item">
+          ${pepiteCardHTML(p, { compact: true })}
+          <div class="meta">${p.mastered ? '🏆 Maîtrisée' : `Prochaine révision : ${escapeHtml(p.nextReview || '')}`}
+            <button type="button" class="small danger" data-pep-unsave="${escapeHtml(p.saveId)}">Retirer</button></div>
+        </div>`).join('')}
+    </div>`).join('');
+  el.querySelectorAll('[data-pep-unsave]').forEach(b => {
+    b.onclick = async () => { await api(`/pepites/saves/${b.dataset.pepUnsave}`, { method: 'DELETE' }); loadPepiteStashes(); loadPepiteStats(); };
+  });
+}
+
+async function loadPepiteCreate() {
+  const sel = document.getElementById('pep-c-domain');
+  if (!sel.options.length) sel.innerHTML = Object.entries(DOMAIN_LABELS).map(([k, l]) => `<option value="${k}">${l}</option>`).join('');
+  const bookSel = document.getElementById('pep-book-select');
+  const books = await api('/library/books').catch(() => []);
+  bookSel.innerHTML = '<option value="">Choisis un livre...</option>' + books.map(b => `<option value="${escapeHtml(b.id)}">${escapeHtml(b.title)}</option>`).join('');
+  if (!books.length) document.getElementById('pep-book-drafts').innerHTML = '<p class="meta">Ajoute d\'abord un livre dans 📚 Bibliothèque.</p>';
+}
+
+document.getElementById('pep-create-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    await api('/pepites/custom', { method: 'POST', body: {
+      title: document.getElementById('pep-c-title').value,
+      text: document.getElementById('pep-c-text').value,
+      source: document.getElementById('pep-c-source').value,
+      action: document.getElementById('pep-c-action').value,
+      domain: document.getElementById('pep-c-domain').value
+    } });
+    e.target.reset();
+    showToast('✨ Pépite enregistrée — elle apparaît dans ton fil.');
+    loadPepiteStats();
+  } catch (err) { showToast(escapeHtml(err.message)); }
+});
+
+document.getElementById('pep-book-select').addEventListener('change', async (e) => {
+  const out = document.getElementById('pep-book-drafts');
+  if (!e.target.value) { out.innerHTML = ''; return; }
+  out.innerHTML = '<p class="meta">Extraction...</p>';
+  try {
+    const drafts = await api(`/pepites/from-library/${e.target.value}`);
+    out.innerHTML = '<p class="meta">Phrases clés repérées automatiquement (résumé statistique). Relis, reformule avec tes mots, puis garde celles qui te parlent.</p>' +
+      (drafts.map((d, i) => `
+        <div class="pep-card">
+          <input type="text" value="${escapeHtml(d.title)}" data-draft-title="${i}" />
+          <textarea data-draft-text="${i}">${escapeHtml(d.text)}</textarea>
+          <button type="button" class="small" data-draft-save="${i}" data-source="${escapeHtml(d.source)}">✨ En faire une pépite</button>
+        </div>`).join('') || '<p class="meta">Texte trop court pour extraire des idées.</p>');
+    out.querySelectorAll('[data-draft-save]').forEach(b => {
+      b.onclick = async () => {
+        const i = b.dataset.draftSave;
+        await api('/pepites/custom', { method: 'POST', body: {
+          title: out.querySelector(`[data-draft-title="${i}"]`).value,
+          text: out.querySelector(`[data-draft-text="${i}"]`).value,
+          source: b.dataset.source
+        } });
+        b.textContent = '✔ Enregistrée'; b.disabled = true;
+        loadPepiteStats();
+      };
+    });
+  } catch (err) { out.innerHTML = `<p class="error">${escapeHtml(err.message)}</p>`; }
+});
