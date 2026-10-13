@@ -2202,5 +2202,405 @@
   "source": "Idée issue du mouvement de l'indépendance financière",
   "action": "Convertis ton prochain achat non essentiel en heures de travail.",
   "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p248",
+  "domain": "emotionnel",
+  "theme": "Confiance en soi",
+  "title": "Une créature merveilleuse",
+  "text": "« Je te loue de ce que je suis une créature si merveilleuse. » Ta valeur ne vient ni de tes performances ni du regard des autres : elle vient de celui qui t'a créé.",
+  "source": "Bible — Psaume 139:14",
+  "action": "Écris 3 qualités que Dieu (ou tes proches) voient en toi.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p249",
+  "domain": "emotionnel",
+  "theme": "Confiance en soi",
+  "title": "Un esprit de force",
+  "text": "« Dieu ne nous a pas donné un esprit de timidité, mais un esprit de force, d'amour et de sagesse. » La peur est réelle, mais elle n'a pas à décider à ta place.",
+  "source": "Bible — 2 Timothée 1:7",
+  "action": "Fais aujourd'hui une chose que la timidité te faisait éviter.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p250",
+  "domain": "emotionnel",
+  "theme": "Confiance en soi",
+  "title": "Gédéon, le vaillant héros",
+  "text": "Quand l'ange appelle Gédéon « vaillant héros », celui-ci répond qu'il est le plus petit de sa famille. Dieu voit souvent en nous ce que nous ne voyons pas encore.",
+  "source": "Bible — Juges 6:12-16",
+  "action": "Note une qualité qu'on t'a reconnue et que tu as du mal à croire.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p251",
+  "domain": "emotionnel",
+  "theme": "Confiance en soi",
+  "title": "Moïse et sa parole",
+  "text": "Moïse se trouvait lent de parole et voulait que quelqu'un d'autre y aille. Dieu lui répond : « Va, je serai avec ta bouche. » Tes faiblesses n'annulent pas ton appel.",
+  "source": "Bible — Exode 4:10-12",
+  "action": "Accepte une occasion de parler que tu aurais refusée.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p252",
+  "domain": "emotionnel",
+  "theme": "Confiance en soi",
+  "title": "La confiance vient de l'action",
+  "text": "On attend souvent d'être confiant pour agir. En réalité, c'est l'inverse : la confiance grandit après l'action. Le courage vient d'abord, la confiance suit.",
+  "source": "Idée issue de la psychologie comportementale",
+  "action": "Fais un petit pas courageux aujourd'hui sans attendre de te sentir prêt.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p253",
+  "domain": "discipline",
+  "theme": "Confiance en soi",
+  "title": "Tenir les promesses faites à soi-même",
+  "text": "Chaque fois que tu fais ce que tu t'étais promis, tu prouves à toi-même que tu es fiable. La confiance en soi se construit comme la confiance envers un ami : par des actes répétés.",
+  "source": "Idée issue du développement personnel",
+  "action": "Fais-toi une petite promesse aujourd'hui et tiens-la.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p254",
+  "domain": "mental",
+  "theme": "Confiance en soi",
+  "title": "Croire en sa capacité",
+  "text": "Le psychologue Albert Bandura a montré que la confiance en sa capacité à réussir une tâche se construit surtout par les réussites vécues, l'exemple des autres et les encouragements.",
+  "source": "Inspiré de : Albert Bandura, le sentiment d'efficacité personnelle",
+  "action": "Liste 5 réussites passées, même petites.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p255",
+  "domain": "mental",
+  "theme": "Confiance en soi",
+  "title": "Le syndrome de l'imposteur",
+  "text": "Beaucoup de personnes compétentes ont l'impression de ne pas mériter leur place et d'être bientôt « démasquées ». Savoir que ce sentiment est courant aide à ne pas le prendre pour une vérité.",
+  "source": "Inspiré de : Pauline Clance et Suzanne Imes",
+  "action": "Écris les preuves concrètes que tu mérites ta place.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p256",
+  "domain": "social",
+  "theme": "Confiance en soi",
+  "title": "Personne ne te regarde autant que tu le crois",
+  "text": "Nous surestimons beaucoup à quel point les autres remarquent nos erreurs ou notre apparence. Chacun est surtout occupé par lui-même.",
+  "source": "Inspiré des recherches de Thomas Gilovich sur l'« effet projecteur »",
+  "action": "La prochaine fois que tu te sens observé, rappelle-toi que c'est surtout dans ta tête.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p257",
+  "domain": "mental",
+  "theme": "Confiance en soi",
+  "title": "Surveiller sa voix intérieure",
+  "text": "« Je suis nul », « je n'y arriverai jamais » : ces phrases répétées finissent par devenir des croyances. Remplace-les par des phrases vraies et encourageantes.",
+  "source": "Idée issue des thérapies cognitives",
+  "action": "Note une phrase négative que tu te dis souvent et réécris-la.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p258",
+  "domain": "emotionnel",
+  "theme": "Confiance en soi",
+  "title": "Arrêter de se comparer",
+  "text": "Tu compares tes coulisses aux vitrines des autres. Sur les réseaux, on voit les réussites, pas les doutes. Compare-toi à celui que tu étais hier.",
+  "source": "Idée courante en psychologie positive",
+  "action": "Note un progrès que tu as fait par rapport à l'an dernier.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p259",
+  "domain": "social",
+  "theme": "Confiance en soi",
+  "title": "Ne pas vivre pour plaire",
+  "text": "Paul écrit : « Si je plaisais encore aux hommes, je ne serais pas serviteur de Christ. » Chercher l'approbation de tous rend prisonnier ; vivre selon ses valeurs rend libre.",
+  "source": "Bible — Galates 1:10",
+  "action": "Identifie une décision que tu prends seulement pour plaire.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p260",
+  "domain": "communication",
+  "theme": "Confiance en soi",
+  "title": "Savoir dire non",
+  "text": "Dire non poliment à ce qui ne correspond pas à tes priorités n'est pas égoïste. C'est respecter ton temps et montrer que tu te respectes.",
+  "source": "Idée issue de l'affirmation de soi",
+  "action": "Dis non avec respect à une demande qui ne te convient pas cette semaine.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p261",
+  "domain": "communication",
+  "theme": "Confiance en soi",
+  "title": "Accepter un compliment",
+  "text": "Répondre « Oh, ce n'est rien » à un compliment, c'est rejeter un cadeau. Un simple « Merci, ça me fait plaisir » est plus juste et renforce ta confiance.",
+  "source": "Idée issue de l'affirmation de soi",
+  "action": "Au prochain compliment, réponds seulement « Merci ».",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p262",
+  "domain": "physique",
+  "theme": "Confiance en soi",
+  "title": "Le corps parle à l'esprit",
+  "text": "Se tenir droit, regarder les gens dans les yeux, parler posément : ces habitudes changent la façon dont les autres te perçoivent, et peu à peu la façon dont tu te perçois.",
+  "source": "Idée issue de la communication non verbale",
+  "action": "Aujourd'hui, regarde chaque interlocuteur dans les yeux en lui parlant.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p263",
+  "domain": "discipline",
+  "theme": "Confiance en soi",
+  "title": "La préparation rassure",
+  "text": "Une grande partie du trac vient du sentiment de ne pas être prêt. Préparer un entretien, une prise de parole ou une discussion difficile réduit fortement l'anxiété.",
+  "source": "Conseil courant en préparation mentale",
+  "action": "Prépare par écrit les 3 points clés de ta prochaine intervention.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p264",
+  "domain": "mental",
+  "theme": "Confiance en soi",
+  "title": "L'échec n'est pas une identité",
+  "text": "Échouer à quelque chose ne fait pas de toi un échec. C'est un événement, pas une définition de qui tu es.",
+  "source": "Idée issue de la psychologie de la résilience",
+  "action": "Remplace « je suis un échec » par « cette fois, ça n'a pas marché ».",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p265",
+  "domain": "discipline",
+  "theme": "Confiance en soi",
+  "title": "S'exposer petit à petit",
+  "text": "On ne vainc pas la peur en l'évitant, mais en s'y exposant progressivement : une petite prise de parole, puis une plus grande. Chaque étape agrandit ta zone de confort.",
+  "source": "Idée issue des thérapies d'exposition",
+  "action": "Choisis une peur et définis une toute première petite étape.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p266",
+  "domain": "emotionnel",
+  "theme": "Confiance en soi",
+  "title": "Le carnet des victoires",
+  "text": "Notre cerveau retient plus facilement les échecs que les réussites. Noter chaque soir une petite victoire rééquilibre ta vision de toi-même.",
+  "source": "Idée issue de la psychologie positive",
+  "action": "Commence ce soir à noter une victoire par jour dans ton journal.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p267",
+  "domain": "emotionnel",
+  "theme": "Confiance en soi",
+  "title": "Je puis tout par celui qui me fortifie",
+  "text": "Paul écrit cela en parlant d'avoir appris à vivre dans l'abondance comme dans le manque. Ce n'est pas une promesse de tout réussir, mais l'assurance de recevoir la force de traverser chaque situation.",
+  "source": "Bible — Philippiens 4:11-13",
+  "action": "Lis Philippiens 4:11-13 et note une situation où tu as besoin de force.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p268",
+  "domain": "emotionnel",
+  "theme": "Surmonter les difficultés",
+  "title": "L'épreuve produit la persévérance",
+  "text": "« La tribulation produit la persévérance, la persévérance la victoire dans l'épreuve, et cette victoire l'espérance. » Les difficultés ne sont pas inutiles : elles forgent le caractère.",
+  "source": "Bible — Romains 5:3-4",
+  "action": "Note ce qu'une épreuve passée a construit en toi.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p269",
+  "domain": "emotionnel",
+  "theme": "Surmonter les difficultés",
+  "title": "Abattus mais pas détruits",
+  "text": "« Nous sommes pressés de toute manière, mais non réduits à l'extrémité ; dans la détresse, mais non dans le désespoir ; abattus, mais non perdus. » On peut être blessé sans être vaincu.",
+  "source": "Bible — 2 Corinthiens 4:8-9",
+  "action": "Relis ce passage lors de ta prochaine journée difficile.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p270",
+  "domain": "spirituel",
+  "theme": "Surmonter les difficultés",
+  "title": "Je serai avec toi",
+  "text": "« Si tu traverses les eaux, je serai avec toi ; et les fleuves, ils ne te submergeront point. » Dieu ne promet pas l'absence de difficultés, mais sa présence au milieu d'elles.",
+  "source": "Bible — Ésaïe 43:2",
+  "action": "Confie à Dieu la difficulté que tu traverses en ce moment.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p271",
+  "domain": "spirituel",
+  "theme": "Surmonter les difficultés",
+  "title": "Près des cœurs brisés",
+  "text": "« L'Éternel est près de ceux qui ont le cœur brisé, et il sauve ceux qui ont l'esprit dans l'abattement. » Dans la douleur, tu n'es pas seul.",
+  "source": "Bible — Psaume 34:19",
+  "action": "Si tu as le cœur lourd, prends un moment pour le dire à Dieu ou à un proche.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p272",
+  "domain": "emotionnel",
+  "theme": "Surmonter les difficultés",
+  "title": "Le matin vient",
+  "text": "« Le soir arrivent les pleurs, et le matin l'allégresse. » Les nuits difficiles ne durent pas toujours. Tenir jusqu'au matin est parfois la seule victoire du jour.",
+  "source": "Bible — Psaume 30:6",
+  "action": "Rappelle-toi une période difficile qui a fini par passer.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p273",
+  "domain": "mental",
+  "theme": "Surmonter les difficultés",
+  "title": "Un jour à la fois",
+  "text": "« Ne vous inquiétez donc pas du lendemain ; à chaque jour suffit sa peine. » Face à une montagne, ne regarde pas le sommet : concentre-toi sur le pas d'aujourd'hui.",
+  "source": "Bible — Matthieu 6:34",
+  "action": "Écris seulement ce que tu dois faire aujourd'hui face à ta difficulté.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p274",
+  "domain": "mental",
+  "theme": "Surmonter les difficultés",
+  "title": "L'obstacle est le chemin",
+  "text": "L'empereur Marc Aurèle écrivait que ce qui fait obstacle à l'action devient l'action elle-même. Chaque difficulté peut devenir une occasion d'exercer la patience, le courage ou la créativité.",
+  "source": "Inspiré de : Marc Aurèle, Pensées ; The Obstacle Is the Way — Ryan Holiday",
+  "action": "Demande-toi : quelle qualité ma difficulté actuelle m'invite-t-elle à développer ?",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p275",
+  "domain": "mental",
+  "theme": "Surmonter les difficultés",
+  "title": "Donner un sens à l'épreuve",
+  "text": "Viktor Frankl, survivant des camps de concentration, a observé que ceux qui trouvaient un sens à leur souffrance tenaient mieux. Celui qui a un « pourquoi » supporte presque n'importe quel « comment ».",
+  "source": "Inspiré de : Découvrir un sens à sa vie — Viktor Frankl",
+  "action": "Écris pour qui ou pour quoi tu veux tenir bon.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p276",
+  "domain": "discipline",
+  "theme": "Surmonter les difficultés",
+  "title": "La persévérance passionnée",
+  "text": "Les recherches d'Angela Duckworth montrent que la persévérance dans la durée, alliée à la passion pour un objectif, prédit souvent mieux la réussite que le talent seul.",
+  "source": "Inspiré de : L'art de la niaque (Grit) — Angela Duckworth",
+  "action": "Choisis un objectif important et engage-toi à ne pas abandonner ce mois-ci.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p277",
+  "domain": "mental",
+  "theme": "Surmonter les difficultés",
+  "title": "Découper la montagne",
+  "text": "Un problème énorme paralyse. Découpé en petites étapes concrètes, il devient faisable. La question n'est pas « comment tout régler ? » mais « quel est le prochain petit pas ? »",
+  "source": "Technique courante de résolution de problèmes",
+  "action": "Découpe ta plus grande difficulté en 5 petites étapes.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p278",
+  "domain": "emotionnel",
+  "theme": "Surmonter les difficultés",
+  "title": "Grandir après l'épreuve",
+  "text": "Des chercheurs ont observé que beaucoup de personnes ressortent d'une épreuve avec plus de force intérieure, de meilleures relations et un sens plus clair de ce qui compte.",
+  "source": "Inspiré de : Richard Tedeschi et Lawrence Calhoun, la croissance post-traumatique",
+  "action": "Repense à une épreuve passée : qu'as-tu gagné en force ou en sagesse ?",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p279",
+  "domain": "spirituel",
+  "theme": "Surmonter les difficultés",
+  "title": "Job et la fidélité dans l'épreuve",
+  "text": "Job a tout perdu et a exprimé sa douleur sans détour. Il a questionné, crié, mais il n'a pas lâché Dieu. Son histoire se termine par une restauration.",
+  "source": "Bible — Job 1–2 ; Job 42:10",
+  "action": "Lis Job 1 et 42 pour voir le début et la fin de son histoire.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p280",
+  "domain": "mental",
+  "theme": "Surmonter les difficultés",
+  "title": "Changer de regard",
+  "text": "Une même situation peut être vue comme une catastrophe ou comme un défi. Reformuler (« qu'est-ce que je peux apprendre ? ») ne change pas les faits, mais change ta capacité à agir.",
+  "source": "Idée issue des thérapies cognitives",
+  "action": "Reformule ta difficulté actuelle en défi à relever.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p281",
+  "domain": "discipline",
+  "theme": "Surmonter les difficultés",
+  "title": "Tirer les leçons de l'échec",
+  "text": "Après un échec, pose-toi trois questions : qu'est-ce qui a marché ? qu'est-ce qui n'a pas marché ? que vais-je faire différemment ? L'échec devient alors un professeur.",
+  "source": "Méthode courante de retour d'expérience",
+  "action": "Analyse un échec récent avec ces trois questions.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p282",
+  "domain": "emotionnel",
+  "theme": "Surmonter les difficultés",
+  "title": "Pleurer n'est pas une faiblesse",
+  "text": "Jésus a pleuré devant la tombe de son ami Lazare. Exprimer sa tristesse fait partie du chemin pour la traverser.",
+  "source": "Bible — Jean 11:35",
+  "action": "Autorise-toi à exprimer ta tristesse, seul ou avec quelqu'un de confiance.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p283",
+  "domain": "physique",
+  "theme": "Surmonter les difficultés",
+  "title": "Prendre soin de soi dans la tempête",
+  "text": "En période difficile, on néglige souvent le sommeil, l'alimentation et le mouvement. Pourtant, ce sont eux qui donnent l'énergie pour tenir. Le corps soutient le moral.",
+  "source": "Conseil courant en psychologie de la santé",
+  "action": "Cette semaine, protège ton sommeil malgré les difficultés.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p284",
+  "domain": "spirituel",
+  "theme": "Surmonter les difficultés",
+  "title": "Élie sous le genêt",
+  "text": "Épuisé et découragé, le prophète Élie voulait mourir. Dieu ne l'a pas sermonné : il l'a laissé dormir et lui a donné à manger, avant de lui parler. Parfois, la première étape est le repos.",
+  "source": "Bible — 1 Rois 19:4-8",
+  "action": "Si tu es épuisé, commence par te reposer et bien manger avant de décider.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p285",
+  "domain": "emotionnel",
+  "theme": "Surmonter les difficultés",
+  "title": "Ne pas affronter seul",
+  "text": "Les difficultés paraissent plus lourdes quand on les porte seul. Parler à un ami, à un pasteur ou à un professionnel allège le poids et ouvre des solutions.",
+  "source": "Idée issue de la psychologie de la résilience",
+  "action": "Parle de ta difficulté actuelle à une personne de confiance cette semaine.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p286",
+  "domain": "mental",
+  "theme": "Surmonter les difficultés",
+  "title": "Célébrer les petits progrès",
+  "text": "Dans une longue épreuve, attendre la victoire finale épuise. Remarquer et célébrer chaque petit progrès entretient la motivation.",
+  "source": "Idée issue de la psychologie de la motivation",
+  "action": "Note un petit progrès que tu as fait cette semaine face à ta difficulté.",
+  "addedAt": "2026-10-13"
+ },
+ {
+  "id": "p287",
+  "domain": "spirituel",
+  "theme": "Surmonter les difficultés",
+  "title": "Dieu dans la tempête",
+  "text": "Pendant la tempête, les disciples paniquent alors que Jésus dort dans la barque. Il calme le vent et leur demande : « Pourquoi avez-vous peur ? » La tempête ne signifie pas l'absence de Dieu.",
+  "source": "Bible — Marc 4:35-41",
+  "action": "Lis Marc 4:35-41 et nomme ta « tempête » actuelle.",
+  "addedAt": "2026-10-13"
  }
 ]
