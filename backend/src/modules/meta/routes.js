@@ -9,6 +9,17 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.8.3',
+    date: '2026-10-13',
+    title: 'Pépites — Bible et Leadership',
+    features: [
+      "40 nouvelles pépites (207 au total) : comment lire et étudier la Bible, leçons de personnages bibliques, et leadership (serviteur, délégation, responsabilité, former d'autres leaders...)",
+      "Nouveaux thèmes filtrables : Bible et Leadership"
+    ],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.8.2',
     date: '2026-10-13',
     title: 'Pépites — Foi et Prière',
