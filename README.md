@@ -380,13 +380,13 @@ Automatisations et nouvelles intégrations restent hors scope pour une app
 - **✨ Pépites** (onglet dédié + « Pépite du jour » sur l'Accueil) : des
   idées courtes à lire en 1 minute, sur le principe d'apps comme Deepstash,
   mais 100 % gratuit, sans abonnement ni limite.
-  - **287 pépites** rédigées pour l'app (paraphrases inspirées de livres et
+  - **295 pépites** rédigées pour l'app (paraphrases inspirées de livres et
     principes connus, source toujours indiquée), réparties sur les 11
     domaines de vie, avec des **thèmes** filtrables (Écouter sans juger,
     Parler à tout le monde, Santé mentale, Organiser ses pensées, Prendre
     soin de son corps, Pour les hommes, Soutenir les femmes, Couple, Foi,
     Prière, Bible, Leadership, Famille, Argent, Confiance en soi,
-    Surmonter les difficultés). Les pépites ajoutées
+    Surmonter les difficultés, Amitié). Les pépites ajoutées
     depuis moins de 7 jours (champ `addedAt`) portent un badge « 🆕 Nouveau »
     et apparaissent dans le filtre « Nouveautés ».
     Ajoute-en librement dans
