@@ -9,6 +9,16 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.9.1',
+    date: '2026-10-14',
+    title: 'Pépites du jour — Amitié, Pour les hommes, Soutenir les femmes, Prendre soin de son corps',
+    features: [
+      "8 nouvelles pépites (295 au total), dont un nouveau thème : Amitié"
+    ],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.9.0',
     date: '2026-10-13',
     title: 'Coach IA avec Claude + Pépites Confiance en soi et Surmonter les difficultés',
