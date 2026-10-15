@@ -2682,5 +2682,85 @@
   "source": "Bible — 1 Corinthiens 6:19-20",
   "action": "Choisis une habitude de santé à améliorer cette semaine comme un acte de foi.",
   "addedAt": "2026-10-14"
+ },
+ {
+  "id": "p296",
+  "domain": "social",
+  "theme": "Amitié",
+  "title": "Deux valent mieux qu'un",
+  "text": "« Deux valent mieux qu'un… Car, s'ils tombent, l'un relève son compagnon. » Avoir un ami proche, c'est avoir quelqu'un pour te relever quand tu chutes.",
+  "source": "Bible — Ecclésiaste 4:9-10",
+  "action": "Propose à un ami de faire le point ensemble régulièrement sur vos objectifs.",
+  "addedAt": "2026-10-15"
+ },
+ {
+  "id": "p297",
+  "domain": "social",
+  "theme": "Amitié",
+  "title": "Les blessures d'un ami",
+  "text": "« Les blessures d'un ami prouvent sa fidélité. » Un vrai ami ose te dire une vérité difficile. L'ami qui ne fait que te flatter ne t'aide pas à grandir.",
+  "source": "Bible — Proverbes 27:6",
+  "action": "Remercie un ami qui t'a dit un jour une vérité difficile à entendre.",
+  "addedAt": "2026-10-15"
+ },
+ {
+  "id": "p298",
+  "domain": "professionnel",
+  "theme": "Travail",
+  "title": "Travailler de bon cœur",
+  "text": "« Tout ce que vous faites, faites-le de bon cœur, comme pour le Seigneur et non pour des hommes. » Même un travail ordinaire prend de la valeur quand on le fait avec soin et intégrité.",
+  "source": "Bible — Colossiens 3:23",
+  "action": "Fais aujourd'hui une tâche ordinaire avec un soin particulier.",
+  "addedAt": "2026-10-15"
+ },
+ {
+  "id": "p299",
+  "domain": "professionnel",
+  "theme": "Travail",
+  "title": "L'homme habile",
+  "text": "« Si tu vois un homme habile dans son ouvrage, il se tient auprès des rois. » Devenir vraiment compétent dans ce que l'on fait ouvre des portes que les relations seules n'ouvrent pas.",
+  "source": "Bible — Proverbes 22:29",
+  "action": "Choisis une compétence de ton travail à améliorer et pratique-la 20 minutes.",
+  "addedAt": "2026-10-15"
+ },
+ {
+  "id": "p300",
+  "domain": "emotionnel",
+  "theme": "Pour les hommes",
+  "title": "Garder son cœur",
+  "text": "« Garde ton cœur plus que toute autre chose, car de lui viennent les sources de la vie. » Ce que tu regardes, écoutes et nourris chaque jour façonne tes pensées, puis tes actes.",
+  "source": "Bible — Proverbes 4:23",
+  "action": "Identifie un contenu (écran, musique, site) qui t'abîme et retire-le cette semaine.",
+  "addedAt": "2026-10-15"
+ },
+ {
+  "id": "p301",
+  "domain": "relationnel",
+  "theme": "Soutenir les femmes",
+  "title": "Vivre avec sagesse et honneur",
+  "text": "Pierre demande aux maris de vivre avec leur femme en montrant de la sagesse et de l'honorer. Comprendre ses besoins et la traiter avec respect est une responsabilité, pas une option.",
+  "source": "Bible — 1 Pierre 3:7",
+  "action": "Demande à ta femme (ou à une femme de ta famille) ce qui la ferait se sentir plus respectée.",
+  "addedAt": "2026-10-15"
+ },
+ {
+  "id": "p302",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Les petits renards",
+  "text": "« Prenez-nous les renards, les petits renards qui ravagent les vignes. » Ce ne sont pas toujours les grandes crises qui abîment un couple, mais les petites négligences et irritations qu'on laisse traîner.",
+  "source": "Bible — Cantique des cantiques 2:15",
+  "action": "Règle avec ton/ta partenaire une petite irritation que vous laissez traîner.",
+  "addedAt": "2026-10-15"
+ },
+ {
+  "id": "p303",
+  "domain": "mental",
+  "theme": "Santé mentale",
+  "title": "Deux heures dans la nature",
+  "text": "Une étude menée auprès de près de 20 000 personnes en Angleterre a montré que passer au moins 120 minutes par semaine dans la nature est associé à une meilleure santé et un meilleur bien-être.",
+  "source": "Inspiré de : White et al., Scientific Reports (2019)",
+  "action": "Planifie cette semaine une promenade dans un parc, une forêt ou au bord de l'eau.",
+  "addedAt": "2026-10-15"
  }
 ]
