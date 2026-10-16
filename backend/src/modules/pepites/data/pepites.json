@@ -2762,5 +2762,85 @@
   "source": "Inspiré de : White et al., Scientific Reports (2019)",
   "action": "Planifie cette semaine une promenade dans un parc, une forêt ou au bord de l'eau.",
   "addedAt": "2026-10-15"
+ },
+ {
+  "id": "p304",
+  "domain": "professionnel",
+  "theme": "Travail",
+  "title": "De toute ta force",
+  "text": "« Tout ce que ta main trouve à faire avec ta force, fais-le. » Donner le meilleur de soi dans ce qu'on fait aujourd'hui, au lieu d'attendre le travail idéal, prépare les portes de demain.",
+  "source": "Bible — Ecclésiaste 9:10",
+  "action": "Choisis une tâche de ta journée et fais-la à fond, sans distraction.",
+  "addedAt": "2026-10-16"
+ },
+ {
+  "id": "p305",
+  "domain": "professionnel",
+  "theme": "Travail",
+  "title": "L'état de flow",
+  "text": "Le psychologue Mihaly Csikszentmihalyi a décrit le « flow » : cet état où l'on est complètement absorbé par une activité. Il apparaît quand le défi est à la hauteur de nos compétences, ni trop facile ni trop dur.",
+  "source": "Inspiré de : Vivre (Flow) — Mihaly Csikszentmihalyi",
+  "action": "Repère une tâche trop facile et rends-la un peu plus exigeante (délai, qualité).",
+  "addedAt": "2026-10-16"
+ },
+ {
+  "id": "p306",
+  "domain": "social",
+  "theme": "Amitié",
+  "title": "Le plus grand amour",
+  "text": "« Il n'y a pas de plus grand amour que de donner sa vie pour ses amis. » L'amitié se prouve par le sacrifice : du temps, de l'aide, de la présence quand ça coûte.",
+  "source": "Bible — Jean 15:13",
+  "action": "Rends un service à un ami qui te demande vraiment un effort cette semaine.",
+  "addedAt": "2026-10-16"
+ },
+ {
+  "id": "p307",
+  "domain": "mental",
+  "theme": "Gestion du temps",
+  "title": "Compter ses jours",
+  "text": "« Enseigne-nous à bien compter nos jours, afin que nous appliquions notre cœur à la sagesse. » Se rappeler que le temps est limité aide à le consacrer à ce qui compte vraiment.",
+  "source": "Bible — Psaume 90:12",
+  "action": "Écris les 3 choses qui doivent avoir une place dans ta semaine, quoi qu'il arrive.",
+  "addedAt": "2026-10-16"
+ },
+ {
+  "id": "p308",
+  "domain": "discipline",
+  "theme": "Gestion du temps",
+  "title": "Bloquer son agenda",
+  "text": "Au lieu d'une simple liste de tâches, donne à chaque tâche importante un créneau précis dans ton agenda. Ce qui n'a pas de place dans l'agenda a tendance à ne jamais être fait.",
+  "source": "Inspiré de : Cal Newport, la planification par blocs (Deep Work)",
+  "action": "Bloque demain deux créneaux dans ton agenda pour tes tâches les plus importantes.",
+  "addedAt": "2026-10-16"
+ },
+ {
+  "id": "p309",
+  "domain": "emotionnel",
+  "theme": "Pour les hommes",
+  "title": "Fuir la tentation",
+  "text": "Quand la femme de Potiphar a voulu le séduire, Joseph ne s'est pas mis à discuter : il s'est enfui. Face à certaines tentations, la vraie force n'est pas de résister longtemps, mais de partir vite.",
+  "source": "Bible — Genèse 39:7-12",
+  "action": "Identifie une situation qui te met en danger et décide à l'avance de comment l'éviter.",
+  "addedAt": "2026-10-16"
+ },
+ {
+  "id": "p310",
+  "domain": "relationnel",
+  "theme": "Soutenir les femmes",
+  "title": "Les premières témoins",
+  "text": "Au matin de la résurrection, c'est à Marie de Magdala que Jésus apparaît en premier, et c'est à elle qu'il confie l'annonce aux disciples. Jésus a honoré la parole des femmes à une époque où on la négligeait.",
+  "source": "Bible — Jean 20:14-18",
+  "action": "Écoute avec attention l'avis d'une femme autour de toi sur une décision importante.",
+  "addedAt": "2026-10-16"
+ },
+ {
+  "id": "p311",
+  "domain": "communication",
+  "theme": "Parler à tout le monde",
+  "title": "Une parole assaisonnée",
+  "text": "« Que votre parole soit toujours accompagnée de grâce, assaisonnée de sel. » Parler avec bienveillance et justesse permet d'être écouté par tout le monde, même en désaccord.",
+  "source": "Bible — Colossiens 4:6",
+  "action": "Dans ta prochaine conversation tendue, commence par une phrase bienveillante.",
+  "addedAt": "2026-10-16"
  }
 ]
