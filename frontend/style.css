@@ -61,6 +61,8 @@ body[data-accent="violet"] { --accent: #9b6cff; --accent-2: #6c8cff; --accent-so
 body[data-accent="bleu"]   { --accent: #6c8cff; --accent-2: #4fd1ff; --accent-soft: rgba(108, 140, 255, 0.14); }
 body[data-accent="vert"]   { --accent: #34d399; --accent-2: #6cc7ff; --accent-soft: rgba(52, 211, 153, 0.14); }
 body[data-accent="orange"] { --accent: #ff9f43; --accent-2: #ff6c6c; --accent-soft: rgba(255, 159, 67, 0.14); }
+/* Bordeaux éclairci pour rester lisible en texte sur fond sombre comme clair */
+body[data-accent="bordeaux"] { --accent: #c9446a; --accent-2: #7a1530; --accent-soft: rgba(201, 68, 106, 0.14); }
 
 * { box-sizing: border-box; }
 
@@ -355,6 +357,7 @@ header.app-header {
 .accent-dot[data-accent-choice="bleu"]   { background: linear-gradient(135deg, #6c8cff, #4fd1ff); }
 .accent-dot[data-accent-choice="vert"]   { background: linear-gradient(135deg, #34d399, #6cc7ff); }
 .accent-dot[data-accent-choice="orange"] { background: linear-gradient(135deg, #ff9f43, #ff6c6c); }
+.accent-dot[data-accent-choice="bordeaux"] { background: linear-gradient(135deg, #c9446a, #7a1530); }
 
 #lock-screen h1 { background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 

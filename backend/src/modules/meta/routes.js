@@ -9,6 +9,14 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.9.4',
+    date: '2026-10-17',
+    title: 'Nouvelle couleur : Bordeaux',
+    features: ["Apparence : nouvelle couleur d'accent Bordeaux"],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.9.3',
     date: '2026-10-16',
     title: 'Pépites du jour — Travail, Gestion du temps, Amitié, Pour les hommes, Soutenir les femmes, Parler à tout le monde',
