@@ -9,6 +9,22 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.9.8',
+    date: '2026-10-18',
+    title: 'Mes idées : micro réparé et amélioré',
+    features: [
+      "Dictée : « Dicter (voix → texte) » transforme ta voix en texte modifiable dans l'idée",
+      "Jauge de niveau pendant l'enregistrement, compteur, arrêt automatique après 15 minutes",
+      "Bouton « Télécharger » sur chaque enregistrement"
+    ],
+    fixes: [
+      "Enregistrements au format MP4 quand le navigateur le permet (lisible partout, y compris sur iPhone) et stockage compatible Safari",
+      "Messages d'erreur précis : micro refusé (avec la marche à suivre selon le téléphone), micro absent ou déjà utilisé, navigateur intégré d'une autre app",
+      "Quitter « Mes idées » pendant un enregistrement le sauvegarde au lieu de laisser le micro ouvert"
+    ],
+    improvements: []
+  },
+  {
     version: '0.9.7',
     date: '2026-10-18',
     title: 'Notifications : cloche dans l\'app et rappels sur le téléphone',
