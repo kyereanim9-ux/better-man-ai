@@ -98,17 +98,68 @@ router.post('/ask', (req, res) => {
   });
 });
 
-// Quiz simple à trous, généré à partir d'un verset.
-router.get('/quiz', (req, res) => {
-  const verse = verses[Math.floor(Math.random() * verses.length)];
-  const words = verse.text.split(' ');
-  // Choisit un mot significatif (plus de 3 lettres) à retirer.
-  const candidateIndexes = words.map((w, i) => i).filter(i => words[i].replace(/[.,;:]/g, '').length > 3);
-  const blankIndex = candidateIndexes[Math.floor(Math.random() * candidateIndexes.length)] ?? 0;
-  const answer = words[blankIndex].replace(/[.,;:]/g, '');
-  const prompt = words.map((w, i) => (i === blankIndex ? '_____' : w)).join(' ');
+// Quiz à trous. ?source=mine pioche dans les versets en mémorisation de
+// l'utilisateur (repli sur toute la bibliothèque s'il n'en a pas).
+// La réponse n'est pas envoyée : elle est vérifiée par POST /quiz/check.
+function quizWords(text) { return text.split(' '); }
+const cleanWord = (w) => w.replace(/[.,;:!?«»"()]/g, '');
+// Comparaison tolérante : sans accents, majuscules ni ponctuation.
+function normalizeAnswer(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[’']/g, "'").replace(/[^a-z0-9']/g, '');
+}
+// Mots trop courants pour faire un bon trou à retrouver.
+const QUIZ_SKIP = new Set(['vous', 'nous', 'dans', 'pour', 'avec', 'mais', 'elle', 'elles', 'leur', 'leurs', 'sont', 'votre', 'notre', 'cette', 'tout', 'toute', 'tous', 'celui', 'ceux', 'point', 'comme', 'aussi', 'ainsi']);
+function editDistance(a, b) {
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+  }
+  return d[a.length][b.length];
+}
 
-  res.json({ ref: verse.ref, prompt, answerLength: answer.length });
+router.get('/quiz', async (req, res) => {
+  let pool = verses;
+  let source = 'all';
+  if (req.query.source === 'mine') {
+    await db.read();
+    const mine = db.data.bibleMemorization.filter(m => m.userId === req.user.id).map(m => ({ ref: m.ref, text: m.text }));
+    if (mine.length) { pool = mine; source = 'mine'; }
+  }
+  const verse = pool[Math.floor(Math.random() * pool.length)];
+  const words = quizWords(verse.text);
+  // Choisit un mot significatif (plus de 3 lettres) à retirer.
+  const candidateIndexes = words.map((w, i) => i)
+    .filter(i => cleanWord(words[i]).length > 3 && !QUIZ_SKIP.has(normalizeAnswer(words[i])));
+  const blankIndex = candidateIndexes[Math.floor(Math.random() * candidateIndexes.length)] ?? 0;
+  const answer = cleanWord(words[blankIndex]);
+  const prompt = words.map((w, i) => (i === blankIndex ? w.replace(answer, '_____') : w)).join(' ');
+
+  res.json({ ref: verse.ref, prompt, blankIndex, answerLength: answer.length, hint: answer.charAt(0), source });
+});
+
+router.post('/quiz/check', async (req, res) => {
+  const { ref, blankIndex, answer, reveal } = req.body;
+  let verse = verses.find(v => v.ref === ref);
+  if (!verse) {
+    await db.read();
+    verse = db.data.bibleMemorization.find(m => m.userId === req.user.id && m.ref === ref);
+  }
+  if (!verse) return res.status(404).json({ error: 'Verset introuvable.' });
+  const words = quizWords(verse.text);
+  const expected = cleanWord(words[Number(blankIndex)] || '');
+  if (!expected) return res.status(400).json({ error: 'Question invalide.' });
+
+  const given = normalizeAnswer(answer);
+  const target = normalizeAnswer(expected);
+  // « l'Éternel » : accepte aussi « Éternel » sans l'article élidé.
+  const exact = !reveal && (given === target || given === target.replace(/^[a-z]'/, ''));
+  // Une petite faute de frappe est acceptée sur les mots de 5 lettres ou plus.
+  const typo = !reveal && !exact && target.length >= 5 && editDistance(given, target) === 1;
+  res.json({ correct: exact || typo, typo, expected, fullText: verse.text, ref: verse.ref });
 });
 
 // --- MÉMORISATION (répétition espacée) ---

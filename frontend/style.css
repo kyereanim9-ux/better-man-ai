@@ -390,3 +390,22 @@ header.app-header {
 .pep-theme { font-size: 11px; font-weight: 700; color: var(--success); background: var(--success-soft); border-radius: 999px; padding: 2px 8px; }
 .pep-chip.theme.active { background: var(--success-soft); color: var(--success); border-color: var(--success); }
 .pep-new { font-size: 11px; font-weight: 800; color: var(--warning); background: var(--warning-soft); border-radius: 999px; padding: 2px 8px; }
+
+/* ---------- Quiz biblique & exercice de mémorisation ---------- */
+.quiz-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.quiz-bar select { flex: 1; min-width: 0; }
+.quiz-prompt, .mem-text { font-size: 16px; line-height: 1.9; margin: 10px 0 4px; }
+.quiz-blank { color: var(--accent); font-weight: 800; }
+.card-block form.quiz-form { flex-direction: row; gap: 8px; margin: 10px 0; }
+.quiz-actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0; }
+.quiz-actions button.small, .quiz-feedback button.small { padding: 6px 10px; font-size: 12.5px; background: transparent; border: 1px solid var(--border); color: var(--text); box-shadow: none; }
+.quiz-feedback { border-radius: var(--radius-sm); padding: 12px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.quiz-feedback.ok { background: var(--success-soft); }
+.quiz-feedback.ko { background: var(--danger-soft); }
+.quiz-verse { margin: 0; font-style: italic; line-height: 1.5; }
+.quiz-good { color: var(--success); font-style: normal; }
+.mem-blank { padding: 3px 6px; margin: 2px 0; font-size: 15px; border-radius: 6px; border: 1px dashed var(--accent); background: var(--panel-2); color: var(--text); max-width: 100%; }
+.mem-blank.ok { border: 1px solid var(--success); background: var(--success-soft); }
+.mem-blank.ko { border: 1px solid var(--danger); background: var(--danger-soft); }
+.mem-corrections { margin: 0; padding-left: 18px; font-size: 13.5px; }
+.mem-item > div { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }

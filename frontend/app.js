@@ -858,14 +858,147 @@ document.getElementById('bible-ask-form').addEventListener('submit', async (e) =
   bindAddMemButtons(el);
 });
 
-document.getElementById('bible-quiz-btn').onclick = async () => {
-  const quiz = await api('/bible/quiz');
+// --- Quiz à trous : on écrit sa réponse, l'app vérifie et montre la bonne ---
+const quizScore = { good: 0, total: 0 };
+function renderQuizScore() {
+  document.getElementById('bible-quiz-score').textContent = quizScore.total
+    ? `Score de la session : ${quizScore.good} / ${quizScore.total} bonne(s) réponse(s)` : '';
+}
+
+async function loadBibleQuiz() {
+  const source = document.getElementById('bible-quiz-source').value;
   const el = document.getElementById('bible-quiz-result');
+  let quiz;
+  try { quiz = await api(`/bible/quiz?source=${source}`); }
+  catch (e) { el.innerHTML = `<p class="error">${escapeHtml(e.message)}</p>`; return; }
   el.innerHTML = `
-    <p>${escapeHtml(quiz.prompt)}</p>
-    <p class="meta">${quiz.answerLength} lettres — référence : ${escapeHtml(quiz.ref)}</p>
+    ${source === 'mine' && quiz.source !== 'mine' ? '<p class="meta">Tu n\'as pas encore de verset en mémorisation : question tirée de toute la bibliothèque.</p>' : ''}
+    <p class="quiz-prompt">${escapeHtml(quiz.prompt).replace('_____', '<span class="quiz-blank">_____</span>')}</p>
+    <p class="meta">${escapeHtml(quiz.ref)} — mot de ${quiz.answerLength} lettres</p>
+    <form id="bible-quiz-form" class="quiz-form">
+      <input type="text" id="bible-quiz-answer" placeholder="Ta réponse" autocomplete="off" autocapitalize="off" />
+      <button type="submit">Vérifier</button>
+    </form>
+    <div class="quiz-actions">
+      <button type="button" class="small" id="bible-quiz-hint">💡 Indice</button>
+      <button type="button" class="small" id="bible-quiz-reveal">👁️ Voir la réponse</button>
+    </div>
+    <div id="bible-quiz-feedback"></div>
   `;
-};
+  const input = document.getElementById('bible-quiz-answer');
+  input.focus();
+  let answered = false;
+
+  const showResult = (r, revealed) => {
+    if (!answered) { answered = true; quizScore.total++; if (r.correct) quizScore.good++; renderQuizScore(); }
+    // Surligne le mot à sa position exacte (un même mot peut apparaître plusieurs fois).
+    const full = r.fullText.split(' ').map((w, i) => i === quiz.blankIndex
+      ? escapeHtml(w).replace(escapeHtml(r.expected), `<strong class="quiz-good">${escapeHtml(r.expected)}</strong>`)
+      : escapeHtml(w)).join(' ');
+    document.getElementById('bible-quiz-feedback').innerHTML = `
+      <div class="quiz-feedback ${r.correct ? 'ok' : 'ko'}">
+        ${revealed ? '👁️ Réponse' : r.correct ? (r.typo ? '✅ Correct (petite faute d\'orthographe)' : '✅ Bonne réponse !') : `❌ Pas tout à fait — tu as écrit « ${escapeHtml(input.value.trim() || '…')} »`}
+        <div>Bonne réponse : <strong>${escapeHtml(r.expected)}</strong></div>
+        <p class="quiz-verse">« ${full} » <span class="meta">— ${escapeHtml(r.ref)}</span></p>
+        <button type="button" id="bible-quiz-next">Question suivante ➜</button>
+      </div>`;
+    document.getElementById('bible-quiz-form').querySelector('button').disabled = true;
+    input.disabled = true;
+    document.getElementById('bible-quiz-next').onclick = loadBibleQuiz;
+  };
+  const check = async (reveal) => {
+    try {
+      const r = await api('/bible/quiz/check', { method: 'POST', body: { ref: quiz.ref, blankIndex: quiz.blankIndex, answer: input.value, reveal } });
+      showResult(r, reveal);
+    } catch (e) { showToast(escapeHtml(e.message)); }
+  };
+  document.getElementById('bible-quiz-form').onsubmit = (e) => {
+    e.preventDefault();
+    if (!input.value.trim()) { input.focus(); return; }
+    check(false);
+  };
+  document.getElementById('bible-quiz-hint').onclick = (e) => {
+    input.placeholder = `Commence par « ${quiz.hint.toUpperCase()} »`;
+    e.target.disabled = true;
+    input.focus();
+  };
+  document.getElementById('bible-quiz-reveal').onclick = () => check(true);
+}
+document.getElementById('bible-quiz-btn').onclick = loadBibleQuiz;
+
+// --- Exercice à trous pour un verset en mémorisation ---
+// Plus l'étape est avancée, plus il y a de mots à retrouver.
+const MEM_BLANK_RATIO = { read: 0.15, fill_blanks: 0.25, recite: 0.4, test: 0.5, review_1: 0.6, review_final: 0.75, mastered: 0.75 };
+const normWord = (w) => stripAccentsClient(String(w).toLowerCase()).replace(/[’']/g, "'").replace(/[^a-z0-9']/g, '');
+
+function openMemExercise(item, canValidate) {
+  const panel = document.getElementById(`recite-panel-${item.id}`);
+  const isOpen = !panel.classList.contains('hidden') && panel.dataset.mode === 'exercise';
+  document.querySelectorAll('[id^="recite-panel-"]').forEach(p => p.classList.add('hidden'));
+  if (isOpen) return;
+  panel.dataset.mode = 'exercise';
+  panel.classList.remove('hidden');
+
+  const words = item.text.split(' ');
+  const candidates = words.map((w, i) => i).filter(i => normWord(words[i]).length > 2);
+  const count = Math.max(1, Math.round(candidates.length * (MEM_BLANK_RATIO[item.stageKey] ?? 0.3)));
+  const blanks = new Set([...candidates].sort(() => Math.random() - 0.5).slice(0, count));
+
+  panel.innerHTML = `
+    <div class="card-block mem-exercise">
+      <p class="meta">🧩 Complète les ${blanks.size} mot(s) manquant(s) de ${escapeHtml(item.ref)}</p>
+      <p class="mem-text">${words.map((w, i) => {
+        if (!blanks.has(i)) return escapeHtml(w);
+        const core = w.replace(/[.,;:!?«»"()]/g, '');
+        const punct = w.slice(core.length);
+        return `<input class="mem-blank" data-i="${i}" size="${Math.max(3, core.length)}" autocomplete="off" autocapitalize="off" />${escapeHtml(punct)}`;
+      }).join(' ')}</p>
+      <div class="quiz-actions">
+        <button type="button" data-mem-check>Vérifier</button>
+        <button type="button" class="small" data-mem-show>👁️ Voir le verset</button>
+      </div>
+      <div data-mem-feedback></div>
+    </div>`;
+  const inputs = [...panel.querySelectorAll('.mem-blank')];
+  inputs[0]?.focus();
+  inputs.forEach((inp, k) => inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); (inputs[k + 1] || panel.querySelector('[data-mem-check]')).focus(); }
+  }));
+
+  panel.querySelector('[data-mem-check]').onclick = () => {
+    let good = 0;
+    inputs.forEach(inp => {
+      const expected = words[Number(inp.dataset.i)].replace(/[.,;:!?«»"()]/g, '');
+      const ok = normWord(inp.value) === normWord(expected) || normWord(inp.value) === normWord(expected).replace(/^[a-z]'/, '');
+      if (ok) good++;
+      inp.classList.toggle('ok', ok);
+      inp.classList.toggle('ko', !ok);
+      if (!ok) inp.title = `Bonne réponse : ${expected}`;
+    });
+    const pct = Math.round((good / inputs.length) * 100);
+    const corrections = inputs.filter(i => i.classList.contains('ko'))
+      .map(i => `<li>« ${escapeHtml(i.value || '…')} » → <strong>${escapeHtml(words[Number(i.dataset.i)].replace(/[.,;:!?«»"()]/g, ''))}</strong></li>`).join('');
+    panel.querySelector('[data-mem-feedback]').innerHTML = `
+      <div class="quiz-feedback ${pct >= 80 ? 'ok' : 'ko'}">
+        ${pct >= 80 ? '✅' : '🔁'} ${good} / ${inputs.length} mots trouvés (${pct} %)
+        ${corrections ? `<ul class="mem-corrections">${corrections}</ul>` : ''}
+        <p class="quiz-verse">« ${escapeHtml(item.text)} »</p>
+        ${pct >= 80 && canValidate ? `<button type="button" data-mem-validate>✅ Valider cette étape</button>` : ''}
+        ${pct < 80 ? '<p class="meta">Objectif : 80 % pour valider l\'étape. Relis le verset et réessaie.</p>' : ''}
+        <button type="button" class="small" data-mem-retry>🔁 Nouvel essai</button>
+      </div>`;
+    panel.querySelector('[data-mem-retry]').onclick = () => { panel.classList.add('hidden'); openMemExercise(item, canValidate); };
+    const validate = panel.querySelector('[data-mem-validate]');
+    if (validate) validate.onclick = async () => {
+      await api(`/bible/memorization/${item.id}/advance`, { method: 'POST' });
+      showToast('✅ Étape validée, bravo !');
+      loadMemorization();
+    };
+  };
+  panel.querySelector('[data-mem-show]').onclick = () => {
+    panel.querySelector('[data-mem-feedback]').innerHTML = `<p class="quiz-verse">« ${escapeHtml(item.text)} »</p>`;
+  };
+}
 
 async function loadMemorization() {
   const data = await api('/bible/memorization');
@@ -880,6 +1013,7 @@ async function loadMemorization() {
           <div class="card mem-item">
             <span>${escapeHtml(m.ref)} <span class="meta">— ${escapeHtml(m.stageLabel)}</span></span>
             <div>
+              <button class="small" data-exercise="${m.id}">🧩 S'entraîner</button>
               <button class="small" data-recite="${m.id}" data-recite-text="${escapeHtml(m.text)}" data-recite-ref="${escapeHtml(m.ref)}">🎤 Réciter</button>
               ${showAdvance ? `<button class="small" data-advance="${m.id}">Valider cette étape</button>` : ''}
               <button class="small danger" data-del-mem="${m.id}">Supprimer</button>
@@ -899,6 +1033,11 @@ async function loadMemorization() {
 
   el.querySelectorAll('[data-recite]').forEach(btn => {
     btn.onclick = () => openRecitationPanel(btn.dataset.recite, btn.dataset.reciteText, btn.dataset.reciteRef);
+  });
+  const allItems = [...data.due, ...data.inProgress, ...data.mastered];
+  el.querySelectorAll('[data-exercise]').forEach(btn => {
+    const item = allItems.find(m => m.id === btn.dataset.exercise);
+    btn.onclick = () => openMemExercise(item, data.due.some(d => d.id === item.id));
   });
   el.querySelectorAll('[data-advance]').forEach(btn => {
     btn.onclick = async () => { await api(`/bible/memorization/${btn.dataset.advance}/advance`, { method: 'POST' }); loadMemorization(); };
@@ -971,9 +1110,11 @@ attachVoiceToTextarea('situation-voice-btn', 'situation-input', 'situation-voice
 
 function openRecitationPanel(id, text, ref) {
   const panel = document.getElementById(`recite-panel-${id}`);
-  const isOpen = !panel.classList.contains('hidden');
+  // Le même panneau sert à l'exercice à trous : basculer au lieu de fermer.
+  const isOpen = !panel.classList.contains('hidden') && panel.dataset.mode !== 'exercise';
   document.querySelectorAll('[id^="recite-panel-"]').forEach(p => p.classList.add('hidden'));
   if (isOpen) return;
+  panel.dataset.mode = 'recite';
   panel.classList.remove('hidden');
 
   if (!SpeechRecognitionAPI) {

@@ -380,13 +380,13 @@ Automatisations et nouvelles intégrations restent hors scope pour une app
 - **✨ Pépites** (onglet dédié + « Pépite du jour » sur l'Accueil) : des
   idées courtes à lire en 1 minute, sur le principe d'apps comme Deepstash,
   mais 100 % gratuit, sans abonnement ni limite.
-  - **311 pépites** rédigées pour l'app (paraphrases inspirées de livres et
+  - **319 pépites** rédigées pour l'app (paraphrases inspirées de livres et
     principes connus, source toujours indiquée), réparties sur les 11
     domaines de vie, avec des **thèmes** filtrables (Écouter sans juger,
     Parler à tout le monde, Santé mentale, Organiser ses pensées, Prendre
     soin de son corps, Pour les hommes, Soutenir les femmes, Couple, Foi,
     Prière, Bible, Leadership, Famille, Argent, Confiance en soi,
-    Surmonter les difficultés, Amitié, Travail, Gestion du temps). Les pépites ajoutées
+    Surmonter les difficultés, Amitié, Travail, Gestion du temps, Paternité). Les pépites ajoutées
     depuis moins de 7 jours (champ `addedAt`) portent un badge « 🆕 Nouveau »
     et apparaissent dans le filtre « Nouveautés ».
     Ajoute-en librement dans
@@ -404,7 +404,23 @@ Automatisations et nouvelles intégrations restent hors scope pour une app
 
 ---
 
-## 15. Coach IA avec Claude (v0.9)
+## 15. Quiz biblique et exercices de mémorisation (v0.9.5)
+
+- **Quiz à trous** (onglet Bible) : écris le mot manquant puis « Vérifier ».
+  La comparaison ignore accents, majuscules et ponctuation, et accepte une
+  petite faute de frappe sur les mots de 5 lettres ou plus. « Indice » donne
+  la première lettre, « Voir la réponse » révèle le mot ; le verset complet
+  s'affiche avec le mot surligné. Score de la session, et choix entre tous les
+  versets ou tes versets en mémorisation. La réponse n'est jamais envoyée au
+  navigateur avant vérification (`POST /api/bible/quiz/check`).
+- **🧩 S'entraîner** (Mémorisation) : le verset s'affiche avec des cases à
+  remplir — 15 % des mots au jour 1, jusqu'à 75 % à la révision finale.
+  Correction mot par mot ; à partir de 80 % de bonnes réponses sur un verset
+  à réviser aujourd'hui, un bouton permet de valider l'étape directement.
+
+---
+
+## 16. Coach IA avec Claude (v0.9)
 
 Le Coach IA peut utiliser **Claude** (Anthropic) comme moteur principal :
 
@@ -425,7 +441,7 @@ fournisseurs via `/api/chat/text-provider-status`.
 
 ---
 
-## 16. À propos du déploiement en ligne (Vercel)
+## 17. À propos du déploiement en ligne (Vercel)
 
 Cette app peut être déployée sur Vercel (voir `vercel.json`, `api/index.js`)
 pour obtenir un lien public permanent, en plus de l'usage local. Si tu as
