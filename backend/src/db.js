@@ -42,6 +42,9 @@ const defaultData = {
   bibleReadingPlans: [],     // { id, userId, planKey, startedAt, done: [numéros de jours lus] }
   bibleFavorites: [],        // { id, userId, ref, text, note, createdAt }
   pushSubscriptions: [],     // { id, userId, endpoint, keys: { p256dh, auth }, userAgent, createdAt }
+  studySets: [],             // { id, ownerId, title, description, examDate, shareCode, items: [{ id, q, a }], createdAt, updatedAt }
+  studyMembers: [],          // { id, userId, setId, joinedAt } — membres d'une liste partagée
+  studyProgress: [],         // { id, userId, setId, itemId, box, due, right, wrong, tip, lastAt }
   appConfig: {}              // réglages globaux générés par l'app (ex : clés VAPID des notifications)
 };
 // Préférences de notification : users[].notifPrefs { types, time, tz } et
@@ -196,4 +199,9 @@ export function purgeUserData(userId) {
   db.data.pushSubscriptions = db.data.pushSubscriptions.filter(s => s.userId !== userId);
   db.data.bibleReadingPlans = db.data.bibleReadingPlans.filter(p => p.userId !== userId);
   db.data.bibleFavorites = db.data.bibleFavorites.filter(f => f.userId !== userId);
+  // Listes de révision créées par l'utilisateur : supprimées pour tout le groupe.
+  const ownedSets = new Set(db.data.studySets.filter(x => x.ownerId === userId).map(x => x.id));
+  db.data.studySets = db.data.studySets.filter(x => x.ownerId !== userId);
+  db.data.studyMembers = db.data.studyMembers.filter(m => m.userId !== userId && !ownedSets.has(m.setId));
+  db.data.studyProgress = db.data.studyProgress.filter(p => p.userId !== userId && !ownedSets.has(p.setId));
 }
