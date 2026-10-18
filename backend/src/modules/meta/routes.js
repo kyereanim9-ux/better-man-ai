@@ -9,6 +9,19 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.9.7',
+    date: '2026-10-18',
+    title: 'Notifications : cloche dans l\'app et rappels sur le téléphone',
+    features: [
+      "Cloche 🔔 en haut de l'écran avec compteur : verset du jour, nouvelles pépites, missions et habitudes, versets à réviser, série en danger",
+      "Profil → Notifications : chacun choisit ses rappels (verset du jour et nouvelles pépites activés par défaut) et l'heure du rappel du jour",
+      "Notifications push sur le téléphone, même app fermée (Android, ordinateur, iPhone avec l'app ajoutée à l'écran d'accueil)",
+      "L'app peut être installée sur l'écran d'accueil (icône et plein écran)"
+    ],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.9.6',
     date: '2026-10-18',
     title: 'Toute la Bible : recherche, lecture et mémorisation de n\'importe quel verset',

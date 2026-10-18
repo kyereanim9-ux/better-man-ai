@@ -45,7 +45,9 @@ router.get('/export', async (req, res) => {
     imageAnalyses: db.data.imageAnalyses.filter(a => a.userId === uid),
     pepiteSaves: db.data.pepiteSaves.filter(s => s.userId === uid),
     pepiteViews: db.data.pepiteViews.filter(v => v.userId === uid),
-    pepiteCustom: db.data.pepiteCustom.filter(c => c.userId === uid)
+    pepiteCustom: db.data.pepiteCustom.filter(c => c.userId === uid),
+    notificationPrefs: user.notifPrefs || null,
+    pushSubscriptions: db.data.pushSubscriptions.filter(s => s.userId === uid).map(({ endpoint, userAgent, createdAt }) => ({ endpoint, userAgent, createdAt }))
   };
 
   res.setHeader('Content-Disposition', 'attachment; filename="better-man-ai-export.json"');

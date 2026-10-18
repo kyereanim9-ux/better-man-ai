@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { app } from './app.js';
 import { initDB } from './db.js';
+import { runNotificationCron } from './modules/notifications/service.js';
 
 const PORT = process.env.PORT || 4000;
 
@@ -8,4 +9,7 @@ initDB().then(() => {
   app.listen(PORT, () => {
     console.log(`Better Man AI démarré sur http://localhost:${PORT} (frontend + API sur le même port)`);
   });
+  // Serveur classique (local, Render...) : envoi des rappels toutes les 5 min.
+  // Sur Vercel (serverless), c'est la tâche GitHub Actions qui s'en charge.
+  setInterval(() => runNotificationCron().catch(e => console.error('[notifications]', e.message)), 5 * 60 * 1000);
 });
