@@ -247,27 +247,47 @@ function editDistance(a, b) {
   return d[a.length][b.length];
 }
 
+// Mot qui peut servir de trou : assez long, pas trop courant, et (pour les
+// versets tirés de toute la Bible ou d'un livre) pas un nom propre.
+function quizCandidates(words, skipProperNames) {
+  return words.map((w, i) => i)
+    .filter(i => cleanWord(words[i]).length > 3 && !QUIZ_SKIP.has(normalizeAnswer(words[i])))
+    .filter(i => !skipProperNames || !/^(?:[a-zà-ÿ][’'])?[A-ZÀ-Ý]/.test(words[i]));
+}
+
+// Sources : all (sélection de versets), mine (mes versets), bible (toute la
+// Bible) ou book (un livre précis, ?book=65 pour l'Apocalypse).
 router.get('/quiz', async (req, res) => {
-  let pool = verses;
   let source = 'all';
-  if (req.query.source === 'bible') { pool = [lsg.randomVerse()]; source = 'bible'; }
+  let bookName = null;
+  let pick = () => verses[Math.floor(Math.random() * verses.length)];
+  if (req.query.source === 'bible') { source = 'bible'; pick = () => lsg.randomVerse(); }
+  if (req.query.source === 'book') {
+    const b = Number(req.query.book);
+    const book = lsg.books()[b];
+    if (!book) return res.status(400).json({ error: 'Livre inconnu.' });
+    source = 'book'; bookName = book.name;
+    pick = () => lsg.randomVerse(b);
+  }
   if (req.query.source === 'mine') {
     await db.read();
     const mine = db.data.bibleMemorization.filter(m => m.userId === req.user.id).map(m => ({ ref: m.ref, text: m.text }));
-    if (mine.length) { pool = mine; source = 'mine'; }
+    if (mine.length) { source = 'mine'; pick = () => mine[Math.floor(Math.random() * mine.length)]; }
   }
-  const verse = pool[Math.floor(Math.random() * pool.length)];
-  const words = quizWords(verse.text);
-  // Choisit un mot significatif (plus de 3 lettres) à retirer.
-  const candidateIndexes = words.map((w, i) => i)
-    .filter(i => cleanWord(words[i]).length > 3 && !QUIZ_SKIP.has(normalizeAnswer(words[i])))
-    // Toute la Bible : on évite les noms propres (Akisch, Jizreel…), peu utiles à apprendre.
-    .filter(i => source !== 'bible' || !/^(?:[a-zà-ÿ][’'])?[A-ZÀ-Ý]/.test(words[i]));
-  const blankIndex = candidateIndexes[Math.floor(Math.random() * candidateIndexes.length)] ?? 0;
+  const skipProper = source === 'bible' || source === 'book';
+  // Quelques essais pour éviter un verset sans bon mot à cacher (généalogies…).
+  let verse, words, candidates = [];
+  for (let attempt = 0; attempt < 12 && !candidates.length; attempt++) {
+    verse = pick();
+    words = quizWords(verse.text);
+    candidates = quizCandidates(words, skipProper);
+  }
+  if (!candidates.length) candidates = quizCandidates(words, false);
+  const blankIndex = candidates[Math.floor(Math.random() * candidates.length)] ?? 0;
   const answer = cleanWord(words[blankIndex]);
   const prompt = words.map((w, i) => (i === blankIndex ? w.replace(answer, '_____') : w)).join(' ');
 
-  res.json({ ref: verse.ref, prompt, blankIndex, answerLength: answer.length, hint: answer.charAt(0), source });
+  res.json({ ref: verse.ref, prompt, blankIndex, answerLength: answer.length, hint: answer.charAt(0), source, bookName });
 });
 
 router.post('/quiz/check', async (req, res) => {
