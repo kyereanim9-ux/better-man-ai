@@ -9,6 +9,23 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.9.9',
+    date: '2026-10-18',
+    title: 'Récitation réparée, plans de lecture, versets favoris, pépites en mode lecture',
+    features: [
+      "Récitation : choix « À voix haute » ou « Par écrit », correction mot par mot (vert/rouge) et validation de l'étape à partir de 80 %",
+      "Plans de lecture : Bible en 1 an, Nouveau Testament en 90 jours, Évangiles en 30 jours, Psaumes en 60 jours, Proverbes en 31 jours, avec progression",
+      "Versets favoris ⭐ avec une note personnelle sur chaque verset",
+      "Pépites en mode lecture : une pépite à la fois en plein écran, glisser pour passer à la suivante",
+      "Note personnelle « ce que j'en retiens » sur chaque pépite gardée, rappelée pendant la révision"
+    ],
+    fixes: [
+      "Récitation : la reconnaissance vocale écoute toujours en français (elle suivait la langue de l'app), ne plante plus en appuyant deux fois sur Démarrer, fonctionne mieux sur Android",
+      "Messages clairs quand la reconnaissance vocale est indisponible (iPhone : activer la Dictée, pas d'Internet, micro refusé…)"
+    ],
+    improvements: []
+  },
+  {
     version: '0.9.8',
     date: '2026-10-18',
     title: 'Mes idées : micro réparé et amélioré',

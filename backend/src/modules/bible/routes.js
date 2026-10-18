@@ -127,6 +127,103 @@ router.get('/chapter', (req, res) => {
   res.json(ch);
 });
 
+// --- PLANS DE LECTURE ---
+const planProgress = (p) => {
+  const plan = lsg.PLANS[p.planKey];
+  const done = new Set(p.done || []);
+  let next = 0;
+  while (next < plan.days && done.has(next)) next++;
+  const daysSinceStart = Math.floor((Date.now() - new Date(p.startedAt).getTime()) / 86400000);
+  return {
+    id: p.id, planKey: p.planKey, label: plan.label, days: plan.days, startedAt: p.startedAt,
+    doneCount: done.size, percent: Math.round(done.size / plan.days * 100),
+    finished: next >= plan.days,
+    late: Math.max(0, Math.min(plan.days, daysSinceStart + 1) - done.size),
+    next: next < plan.days ? lsg.planDay(p.planKey, next) : null
+  };
+};
+
+router.get('/plans', async (req, res) => {
+  await db.read();
+  const mine = db.data.bibleReadingPlans.filter(p => p.userId === req.user.id).map(planProgress);
+  res.json({
+    catalog: Object.entries(lsg.PLANS).map(([key, p]) => ({ key, label: p.label, days: p.days, chapters: p.chapters().length })),
+    mine
+  });
+});
+
+router.post('/plans', async (req, res) => {
+  const { planKey } = req.body;
+  if (!lsg.PLANS[planKey]) return res.status(400).json({ error: 'Plan inconnu.' });
+  await db.read();
+  if (db.data.bibleReadingPlans.some(p => p.userId === req.user.id && p.planKey === planKey)) {
+    return res.status(409).json({ error: 'Tu suis déjà ce plan.' });
+  }
+  const plan = { id: nanoid(), userId: req.user.id, planKey, startedAt: new Date().toISOString(), done: [] };
+  db.data.bibleReadingPlans.push(plan);
+  await db.write();
+  res.status(201).json(planProgress(plan));
+});
+
+// Marque (ou démarque) un jour du plan comme lu.
+router.post('/plans/:id/days/:day', async (req, res) => {
+  await db.read();
+  const plan = db.data.bibleReadingPlans.find(p => p.id === req.params.id && p.userId === req.user.id);
+  if (!plan) return res.status(404).json({ error: 'Plan introuvable.' });
+  const day = Number(req.params.day);
+  if (!lsg.planDay(plan.planKey, day)) return res.status(400).json({ error: 'Jour invalide.' });
+  const done = new Set(plan.done);
+  if (req.body.done === false) done.delete(day); else done.add(day);
+  plan.done = [...done].sort((a, b) => a - b);
+  await db.write();
+  res.json(planProgress(plan));
+});
+
+router.delete('/plans/:id', async (req, res) => {
+  await db.read();
+  const before = db.data.bibleReadingPlans.length;
+  db.data.bibleReadingPlans = db.data.bibleReadingPlans.filter(p => !(p.id === req.params.id && p.userId === req.user.id));
+  if (db.data.bibleReadingPlans.length === before) return res.status(404).json({ error: 'Plan introuvable.' });
+  await db.write();
+  res.json({ ok: true });
+});
+
+// --- VERSETS FAVORIS (avec note personnelle) ---
+router.get('/favorites', async (req, res) => {
+  await db.read();
+  res.json(db.data.bibleFavorites.filter(f => f.userId === req.user.id).sort((a, b) => b.createdAt.localeCompare(a.createdAt)));
+});
+
+router.post('/favorites', async (req, res) => {
+  const verse = verses.find(v => v.ref === req.body.ref) || lsg.passage(req.body.ref);
+  if (!verse) return res.status(404).json({ error: 'Verset introuvable.' });
+  await db.read();
+  const existing = db.data.bibleFavorites.find(f => f.userId === req.user.id && f.ref === verse.ref);
+  if (existing) return res.json(existing);
+  const fav = { id: nanoid(), userId: req.user.id, ref: verse.ref, text: verse.text, note: '', createdAt: new Date().toISOString() };
+  db.data.bibleFavorites.push(fav);
+  await db.write();
+  res.status(201).json(fav);
+});
+
+router.patch('/favorites/:id', async (req, res) => {
+  await db.read();
+  const fav = db.data.bibleFavorites.find(f => f.id === req.params.id && f.userId === req.user.id);
+  if (!fav) return res.status(404).json({ error: 'Favori introuvable.' });
+  if (typeof req.body.note === 'string') fav.note = req.body.note.slice(0, 2000);
+  await db.write();
+  res.json(fav);
+});
+
+router.delete('/favorites/:id', async (req, res) => {
+  await db.read();
+  const before = db.data.bibleFavorites.length;
+  db.data.bibleFavorites = db.data.bibleFavorites.filter(f => !(f.id === req.params.id && f.userId === req.user.id));
+  if (db.data.bibleFavorites.length === before) return res.status(404).json({ error: 'Favori introuvable.' });
+  await db.write();
+  res.json({ ok: true });
+});
+
 // Quiz à trous. ?source=mine pioche dans les versets en mémorisation de
 // l'utilisateur (repli sur toute la bibliothèque s'il n'en a pas).
 // La réponse n'est pas envoyée : elle est vérifiée par POST /quiz/check.

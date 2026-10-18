@@ -15,6 +15,17 @@
 
 <div id="toast-layer"></div>
 
+<div id="pep-story" class="pep-story hidden" role="dialog" aria-label="Pépites en mode lecture">
+  <div class="pep-story-bar" id="pep-story-bar"></div>
+  <button type="button" class="pep-story-close" id="pep-story-close" aria-label="Fermer">✕</button>
+  <div class="pep-story-card" id="pep-story-card"></div>
+  <div class="pep-story-nav">
+    <button type="button" class="small" id="pep-story-prev">◀ Précédente</button>
+    <button type="button" class="small" id="pep-story-save">🔖 Garder</button>
+    <button type="button" id="pep-story-next">Suivante ▶</button>
+  </div>
+</div>
+
 <div id="lock-screen" class="screen hidden" style="max-width:320px;margin:80px auto;text-align:center;">
   <h1>🔒 Verrouillé</h1>
   <form id="lock-unlock-form">
@@ -289,6 +300,16 @@
         </details>
       </div>
 
+      <div class="card-block" id="bible-plans-card">
+        <h3>📅 Plans de lecture</h3>
+        <div id="bible-plans"><p class="meta">Chargement…</p></div>
+      </div>
+
+      <div class="card-block" id="bible-favorites-card">
+        <h3>⭐ Mes versets favoris</h3>
+        <div id="bible-favorites"><p class="meta">Chargement…</p></div>
+      </div>
+
       <div class="card-block">
         <h3>Verset du jour</h3>
         <div id="bible-verse-of-day">Chargement...</div>
@@ -445,6 +466,7 @@
       </div>
 
       <div data-pep-panel="feed">
+        <button type="button" id="pep-story-btn" class="pep-story-btn">▶️ Mode lecture : une pépite à la fois</button>
         <div class="pep-chips" id="pep-theme-chips"></div>
         <div class="pep-chips" id="pep-domain-chips"></div>
         <p class="meta" id="pep-focus"></p>

@@ -188,6 +188,16 @@ router.post('/:id/save', async (req, res) => {
   res.status(201).json(save);
 });
 
+// Note personnelle sur une pépite gardée (« ce que j'en retiens »).
+router.patch('/saves/:saveId', async (req, res) => {
+  await db.read();
+  const save = db.data.pepiteSaves.find(s => s.id === req.params.saveId && s.userId === req.user.id);
+  if (!save) return res.status(404).json({ error: 'Sauvegarde introuvable.' });
+  if (typeof req.body.note === 'string') save.note = req.body.note.slice(0, 2000);
+  await db.write();
+  res.json(save);
+});
+
 router.delete('/saves/:saveId', async (req, res) => {
   await db.read();
   const before = db.data.pepiteSaves.length;
@@ -205,7 +215,7 @@ router.get('/stashes', async (req, res) => {
   for (const s of savesOf(uid)) {
     const p = findPepite(uid, s.pepiteId);
     if (!p) continue;
-    (groups[s.stash] ||= []).push({ ...p, saveId: s.id, stash: s.stash, mastered: s.mastered, nextReview: s.nextReview });
+    (groups[s.stash] ||= []).push({ ...p, saveId: s.id, stash: s.stash, mastered: s.mastered, nextReview: s.nextReview, note: s.note || '' });
   }
   res.json(Object.entries(groups).map(([name, items]) => ({ name, items })));
 });
@@ -218,7 +228,7 @@ router.get('/review', async (req, res) => {
     .filter(s => !s.mastered && s.nextReview <= today())
     .map(s => ({ save: s, pepite: findPepite(uid, s.pepiteId) }))
     .filter(x => x.pepite);
-  res.json(due.map(({ save, pepite }) => ({ ...pepite, saveId: save.id, stage: save.stage })));
+  res.json(due.map(({ save, pepite }) => ({ ...pepite, saveId: save.id, stage: save.stage, note: save.note || '' })));
 });
 
 // remembered=true → étape suivante ; false → on recommence à J1.

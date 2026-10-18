@@ -434,6 +434,12 @@ Automatisations et nouvelles intégrations restent hors scope pour une app
   versets), ou un **verset d'une autre traduction** en collant son texte.
 - API : `GET /api/bible/books`, `GET /api/bible/lookup?q=`,
   `GET /api/bible/chapter?book=&chapter=`.
+- **📅 Plans de lecture** (v0.9.9) : Bible en 1 an, NT en 90 jours,
+  Évangiles en 30 jours, Psaumes en 60 jours, Proverbes en 31 jours ; chaque
+  jour indique les chapitres à lire, ouvre le lecteur, et se coche « lu ».
+- **⭐ Versets favoris** avec note personnelle, depuis la recherche ou le lecteur.
+- **Récitation** : à voix haute (reconnaissance vocale, toujours en français)
+  ou par écrit, avec correction mot par mot.
 
 ---
 

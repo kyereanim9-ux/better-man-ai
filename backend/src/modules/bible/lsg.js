@@ -121,3 +121,36 @@ export function randomVerse() {
   const e = all[Math.floor(Math.random() * all.length)];
   return { ref: refLabel(e.b, e.c + 1, e.v + 1), text: load().books[e.b].chapters[e.c][e.v] };
 }
+
+// --- Plans de lecture : liste ordonnée de chapitres répartie sur N jours ---
+function chaptersOf(fromBook, toBook) {
+  const list = [];
+  load().books.slice(fromBook, toBook + 1).forEach((book, k) => {
+    for (let c = 1; c <= book.chapters.length; c++) list.push({ b: fromBook + k, c });
+  });
+  return list;
+}
+export const PLANS = {
+  'bible-1an': { label: 'Toute la Bible en 1 an', days: 365, chapters: () => chaptersOf(0, 65) },
+  'nt-90j': { label: 'Nouveau Testament en 90 jours', days: 90, chapters: () => chaptersOf(39, 65) },
+  'evangiles-30j': { label: 'Les 4 Évangiles en 30 jours', days: 30, chapters: () => chaptersOf(39, 42) },
+  'psaumes-60j': { label: 'Les Psaumes en 60 jours', days: 60, chapters: () => chaptersOf(18, 18) },
+  'proverbes-31j': { label: 'Proverbes : un chapitre par jour (31 jours)', days: 31, chapters: () => chaptersOf(19, 19) }
+};
+
+// Lecture du jour n (0 = premier jour) d'un plan : chapitres et libellé.
+export function planDay(planKey, day) {
+  const plan = PLANS[planKey];
+  if (!plan || day < 0 || day >= plan.days) return null;
+  const all = plan.chapters();
+  const slice = all.slice(Math.floor(day * all.length / plan.days), Math.floor((day + 1) * all.length / plan.days));
+  // Regroupe les chapitres consécutifs d'un même livre : « Genèse 1-3 ».
+  const parts = [];
+  for (const { b, c } of slice) {
+    const last = parts[parts.length - 1];
+    if (last && last.b === b && last.to === c - 1) last.to = c;
+    else parts.push({ b, from: c, to: c });
+  }
+  const label = parts.map(p => `${load().books[p.b].name} ${p.from}${p.to !== p.from ? '-' + p.to : ''}`).join(', ');
+  return { day, label, first: slice[0] ? { book: slice[0].b, chapter: slice[0].c } : null, chapters: slice.length };
+}
