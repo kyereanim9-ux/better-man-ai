@@ -408,4 +408,24 @@ header.app-header {
 .mem-blank.ok { border: 1px solid var(--success); background: var(--success-soft); }
 .mem-blank.ko { border: 1px solid var(--danger); background: var(--danger-soft); }
 .mem-corrections { margin: 0; padding-left: 18px; font-size: 13.5px; }
-.mem-item > div { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.mem-item { flex-direction: column; align-items: stretch; }
+.mem-item > span { display: flex; flex-direction: column; gap: 2px; }
+.mem-item > div { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; }
+
+/* ---------- Bible complète : recherche et lecteur ---------- */
+.bible-browse { display: flex; gap: 8px; margin: 4px 0 10px; }
+.bible-browse select { flex: 1; min-width: 0; }
+.bible-reader-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 8px 0; font-size: 16px; }
+.bible-verse-row { padding: 9px 0; border-bottom: 1px solid var(--border); }
+.bible-verse-row:last-child { border-bottom: none; }
+.bible-verse-text { line-height: 1.6; font-size: 15px; }
+.bible-verse-text sup { color: var(--accent); font-weight: 700; margin-right: 2px; }
+.bible-verse-text mark { background: var(--accent-soft); color: inherit; border-radius: 3px; padding: 0 2px; }
+.bible-verse-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 5px; }
+#bible-finder button.small, #view-bible .card-block > div > button.small { padding: 5px 9px; font-size: 12px; background: transparent; border: 1px solid var(--border); color: var(--text); box-shadow: none; }
+.bible-custom { margin-top: 12px; }
+.bible-custom summary { cursor: pointer; color: var(--muted); font-size: 13.5px; }
+.bible-custom form { margin-top: 8px; }
+.mem-progress-row { display: flex; align-items: center; gap: 8px; margin: 4px 0 2px; }
+.mem-progress { display: block; height: 6px; width: 120px; max-width: 50%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.mem-progress span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }

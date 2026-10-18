@@ -9,6 +9,22 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.9.6',
+    date: '2026-10-18',
+    title: 'Toute la Bible : recherche, lecture et mémorisation de n\'importe quel verset',
+    features: [
+      "Bible Louis Segond 1910 complète (66 livres, 31 170 versets, domaine public) intégrée à l'app, sans connexion à un service extérieur",
+      "Recherche par référence (Jean 3:16, Ps 23, 1 Co 13:4-7, abréviations acceptées) ou par mots-clés, avec mots surlignés",
+      "Lecteur par livre et chapitre, avec chapitre précédent/suivant et lecture audio",
+      "Mémoriser n'importe quel verset ou passage (jusqu'à 10 versets), ou un verset d'une autre traduction en collant son texte",
+      "Bouton « Lire le chapitre » sur le verset et la lecture du jour",
+      "Quiz : nouvelle source « Toute la Bible »",
+      "Mémorisation : barre de progression, étape x/6 et date de la prochaine révision"
+    ],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.9.5',
     date: '2026-10-18',
     title: 'Quiz biblique interactif, exercices de mémorisation et pépites du jour',

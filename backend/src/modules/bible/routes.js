@@ -7,6 +7,7 @@ import { requireAuth } from '../../middleware/auth.js';
 import { db } from '../../db.js';
 import { computeStatus, advanceStage, STAGES } from './spacedRepetition.js';
 import { stripAccents } from '../../shared/textNormalize.js';
+import * as lsg from './lsg.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const verses = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'verses.json'), 'utf-8'));
@@ -98,6 +99,31 @@ router.post('/ask', (req, res) => {
   });
 });
 
+// --- BIBLE COMPLÈTE (Louis Segond 1910) : recherche, lecture par chapitre ---
+
+router.get('/books', (req, res) => res.json(lsg.books()));
+
+// Une référence (« Jean 3:16 », « Ps 23 ») ou des mots-clés (« paix », « pardonne offenses »).
+router.get('/lookup', (req, res) => {
+  const q = String(req.query.q || '').trim().slice(0, 100);
+  if (!q) return res.status(400).json({ error: 'Écris une référence ou un mot à chercher.' });
+  const ref = lsg.parseReference(q);
+  if (ref?.error) return res.status(404).json({ error: ref.error });
+  if (ref) {
+    const ch = lsg.chapter(ref.b, ref.c);
+    const verses = ref.from === null ? ch.verses : ch.verses.slice(ref.from - 1, ref.to);
+    return res.json({ type: 'ref', book: ch.book, bookIndex: ch.bookIndex, chapter: ch.chapter, chapters: ch.chapters, verses });
+  }
+  const { total, results } = lsg.searchText(q, 50);
+  res.json({ type: 'search', total, results });
+});
+
+router.get('/chapter', (req, res) => {
+  const ch = lsg.chapter(Number(req.query.book), Number(req.query.chapter));
+  if (!ch) return res.status(404).json({ error: 'Chapitre introuvable.' });
+  res.json(ch);
+});
+
 // Quiz à trous. ?source=mine pioche dans les versets en mémorisation de
 // l'utilisateur (repli sur toute la bibliothèque s'il n'en a pas).
 // La réponse n'est pas envoyée : elle est vérifiée par POST /quiz/check.
@@ -124,6 +150,7 @@ function editDistance(a, b) {
 router.get('/quiz', async (req, res) => {
   let pool = verses;
   let source = 'all';
+  if (req.query.source === 'bible') { pool = [lsg.randomVerse()]; source = 'bible'; }
   if (req.query.source === 'mine') {
     await db.read();
     const mine = db.data.bibleMemorization.filter(m => m.userId === req.user.id).map(m => ({ ref: m.ref, text: m.text }));
@@ -133,7 +160,9 @@ router.get('/quiz', async (req, res) => {
   const words = quizWords(verse.text);
   // Choisit un mot significatif (plus de 3 lettres) à retirer.
   const candidateIndexes = words.map((w, i) => i)
-    .filter(i => cleanWord(words[i]).length > 3 && !QUIZ_SKIP.has(normalizeAnswer(words[i])));
+    .filter(i => cleanWord(words[i]).length > 3 && !QUIZ_SKIP.has(normalizeAnswer(words[i])))
+    // Toute la Bible : on évite les noms propres (Akisch, Jizreel…), peu utiles à apprendre.
+    .filter(i => source !== 'bible' || !/^(?:[a-zà-ÿ][’'])?[A-ZÀ-Ý]/.test(words[i]));
   const blankIndex = candidateIndexes[Math.floor(Math.random() * candidateIndexes.length)] ?? 0;
   const answer = cleanWord(words[blankIndex]);
   const prompt = words.map((w, i) => (i === blankIndex ? w.replace(answer, '_____') : w)).join(' ');
@@ -146,7 +175,7 @@ router.post('/quiz/check', async (req, res) => {
   let verse = verses.find(v => v.ref === ref);
   if (!verse) {
     await db.read();
-    verse = db.data.bibleMemorization.find(m => m.userId === req.user.id && m.ref === ref);
+    verse = db.data.bibleMemorization.find(m => m.userId === req.user.id && m.ref === ref) || lsg.passage(ref);
   }
   if (!verse) return res.status(404).json({ error: 'Verset introuvable.' });
   const words = quizWords(verse.text);
@@ -178,16 +207,26 @@ router.get('/memorization', async (req, res) => {
 });
 
 router.post('/memorization', async (req, res) => {
-  const { ref } = req.body;
-  const verse = verses.find(v => v.ref === ref);
-  if (!verse) return res.status(404).json({ error: 'Verset introuvable dans la bibliothèque.' });
+  const { ref, text } = req.body;
+  // Verset de la sélection, n'importe quel passage de la Bible (jusqu'à 10
+  // versets), ou verset personnalisé (autre traduction) avec son texte.
+  let verse = verses.find(v => v.ref === ref) || lsg.passage(ref);
+  if (verse && verse.ref.includes('-')) {
+    const [, from, to] = verse.ref.match(/:(\d+)-(\d+)$/) || [];
+    if (from && Number(to) - Number(from) >= 10) return res.status(400).json({ error: 'Choisis au plus 10 versets à la fois.' });
+  }
+  if (!verse && ref?.trim() && text?.trim()) {
+    verse = { ref: ref.trim().slice(0, 80), text: text.trim().slice(0, 1500), custom: true };
+  }
+  if (!verse) return res.status(404).json({ error: 'Verset introuvable. Vérifie la référence (ex : Jean 3:16) ou colle le texte du verset.' });
 
   await db.read();
-  const already = db.data.bibleMemorization.find(m => m.userId === req.user.id && m.ref === ref);
+  const already = db.data.bibleMemorization.find(m => m.userId === req.user.id && m.ref === verse.ref);
   if (already) return res.status(409).json({ error: 'Ce verset est déjà dans ta liste de mémorisation.' });
 
   const item = {
     id: nanoid(), userId: req.user.id, ref: verse.ref, text: verse.text,
+    ...(verse.custom ? { custom: true } : {}),
     stage: 0, startedAt: new Date().toISOString()
   };
   db.data.bibleMemorization.push(item);

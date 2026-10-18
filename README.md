@@ -420,7 +420,24 @@ Automatisations et nouvelles intégrations restent hors scope pour une app
 
 ---
 
-## 16. Coach IA avec Claude (v0.9)
+## 16. Toute la Bible : recherche et mémorisation (v0.9.6)
+
+- La **Bible Louis Segond 1910 complète** (domaine public, 31 170 versets) est
+  incluse dans `backend/src/modules/bible/data/lsg1910.json` (source :
+  getBible, `https://api.getbible.net/v2/ls1910.json`). Elle n'est chargée
+  qu'à la première recherche — aucun service extérieur n'est appelé.
+- **🔎 Chercher dans la Bible** (haut de l'onglet Bible) : une référence
+  (`Jean 3:16`, `jean 3 16`, `Ps 23`, `1 Co 13:4-7`, abréviations courantes)
+  ou des mots-clés (tous les mots doivent apparaître, accents ignorés).
+- **Parcourir** un livre et un chapitre, avec ◀ ▶ pour changer de chapitre.
+- **➕ Mémoriser** n'importe quel verset, un passage entier (jusqu'à 10
+  versets), ou un **verset d'une autre traduction** en collant son texte.
+- API : `GET /api/bible/books`, `GET /api/bible/lookup?q=`,
+  `GET /api/bible/chapter?book=&chapter=`.
+
+---
+
+## 17. Coach IA avec Claude (v0.9)
 
 Le Coach IA peut utiliser **Claude** (Anthropic) comme moteur principal :
 
@@ -441,7 +458,7 @@ fournisseurs via `/api/chat/text-provider-status`.
 
 ---
 
-## 17. À propos du déploiement en ligne (Vercel)
+## 18. À propos du déploiement en ligne (Vercel)
 
 Cette app peut être déployée sur Vercel (voir `vercel.json`, `api/index.js`)
 pour obtenir un lien public permanent, en plus de l'usage local. Si tu as
