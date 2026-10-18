@@ -9,6 +9,22 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.10.0',
+    date: '2026-10-18',
+    title: 'Révisions : apprendre pour ses tests, en groupe',
+    features: [
+      "Nouvelle rubrique 📝 Révisions : colle ta liste (une ligne = question | réponse), avec la date du test et un compte à rebours",
+      "« Préremplir les chapitres » d'un livre de la Bible (ex. Apocalypse 1 à 22) : il ne reste qu'à écrire les titres",
+      "8 méthodes : à revoir aujourd'hui (répétition espacée), cartes à retourner, écrire ou dicter au micro, QCM, associer, examen blanc noté sur 20, écoute à voix haute, fiche à réponses cachées",
+      "Réponses écrites vérifiées avec tolérance (accents, petits mots, fautes de frappe) et mots manquants surlignés",
+      "Astuce personnelle sur chaque carte (image, mot-clé…) et guide des méthodes de mémorisation",
+      "Partage au groupe avec un code : chacun a sa progression, avec un classement",
+      "Les rappels « Versets à réviser » comptent aussi les fiches à revoir"
+    ],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.9.11',
     date: '2026-10-18',
     title: 'Nouveau logo : Sommet et étoile',

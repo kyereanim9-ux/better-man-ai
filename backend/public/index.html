@@ -112,6 +112,7 @@
       <button data-view="adaptation" class="nav-btn">⚙️ Adaptation</button>
       <button data-view="communication" class="nav-btn">🗣️ Communication</button>
       <button data-view="pepites" class="nav-btn">✨ Pépites</button>
+      <button data-view="study" class="nav-btn">📝 Révisions</button>
       <button data-view="ideas" class="nav-btn">💡 Mes idées</button>
       <button data-view="domains" class="nav-btn">📊 Domaines</button>
       <button data-view="progress" class="nav-btn">📈 Progression</button>
@@ -457,6 +458,62 @@
 
     <!-- INTIMACY -->
     <!-- PÉPITES : idées courtes à lire en 1 minute -->
+    <div class="view hidden" id="view-study">
+      <h2>📝 Révisions</h2>
+      <p class="meta">Prépare tes tests : colle ta liste de questions et réponses, entraîne-toi avec plusieurs méthodes et partage-la à ton groupe.</p>
+
+      <div id="study-home">
+        <div id="study-sets"></div>
+        <div class="card-block">
+          <h3>Rejoindre la liste d'un groupe</h3>
+          <form id="study-join-form">
+            <input id="study-join-code" placeholder="Code (ex. K7P2QX)" maxlength="12" autocapitalize="characters" />
+            <button type="submit">Rejoindre</button>
+          </form>
+        </div>
+        <button type="button" id="study-new-btn">➕ Nouvelle liste à apprendre</button>
+        <details class="card-block study-methods">
+          <summary>💡 Comment bien mémoriser ? (les méthodes)</summary>
+          <ul>
+            <li><strong>Se tester plutôt que relire</strong> : chercher la réponse dans sa tête avant de la voir grave l'information bien mieux. Toutes les méthodes ici te font chercher d'abord.</li>
+            <li><strong>Répétition espacée</strong> : une carte sue revient dans 1, 2, 4, 7 puis 14 jours ; une carte ratée revient aujourd'hui. Fais seulement « À revoir aujourd'hui », 10 minutes par jour.</li>
+            <li><strong>Petits paquets</strong> : apprends 5 à 7 cartes à la fois (ex. chapitres 1 à 5), puis ajoute le paquet suivant.</li>
+            <li><strong>Une image par chapitre</strong> : invente une image forte et un peu folle (ex. Ap 1 : Jésus avec 7 étoiles dans la main). Note-la dans « 💡 Astuce » sur la carte.</li>
+            <li><strong>Mot-clé</strong> : retiens un seul mot qui résume le titre (ex. « Lettres », « Trône », « Sceaux »), puis reconstruis le titre autour.</li>
+            <li><strong>Palais de mémoire</strong> : place chaque chapitre dans une pièce de ta maison, dans l'ordre (entrée = Ap 1, salon = Ap 2…), puis fais la visite dans ta tête.</li>
+            <li><strong>Écouter</strong> : « 🎧 Écouter la liste » lit tout à voix haute, idéal en marchant ou dans les transports.</li>
+            <li><strong>Expliquer à quelqu'un</strong> : réciter à une autre personne du groupe, ou au micro, oblige à vraiment savoir.</li>
+            <li><strong>Mélanger l'ordre</strong> : au test, les questions ne seront peut-être pas dans l'ordre. Entraîne-toi en ordre puis en aléatoire.</li>
+            <li><strong>Dormir</strong> : réviser un peu le soir puis dormir aide le cerveau à garder ce qu'il a appris.</li>
+          </ul>
+        </details>
+      </div>
+
+      <div id="study-editor" class="hidden">
+        <div class="card-block">
+          <h3 id="study-editor-title">Nouvelle liste</h3>
+          <form id="study-edit-form" class="study-form">
+            <input id="study-title" placeholder="Titre (ex. Titres des chapitres de l'Apocalypse)" maxlength="120" required />
+            <label class="meta">Date du test (facultatif) <input type="date" id="study-exam-date" /></label>
+            <input id="study-desc" placeholder="Note (facultatif)" maxlength="500" />
+            <p class="meta">Une ligne par carte : <strong>question | réponse</strong>. « : », « = » ou « - » marchent aussi. Ex. : <em>Apocalypse 1 | La vision du Fils de l'homme</em></p>
+            <div class="study-prefill">
+              <select id="study-prefill-book"></select>
+              <button type="button" class="secondary" id="study-prefill-btn">Préremplir les chapitres</button>
+            </div>
+            <textarea id="study-text" rows="14" placeholder="Apocalypse 1 | …&#10;Apocalypse 2 | …"></textarea>
+            <p class="meta" id="study-text-count"></p>
+            <div class="pep-buttons">
+              <button type="submit">💾 Enregistrer</button>
+              <button type="button" class="secondary" id="study-edit-cancel">Annuler</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="study-detail" class="hidden"></div>
+    </div>
+
     <div class="view hidden" id="view-pepites">
       <h2>✨ Pépites</h2>
       <p class="meta">Des idées puissantes à lire en 1 minute, à garder, réviser et appliquer. 100 % gratuit.</p>

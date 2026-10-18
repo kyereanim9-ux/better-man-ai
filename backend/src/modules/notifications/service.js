@@ -15,6 +15,7 @@ import { db } from '../../db.js';
 import { computeStatus } from '../bible/spacedRepetition.js';
 import { verseOfDay } from '../bible/routes.js';
 import { computeStreak } from '../gamification/routes.js';
+import { studyDue } from '../study/routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PEPITES = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'pepites', 'data', 'pepites.json'), 'utf-8'));
@@ -23,7 +24,7 @@ export const NOTIF_TYPES = {
   verseOfDay: { label: 'Verset du jour', default: true },
   pepites: { label: 'Nouvelles pépites', default: true },
   missions: { label: 'Missions et habitudes', default: false },
-  verses: { label: 'Versets à réviser', default: false },
+  verses: { label: 'Versets et fiches de révision à revoir', default: false },
   streak: { label: 'Série en danger (vers 20h)', default: false }
 };
 const STREAK_HOUR = '20:00';
@@ -87,6 +88,11 @@ export function computeItems(uid, prefs) {
     const due = db.data.bibleMemorization.filter(m => m.userId === uid).map(computeStatus).filter(m => m.isDue);
     if (due.length) {
       items.push({ kind: 'verses', icon: '🧠', title: `${due.length} verset${due.length > 1 ? 's' : ''} à réviser`, body: due.slice(0, 3).map(m => m.ref).join(' · '), view: 'bible' });
+    }
+    const study = studyDue(uid);
+    const cards = study.reduce((n, x) => n + x.due, 0);
+    if (cards) {
+      items.push({ kind: 'study', icon: '📝', title: `${cards} fiche${cards > 1 ? 's' : ''} de révision à revoir`, body: study.slice(0, 3).map(x => `${x.title} (${x.due})`).join(' · '), view: 'study' });
     }
   }
   if (prefs.types.streak) {

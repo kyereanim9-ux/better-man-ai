@@ -364,6 +364,8 @@ function switchView(view) {
   if (view === 'domains') loadDomains();
   if (view === 'ideas') loadIdeas();
   if (view === 'pepites') loadPepites();
+  if (view === 'study') loadStudy();
+  else stopStudyAudio();
   if (view === 'profile-setup') loadOnboarding();
   if (view === 'whats-new') loadWhatsNew();
   if (view === 'account') { loadAccount(); renderNotifSettings(); }
@@ -396,6 +398,7 @@ const CATEGORIES = {
   ],
   'cat-apprendre': [
     { view: 'pepites', icon: '✨', name: 'Pépites', desc: 'Une idée puissante en 1 minute' },
+    { view: 'study', icon: '📝', name: 'Révisions', desc: 'Apprends pour tes tests, seul ou en groupe' },
     { view: 'bible', icon: '📖', name: 'Bible', desc: 'Lire, mémoriser, appliquer' },
     { view: 'library', icon: '📚', name: 'Bibliothèque', desc: 'Tes livres et lectures' },
     { view: 'teach', icon: '🎓', name: 'Teach Me', desc: 'Apprends un sujet en 5 niveaux' },
@@ -4184,3 +4187,551 @@ document.getElementById('pep-story-save').onclick = async () => {
     if (e.key === 'Escape') closePepStory();
   });
 })();
+
+// --- RÉVISIONS : listes à apprendre pour un test, partagées au groupe ---
+// Chaque carte a une question et une réponse. Plusieurs méthodes : cartes à
+// retourner, réponse écrite (ou dictée), QCM, associer, examen blanc, écoute.
+// La progression (boîtes de Leitner) est enregistrée côté serveur.
+// var (et non const) : switchView() appelle stopStudyAudio() dès le démarrage, avant cette ligne.
+var study = { sets: [], current: null, session: null, editingId: null, books: null, audio: false };
+const STUDY_STOP = new Set(['le', 'la', 'les', 'l', 'de', 'du', 'des', 'd', 'un', 'une', 'et', 'a', 'au', 'aux', 'en', 'dans', 'sur', 'pour', 'par', 'avec', 'qui', 'que', 'qu', 'ou', 'son', 'sa', 'ses', 'se', 's', 'ce', 'est']);
+const studyNorm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+  .replace(/[^a-z0-9]+/g, ' ').trim();
+const studyShuffle = (list) => { const a = [...list]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function studyDistance(a, b) {
+  let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    for (let j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    prev = cur;
+  }
+  return prev[b.length];
+}
+// Comparaison tolérante d'une réponse rédigée : accents, majuscules, petits
+// mots (le, de, et…) et fautes de frappe ne comptent pas. « close » = presque.
+function studyCompare(given, expected) {
+  const g = studyNorm(given), e = studyNorm(expected);
+  if (!g) return { verdict: 'wrong', missing: [] };
+  const gj = g.replace(/ /g, ''), ej = e.replace(/ /g, '');
+  if (gj === ej || (ej.length >= 5 && studyDistance(gj, ej) <= Math.max(1, Math.floor(ej.length / 10)))) return { verdict: 'right', missing: [] };
+  const gWords = g.split(' ');
+  const keys = e.split(' ').filter(w => !STUDY_STOP.has(w));
+  const found = (w) => gWords.some(x => x === w || (w.length >= 5 && studyDistance(x, w) <= 1));
+  const missing = keys.filter(w => !found(w));
+  const ratio = keys.length ? 1 - missing.length / keys.length : 0;
+  return { verdict: ratio === 1 ? 'right' : ratio >= 0.6 ? 'close' : 'wrong', missing };
+}
+// Met en évidence, dans la bonne réponse, les mots qui manquaient.
+function studyMarkMissing(expected, missing) {
+  const miss = new Set(missing);
+  return expected.split(/(\s+)/).map(part => miss.has(studyNorm(part)) ? `<mark>${escapeHtml(part)}</mark>` : escapeHtml(part)).join('');
+}
+
+function studyShow(which) {
+  for (const id of ['study-home', 'study-editor', 'study-detail']) document.getElementById(id).classList.toggle('hidden', id !== which);
+  window.scrollTo({ top: 0 });
+}
+
+async function loadStudy() {
+  stopStudyAudio();
+  studyShow('study-home');
+  const box = document.getElementById('study-sets');
+  box.innerHTML = '<p class="meta">Chargement…</p>';
+  try { study.sets = await api('/study'); } catch (err) { box.innerHTML = `<p class="meta">${escapeHtml(err.message)}</p>`; return; }
+  if (!study.sets.length) {
+    box.innerHTML = '<div class="pep-card"><div class="pep-title">Aucune liste pour l\'instant</div><div class="pep-text">Crée ta première liste (ex. les titres des chapitres de l\'Apocalypse) ou rejoins celle de ton groupe avec un code.</div></div>';
+    return;
+  }
+  box.innerHTML = study.sets.map(s => `
+    <button type="button" class="study-set" data-study-open="${s.id}">
+      <span class="study-set-title">${escapeHtml(s.title)}</span>
+      <span class="meta">${s.total} carte${s.total > 1 ? 's' : ''} · ${studyCountdown(s)}${s.isOwner ? '' : ` · par ${escapeHtml(s.owner)}`}</span>
+      <span class="study-bar"><span style="width:${s.total ? Math.round(s.mastered * 100 / s.total) : 0}%"></span></span>
+      <span class="meta">${s.mastered}/${s.total} maîtrisées${s.due ? ` · <strong>${s.due} à revoir aujourd'hui</strong>` : ' · rien à revoir aujourd\'hui ✅'}</span>
+    </button>`).join('');
+  box.querySelectorAll('[data-study-open]').forEach(b => { b.onclick = () => openStudySet(b.dataset.studyOpen); });
+}
+
+function studyCountdown(s) {
+  if (s.daysLeft === null || s.daysLeft === undefined) return 'pas de date de test';
+  if (s.daysLeft < 0) return 'test passé';
+  if (s.daysLeft === 0) return '<strong>test aujourd\'hui</strong>';
+  return `test dans ${s.daysLeft} jour${s.daysLeft > 1 ? 's' : ''}`;
+}
+
+document.getElementById('study-join-form').onsubmit = async (e) => {
+  e.preventDefault();
+  const input = document.getElementById('study-join-code');
+  try {
+    const set = await api('/study/join', { method: 'POST', body: { code: input.value } });
+    input.value = '';
+    showToast(`Liste « ${escapeHtml(set.title)} » ajoutée ✅`);
+    openStudySet(set.id);
+  } catch (err) { showToast(escapeHtml(err.message)); }
+};
+
+// --- Création / modification d'une liste ---
+document.getElementById('study-new-btn').onclick = () => openStudyEditor(null);
+document.getElementById('study-edit-cancel').onclick = () => study.editingId ? openStudySet(study.editingId) : loadStudy();
+document.getElementById('study-text').oninput = updateStudyTextCount;
+function updateStudyTextCount() {
+  const lines = document.getElementById('study-text').value.split('\n').map(l => l.trim()).filter(Boolean);
+  const empty = lines.filter(l => !/(\||\t|=|—|–|\s-\s|(?<!\d):(?!\d))\s*\S/.test(l)).length;
+  document.getElementById('study-text-count').textContent = lines.length
+    ? `${lines.length} carte${lines.length > 1 ? 's' : ''}${empty ? ` · ${empty} sans réponse (à compléter plus tard, ignorée${empty > 1 ? 's' : ''} pendant les révisions)` : ''}`
+    : '';
+}
+async function openStudyEditor(set) {
+  stopStudyAudio();
+  study.editingId = set?.id || null;
+  document.getElementById('study-editor-title').textContent = set ? 'Modifier la liste' : 'Nouvelle liste';
+  document.getElementById('study-title').value = set?.title || '';
+  document.getElementById('study-exam-date').value = set?.examDate || '';
+  document.getElementById('study-desc').value = set?.description || '';
+  document.getElementById('study-text').value = set ? set.items.map(i => `${i.q} | ${i.a}`).join('\n') : '';
+  updateStudyTextCount();
+  studyShow('study-editor');
+  const select = document.getElementById('study-prefill-book');
+  if (!study.books) {
+    try { study.books = await api('/bible/books'); } catch { study.books = []; }
+    select.innerHTML = study.books.map(b => `<option value="${b.index}">${escapeHtml(b.name)} (${b.chapters} ch.)</option>`).join('');
+    select.value = '65'; // Apocalypse
+  }
+}
+// Ajoute « Livre 1 | », « Livre 2 | »… pour chaque chapitre manquant : il ne reste qu'à écrire les titres.
+document.getElementById('study-prefill-btn').onclick = () => {
+  const book = study.books?.[Number(document.getElementById('study-prefill-book').value)];
+  if (!book) return;
+  const area = document.getElementById('study-text');
+  const existing = new Set(area.value.split('\n').map(l => studyNorm(l.split(/\||:|=|\t/)[0])));
+  const lines = [];
+  for (let c = 1; c <= book.chapters; c++) if (!existing.has(studyNorm(`${book.name} ${c}`))) lines.push(`${book.name} ${c} | `);
+  area.value = [area.value.trim(), ...lines].filter(Boolean).join('\n');
+  if (!document.getElementById('study-title').value) document.getElementById('study-title').value = `Titres des chapitres — ${book.name}`;
+  updateStudyTextCount();
+  area.focus();
+};
+document.getElementById('study-edit-form').onsubmit = async (e) => {
+  e.preventDefault();
+  const body = {
+    title: document.getElementById('study-title').value,
+    examDate: document.getElementById('study-exam-date').value,
+    description: document.getElementById('study-desc').value,
+    text: document.getElementById('study-text').value
+  };
+  try {
+    const set = study.editingId
+      ? await api(`/study/${study.editingId}`, { method: 'PUT', body })
+      : await api('/study', { method: 'POST', body });
+    showToast('Liste enregistrée ✅');
+    openStudySet(set.id);
+  } catch (err) { showToast(escapeHtml(err.message)); }
+};
+
+// --- Page d'une liste ---
+const STUDY_MODES = [
+  { key: 'due', icon: '🔁', name: 'À revoir aujourd\'hui', desc: 'Répétition espacée : le plus efficace, 10 min/jour' },
+  { key: 'cards', icon: '🃏', name: 'Cartes', desc: 'Pense à la réponse, retourne la carte' },
+  { key: 'write', icon: '✍️', name: 'Écrire', desc: 'Tape ou dicte la réponse 🎤' },
+  { key: 'mcq', icon: '🔘', name: 'QCM', desc: 'Choisis parmi 4 réponses' },
+  { key: 'match', icon: '🔗', name: 'Associer', desc: 'Relie questions et réponses' },
+  { key: 'exam', icon: '📝', name: 'Examen blanc', desc: 'Comme le vrai test, note à la fin' },
+  { key: 'listen', icon: '🎧', name: 'Écouter la liste', desc: 'Lecture à voix haute' },
+  { key: 'sheet', icon: '📋', name: 'Fiche', desc: 'Toute la liste, réponses cachées ou non' }
+];
+async function openStudySet(id) {
+  stopStudyAudio();
+  study.session = null;
+  try { study.current = await api(`/study/${id}`); } catch (err) { showToast(escapeHtml(err.message)); return loadStudy(); }
+  renderStudyDetail();
+  studyShow('study-detail');
+}
+function studyReady() { return study.current.items.filter(i => i.a); }
+function studyPackets() {
+  const ready = studyReady();
+  const size = 7;
+  const packets = [];
+  for (let i = 0; i < ready.length; i += size) packets.push({ from: i, to: Math.min(i + size, ready.length) });
+  return ready.length > size ? packets : [];
+}
+function renderStudyDetail() {
+  const s = study.current;
+  const box = document.getElementById('study-detail');
+  const perDay = s.daysLeft > 0 ? Math.ceil((s.total - s.mastered) / s.daysLeft) : null;
+  const packets = studyPackets();
+  box.innerHTML = `
+    <button type="button" class="link-btn" id="study-back">← Mes listes</button>
+    <div class="pep-card">
+      <div class="pep-title">${escapeHtml(s.title)}</div>
+      ${s.description ? `<div class="pep-text">${escapeHtml(s.description)}</div>` : ''}
+      <div class="meta">${studyCountdown(s)} · ${s.total} carte${s.total > 1 ? 's' : ''}${s.incomplete ? ` · ${s.incomplete} sans réponse` : ''}${s.isOwner ? '' : ` · liste de ${escapeHtml(s.owner)}`}</div>
+      <span class="study-bar"><span style="width:${s.total ? Math.round(s.mastered * 100 / s.total) : 0}%"></span></span>
+      <div class="meta">${s.mastered}/${s.total} maîtrisées · ${s.due} à revoir aujourd'hui${perDay ? ` · objectif : ${perDay} nouvelle${perDay > 1 ? 's' : ''} carte${perDay > 1 ? 's' : ''} maîtrisée${perDay > 1 ? 's' : ''} par jour` : ''}</div>
+      ${s.isOwner ? `<div class="study-share">Code du groupe : <strong>${s.shareCode}</strong> <button type="button" class="small" id="study-copy-code">Copier</button><span class="meta"> · ${s.members} membre${s.members > 1 ? 's' : ''}</span></div>` : ''}
+    </div>
+    ${s.total ? `
+    <div class="study-options">
+      <label>Sens <select id="study-direction"><option value="qa">Question → réponse</option><option value="aq">Réponse → question</option></select></label>
+      <label>Ordre <select id="study-order"><option value="random">Mélangé</option><option value="seq">Dans l'ordre</option></select></label>
+      ${packets.length ? `<label>Paquet <select id="study-packet"><option value="">Toute la liste</option>${packets.map((p, k) => `<option value="${k}">Cartes ${p.from + 1} à ${p.to}</option>`).join('')}</select></label>` : ''}
+    </div>
+    <div class="study-modes">${STUDY_MODES.map(m => `
+      <button type="button" class="study-mode" data-study-mode="${m.key}"><span class="study-mode-icon">${m.icon}</span><strong>${m.name}${m.key === 'due' && s.due ? ` (${s.due})` : ''}</strong><span class="meta">${m.desc}</span></button>`).join('')}
+    </div>` : '<p class="meta">Ajoute les réponses dans « Modifier » pour commencer à réviser.</p>'}
+    <div id="study-session"></div>
+    <div class="card-block"><h3>🏆 Groupe</h3><div id="study-group" class="meta">Chargement…</div></div>
+    <div class="pep-buttons">
+      ${s.isOwner ? '<button type="button" class="small" id="study-edit">✏️ Modifier</button>' : ''}
+      <button type="button" class="small" id="study-reset">↺ Recommencer ma progression</button>
+      <button type="button" class="small danger" id="study-delete">${s.isOwner ? '🗑️ Supprimer la liste' : '🚪 Quitter la liste'}</button>
+    </div>`;
+  box.querySelector('#study-back').onclick = loadStudy;
+  box.querySelector('#study-copy-code')?.addEventListener('click', () => {
+    navigator.clipboard?.writeText(s.shareCode).then(() => showToast('Code copié 📋'), () => showToast(`Code : ${s.shareCode}`));
+  });
+  box.querySelector('#study-edit')?.addEventListener('click', () => openStudyEditor(s));
+  box.querySelector('#study-reset').onclick = async () => {
+    if (!confirm('Remettre ta progression à zéro sur cette liste ?')) return;
+    await api(`/study/${s.id}/reset`, { method: 'POST' }).catch(err => showToast(escapeHtml(err.message)));
+    openStudySet(s.id);
+  };
+  box.querySelector('#study-delete').onclick = async () => {
+    if (!confirm(s.isOwner ? 'Supprimer cette liste pour tout le groupe ?' : 'Quitter cette liste ?')) return;
+    try { await api(`/study/${s.id}`, { method: 'DELETE' }); loadStudy(); } catch (err) { showToast(escapeHtml(err.message)); }
+  };
+  box.querySelectorAll('[data-study-mode]').forEach(b => { b.onclick = () => startStudyMode(b.dataset.studyMode); });
+  loadStudyGroup();
+}
+async function loadStudyGroup() {
+  const el = document.getElementById('study-group');
+  try {
+    const rows = await api(`/study/${study.current.id}/group`);
+    el.innerHTML = rows.length > 1
+      ? rows.map((r, k) => `<div class="study-rank${r.me ? ' me' : ''}"><span>${['🥇', '🥈', '🥉'][k] || `${k + 1}.`} ${escapeHtml(r.name)}${r.me ? ' (toi)' : ''}</span><span>${r.percent} %</span></div>`).join('')
+      : (study.current.isOwner ? `Partage le code <strong>${study.current.shareCode}</strong> : chacun l'entre dans « Rejoindre la liste d'un groupe » et a sa propre progression.` : 'Tu es la seule personne sur cette liste pour l\'instant.');
+  } catch { el.textContent = ''; }
+}
+
+// Cartes de la session selon les options choisies (sens, ordre, paquet).
+function studyDeck(mode) {
+  let items = studyReady();
+  const packet = document.getElementById('study-packet')?.value;
+  if (packet) { const p = studyPackets()[Number(packet)]; items = items.slice(p.from, p.to); }
+  if (mode === 'due') {
+    const t = new Date().toISOString().slice(0, 10);
+    items = items.filter(i => !i.due || i.due <= t);
+  }
+  const reverse = document.getElementById('study-direction')?.value === 'aq';
+  const deck = items.map(i => ({ id: i.id, q: reverse ? i.a : i.q, a: reverse ? i.q : i.a, tip: i.tip }));
+  return document.getElementById('study-order')?.value === 'seq' && mode !== 'match' ? deck : studyShuffle(deck);
+}
+function startStudyMode(mode) {
+  stopStudyAudio();
+  if (mode === 'sheet') return renderStudySheet();
+  if (mode === 'listen') return startStudyListen();
+  const deck = studyDeck(mode);
+  if (!deck.length) return showToast(mode === 'due' ? 'Rien à revoir aujourd\'hui ✅ Essaie une autre méthode.' : 'Aucune carte dans ce paquet.');
+  study.session = { mode, deck, index: 0, right: 0, wrongItems: [], answers: [] };
+  if (mode === 'match') return renderStudyMatch();
+  renderStudyCard();
+  document.getElementById('study-session').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+async function studySendResults(results) {
+  try {
+    const sum = await api(`/study/${study.current.id}/review`, { method: 'POST', body: { results } });
+    Object.assign(study.current, sum);
+    for (const r of results) {
+      const item = study.current.items.find(i => i.id === r.itemId);
+      if (!item) continue;
+      // Copie locale approximative, rechargée à la fin de la session.
+      item.box = r.correct ? Math.min((item.box || 0) + 1, 5) : 0;
+      item.due = r.correct ? '9999-12-31' : new Date().toISOString().slice(0, 10);
+    }
+  } catch (err) { showToast(escapeHtml(err.message)); }
+}
+function studyRecord(card, correct) {
+  const s = study.session;
+  if (correct) s.right++; else s.wrongItems.push(card);
+  if (s.mode !== 'exam') studySendResults([{ itemId: card.id, correct }]);
+}
+function studyProgressLine() {
+  const s = study.session;
+  return `<div class="study-progress"><span>${study.session.mode === 'exam' ? '📝 Examen blanc' : STUDY_MODES.find(m => m.key === s.mode).icon + ' ' + STUDY_MODES.find(m => m.key === s.mode).name}</span><span>${Math.min(s.index + 1, s.deck.length)} / ${s.deck.length}</span><button type="button" class="link-btn" data-study-quit>Arrêter</button></div>`;
+}
+function bindStudyQuit(el) { el.querySelector('[data-study-quit]')?.addEventListener('click', finishStudySession); }
+
+function renderStudyCard() {
+  const s = study.session;
+  if (s.index >= s.deck.length) return finishStudySession();
+  const card = s.deck[s.index];
+  const el = document.getElementById('study-session');
+  const next = () => { s.index++; renderStudyCard(); };
+
+  if (s.mode === 'cards' || s.mode === 'due') {
+    el.innerHTML = `<div class="pep-card study-card">${studyProgressLine()}
+      <div class="study-q">${escapeHtml(card.q)}</div>
+      <div class="meta">Dis la réponse dans ta tête (ou à voix haute), puis retourne la carte.</div>
+      <div id="study-back-side" class="hidden">
+        <div class="study-a">${escapeHtml(card.a)}</div>
+        ${studyTipHTML(card)}
+        <div class="pep-buttons study-grade">
+          <button type="button" class="study-wrong" data-grade="0">✗ Pas su</button>
+          <button type="button" class="study-right" data-grade="1">✓ Je savais</button>
+        </div>
+      </div>
+      <button type="button" id="study-flip">🔄 Retourner la carte</button>
+    </div>`;
+    el.querySelector('#study-flip').onclick = (e) => { e.target.remove(); el.querySelector('#study-back-side').classList.remove('hidden'); };
+    el.querySelectorAll('[data-grade]').forEach(b => { b.onclick = () => { studyRecord(card, b.dataset.grade === '1'); next(); }; });
+  } else if (s.mode === 'write' || s.mode === 'exam') {
+    el.innerHTML = `<div class="pep-card study-card">${studyProgressLine()}
+      <div class="study-q">${escapeHtml(card.q)}</div>
+      <form id="study-write-form" class="study-write">
+        <textarea id="study-answer" rows="2" placeholder="Ta réponse…" autocomplete="off"></textarea>
+        <div class="pep-buttons">
+          <button type="submit">${s.mode === 'exam' ? 'Suivant →' : 'Vérifier'}</button>
+          ${studyMicSupported() ? '<button type="button" class="secondary" id="study-mic">🎤 Dicter</button>' : ''}
+          ${s.mode === 'write' ? '<button type="button" class="secondary" id="study-skip">Je ne sais pas</button>' : ''}
+        </div>
+      </form>
+      <div id="study-feedback"></div>
+    </div>`;
+    const input = el.querySelector('#study-answer');
+    input.focus();
+    input.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); el.querySelector('#study-write-form').requestSubmit(); } };
+    el.querySelector('#study-mic')?.addEventListener('click', (e) => studyDictate(input, e.target));
+    el.querySelector('#study-skip')?.addEventListener('click', () => showStudyWriteFeedback(card, '', { verdict: 'wrong', missing: [] }, next));
+    el.querySelector('#study-write-form').onsubmit = (e) => {
+      e.preventDefault();
+      const given = input.value;
+      const result = studyCompare(given, card.a);
+      if (s.mode === 'exam') {
+        s.answers.push({ card, given, result });
+        if (result.verdict === 'right') s.right++; else s.wrongItems.push(card);
+        return next();
+      }
+      showStudyWriteFeedback(card, given, result, next);
+    };
+  } else if (s.mode === 'mcq') {
+    const others = studyShuffle([...new Set(studyReady().map(i => (document.getElementById('study-direction')?.value === 'aq' ? i.q : i.a)).filter(a => a !== card.a))]).slice(0, 3);
+    const options = studyShuffle([card.a, ...others]);
+    el.innerHTML = `<div class="pep-card study-card">${studyProgressLine()}
+      <div class="study-q">${escapeHtml(card.q)}</div>
+      <div class="study-options-list">${options.map((o, k) => `<button type="button" class="study-option" data-opt="${k}">${escapeHtml(o)}</button>`).join('')}</div>
+      <div id="study-feedback"></div>
+    </div>`;
+    el.querySelectorAll('[data-opt]').forEach(b => {
+      b.onclick = () => {
+        const correct = options[Number(b.dataset.opt)] === card.a;
+        el.querySelectorAll('[data-opt]').forEach(x => {
+          x.disabled = true;
+          if (options[Number(x.dataset.opt)] === card.a) x.classList.add('right');
+        });
+        if (!correct) b.classList.add('wrong');
+        studyRecord(card, correct);
+        el.querySelector('#study-feedback').innerHTML = `<div class="study-verdict ${correct ? 'right' : 'wrong'}">${correct ? '✓ Bonne réponse' : '✗ Ce n\'était pas ça'}</div>${studyTipHTML(card)}<button type="button" id="study-next">Suivant →</button>`;
+        bindStudyTip(el, card);
+        el.querySelector('#study-next').onclick = next;
+      };
+    });
+  }
+  bindStudyQuit(el);
+  bindStudyTip(el, card);
+}
+function showStudyWriteFeedback(card, given, result, next) {
+  const el = document.getElementById('study-session');
+  el.querySelector('#study-write-form').classList.add('hidden');
+  const fb = el.querySelector('#study-feedback');
+  const label = { right: '✓ Bonne réponse', close: '≈ Presque !', wrong: '✗ Pas tout à fait' }[result.verdict];
+  fb.innerHTML = `
+    <div class="study-verdict ${result.verdict}">${label}</div>
+    ${given ? `<div class="meta">Ta réponse : ${escapeHtml(given)}</div>` : ''}
+    <div class="study-a">${studyMarkMissing(card.a, result.missing)}</div>
+    ${result.missing.length ? '<div class="meta">En surligné : les mots qui manquaient.</div>' : ''}
+    ${studyTipHTML(card)}
+    <div class="pep-buttons">
+      ${result.verdict === 'close'
+        ? '<button type="button" class="study-right" data-close="1">C\'était bon</button><button type="button" class="study-wrong" data-close="0">Compter faux</button>'
+        : '<button type="button" id="study-next">Suivant →</button>'}
+    </div>`;
+  if (result.verdict === 'close') {
+    fb.querySelectorAll('[data-close]').forEach(b => { b.onclick = () => { studyRecord(card, b.dataset.close === '1'); next(); }; });
+  } else {
+    studyRecord(card, result.verdict === 'right');
+    fb.querySelector('#study-next').onclick = next;
+    fb.querySelector('#study-next').focus();
+  }
+  bindStudyTip(el, card);
+}
+
+// Astuce personnelle (image, mot-clé…) affichée au dos de la carte.
+function studyTipHTML(card) {
+  return `<div class="study-tip" data-tip-for="${card.id}">${card.tip ? `💡 ${escapeHtml(card.tip)} ` : ''}<button type="button" class="link-btn" data-tip-edit>${card.tip ? 'modifier' : '💡 Ajouter une astuce pour retenir'}</button></div>`;
+}
+function bindStudyTip(el, card) {
+  const box = el.querySelector(`[data-tip-for="${card.id}"]`);
+  const btn = box?.querySelector('[data-tip-edit]');
+  if (!btn || btn.dataset.bound) return;
+  btn.dataset.bound = '1';
+  btn.onclick = async () => {
+    const tip = prompt('Ton astuce pour retenir (une image, un mot-clé, une phrase…) :', card.tip || '');
+    if (tip === null) return;
+    try {
+      await api(`/study/${study.current.id}/items/${card.id}/tip`, { method: 'PATCH', body: { tip } });
+      card.tip = tip.trim();
+      const item = study.current.items.find(i => i.id === card.id);
+      if (item) item.tip = card.tip;
+      box.outerHTML = studyTipHTML(card);
+      bindStudyTip(el, card);
+    } catch (err) { showToast(escapeHtml(err.message)); }
+  };
+}
+
+// Associer : 5 paires à la fois, toucher une question puis sa réponse.
+function renderStudyMatch() {
+  const s = study.session;
+  const round = s.deck.slice(s.index, s.index + 5);
+  if (!round.length) return finishStudySession();
+  const el = document.getElementById('study-session');
+  const answers = studyShuffle(round.map(c => c.id));
+  const missed = new Set();
+  let picked = null, left = round.length;
+  el.innerHTML = `<div class="pep-card study-card">
+    <div class="study-progress"><span>🔗 Associer</span><span>${Math.min(s.index + round.length, s.deck.length)} / ${s.deck.length}</span><button type="button" class="link-btn" data-study-quit>Arrêter</button></div>
+    <div class="meta">Touche une question, puis la réponse qui va avec.</div>
+    <div class="study-match">
+      <div>${round.map(c => `<button type="button" class="study-option" data-mq="${c.id}">${escapeHtml(c.q)}</button>`).join('')}</div>
+      <div>${answers.map(id => `<button type="button" class="study-option" data-ma="${id}">${escapeHtml(round.find(c => c.id === id).a)}</button>`).join('')}</div>
+    </div></div>`;
+  bindStudyQuit(el);
+  el.querySelectorAll('[data-mq]').forEach(b => {
+    b.onclick = () => { el.querySelectorAll('[data-mq]').forEach(x => x.classList.remove('picked')); picked = b.dataset.mq; b.classList.add('picked'); };
+  });
+  el.querySelectorAll('[data-ma]').forEach(b => {
+    b.onclick = () => {
+      if (!picked) return showToast('Touche d\'abord une question.');
+      const qBtn = el.querySelector(`[data-mq="${picked}"]`);
+      if (b.dataset.ma === picked) {
+        const card = round.find(c => c.id === picked);
+        qBtn.disabled = b.disabled = true;
+        qBtn.classList.add('right'); b.classList.add('right');
+        studyRecord(card, !missed.has(card.id));
+        picked = null;
+        if (--left === 0) { s.index += round.length; setTimeout(renderStudyMatch, 500); }
+      } else {
+        missed.add(picked);
+        b.classList.add('wrong'); setTimeout(() => b.classList.remove('wrong'), 500);
+      }
+    };
+  });
+}
+
+async function finishStudySession() {
+  const s = study.session;
+  if (!s) return;
+  study.session = null;
+  if (s.mode === 'exam' && s.answers.length) await studySendResults(s.answers.map(a => ({ itemId: a.card.id, correct: a.result.verdict === 'right' })));
+  const done = s.mode === 'exam' ? s.answers.length : s.right + s.wrongItems.length;
+  const el = document.getElementById('study-session');
+  const note = done ? Math.round(s.right * 20 / done) : 0;
+  el.innerHTML = `<div class="pep-card study-card">
+    <div class="pep-title">${done ? (s.right === done ? '🎉 Parfait !' : s.right / done >= 0.7 ? '💪 Bien joué !' : '📈 On continue !') : 'Session arrêtée'}</div>
+    ${done ? `<div class="study-score">${s.right} / ${done}${s.mode === 'exam' ? ` · note ${note}/20` : ''}</div>` : ''}
+    ${s.mode === 'exam' && s.answers.some(a => a.result.verdict !== 'right') ? `<h4>À corriger</h4>${s.answers.filter(a => a.result.verdict !== 'right').map(a => `
+      <div class="study-correction"><strong>${escapeHtml(a.card.q)}</strong><div class="meta">Ta réponse : ${escapeHtml(a.given || '—')}</div><div>${studyMarkMissing(a.card.a, a.result.missing)}</div></div>`).join('')}` : ''}
+    <div class="pep-buttons">
+      ${s.wrongItems.length ? '<button type="button" id="study-redo">🔁 Revoir mes erreurs</button>' : ''}
+      <button type="button" class="secondary" id="study-done">Terminer</button>
+    </div></div>`;
+  el.querySelector('#study-done').onclick = () => openStudySet(study.current.id);
+  el.querySelector('#study-redo')?.addEventListener('click', () => {
+    study.session = { mode: s.mode === 'exam' || s.mode === 'match' ? 'write' : s.mode, deck: studyShuffle(s.wrongItems), index: 0, right: 0, wrongItems: [], answers: [] };
+    renderStudyCard();
+  });
+  // Rafraîchit les compteurs (à revoir, maîtrisées) sans quitter l'écran de fin.
+  api(`/study/${study.current.id}`).then(fresh => { study.current = fresh; }).catch(() => {});
+}
+
+// Fiche : toute la liste, avec les réponses cachées pour se tester en les découvrant une à une.
+function renderStudySheet() {
+  const el = document.getElementById('study-session');
+  const reverse = document.getElementById('study-direction')?.value === 'aq';
+  el.innerHTML = `<div class="pep-card study-card">
+    <div class="study-progress"><span>📋 Fiche</span><button type="button" class="link-btn" id="study-sheet-toggle">Tout afficher</button><button type="button" class="link-btn" id="study-sheet-close">Fermer</button></div>
+    <div class="meta">Touche une réponse pour la découvrir.</div>
+    ${studyReady().map(i => `<div class="study-sheet-row"><strong>${escapeHtml(reverse ? i.a : i.q)}</strong><button type="button" class="study-hidden" data-reveal>${escapeHtml(reverse ? i.q : i.a)}</button>${i.tip ? `<div class="meta">💡 ${escapeHtml(i.tip)}</div>` : ''}</div>`).join('')}
+  </div>`;
+  el.querySelectorAll('[data-reveal]').forEach(b => { b.onclick = () => b.classList.toggle('shown'); });
+  let all = false;
+  el.querySelector('#study-sheet-toggle').onclick = (e) => {
+    all = !all;
+    el.querySelectorAll('[data-reveal]').forEach(b => b.classList.toggle('shown', all));
+    e.target.textContent = all ? 'Tout cacher' : 'Tout afficher';
+  };
+  el.querySelector('#study-sheet-close').onclick = () => { el.innerHTML = ''; };
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Écoute : lit « question… (pause) réponse » pour chaque carte.
+function startStudyListen() {
+  const el = document.getElementById('study-session');
+  if (!isSpeechSupported()) { el.innerHTML = '<p class="meta">La lecture audio n\'est pas disponible sur ce navigateur.</p>'; return; }
+  const deck = studyDeck('listen');
+  if (!deck.length) return;
+  study.audio = true;
+  let k = 0;
+  el.innerHTML = `<div class="pep-card study-card">
+    <div class="study-progress"><span>🎧 Écoute</span><span id="study-listen-pos"></span><button type="button" class="link-btn" id="study-listen-stop">Arrêter</button></div>
+    <div class="meta">Essaie de dire la réponse pendant le silence, avant de l'entendre.</div>
+    <div class="study-q" id="study-listen-q"></div><div class="study-a" id="study-listen-a"></div></div>`;
+  el.querySelector('#study-listen-stop').onclick = () => { stopStudyAudio(); el.innerHTML = ''; };
+  const say = (text, then) => {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'fr-FR';
+    const fr = AVAILABLE_VOICES.find(v => v.lang.startsWith('fr'));
+    if (fr) u.voice = fr;
+    u.rate = 0.95;
+    u.onend = () => { if (study.audio) then(); };
+    window.speechSynthesis.speak(u);
+  };
+  const play = () => {
+    if (!study.audio) return;
+    if (k >= deck.length) { study.audio = false; el.querySelector('#study-listen-pos').textContent = 'Terminé ✅'; return; }
+    const card = deck[k];
+    el.querySelector('#study-listen-pos').textContent = `${k + 1} / ${deck.length}`;
+    el.querySelector('#study-listen-q').textContent = card.q;
+    el.querySelector('#study-listen-a').textContent = '…';
+    say(card.q, () => setTimeout(() => {
+      if (!study.audio) return;
+      el.querySelector('#study-listen-a').textContent = card.a;
+      say(card.a, () => setTimeout(() => { k++; play(); }, 1200));
+    }, 3000));
+  };
+  window.speechSynthesis.cancel();
+  play();
+}
+function stopStudyAudio() {
+  if (!study?.audio) return;
+  study.audio = false;
+  if (isSpeechSupported()) window.speechSynthesis.cancel();
+}
+
+// Dictée de la réponse (reconnaissance vocale du navigateur, en français).
+function studyMicSupported() { return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
+function studyDictate(input, btn) {
+  const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const rec = new Rec();
+  rec.lang = 'fr-FR';
+  rec.interimResults = false;
+  rec.maxAlternatives = 1;
+  btn.disabled = true;
+  btn.textContent = '🎙️ Parle…';
+  rec.onresult = (e) => { input.value = [input.value.trim(), e.results[0][0].transcript].filter(Boolean).join(' '); };
+  rec.onerror = (e) => {
+    showToast(e.error === 'not-allowed' || e.error === 'service-not-allowed'
+      ? 'Micro refusé : autorise-le dans les réglages du navigateur.'
+      : e.error === 'no-speech' ? 'Je n\'ai rien entendu, réessaie.' : 'Le micro n\'a pas marché, tape ta réponse.');
+  };
+  rec.onend = () => { btn.disabled = false; btn.textContent = '🎤 Dicter'; input.focus(); };
+  try { rec.start(); } catch { rec.onend(); }
+}
