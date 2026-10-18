@@ -437,7 +437,33 @@ Automatisations et nouvelles intégrations restent hors scope pour une app
 
 ---
 
-## 17. Coach IA avec Claude (v0.9)
+## 17. Notifications (v0.9.7)
+
+- **🔔 Cloche** en haut de l'écran : les rappels du moment, avec un compteur.
+  Toucher un rappel ouvre la bonne section.
+- **Profil → Notifications** : chaque utilisateur choisit ses rappels —
+  verset du jour et nouvelles pépites (activés par défaut), missions et
+  habitudes, versets à réviser, série en danger (vers 20 h) — et l'heure de
+  son rappel du jour (dans son fuseau horaire).
+- **Sur le téléphone** (notifications push, gratuites) : bouton « Activer les
+  notifications » dans le même écran. Fonctionne sur Android, ordinateur, et
+  iPhone/iPad (iOS 16.4+) **une fois l'app ajoutée à l'écran d'accueil**
+  (Partager ⬆️ → « Sur l'écran d'accueil »).
+- **Clés** : rien à configurer, l'app génère ses clés VAPID au premier usage
+  et les garde dans la base (ou utilise `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY`
+  si elles sont définies).
+- **Envoi programmé** : sur Vercel (serverless), le fichier
+  `.github/workflows/notifications.yml` appelle l'app toutes les 15 min.
+  À faire **une seule fois** : GitHub → Settings → Secrets and variables →
+  Actions → onglet *Variables* → `APP_URL` = adresse de l'app en ligne.
+  (Optionnel : définir `CRON_SECRET` dans Vercel **et** dans les secrets
+  GitHub pour réserver l'appel à GitHub.) En local, un minuteur intégré au
+  serveur s'en charge. Chaque rappel part au plus une fois par jour, et
+  jamais plus de 3 h après l'heure choisie.
+
+---
+
+## 18. Coach IA avec Claude (v0.9)
 
 Le Coach IA peut utiliser **Claude** (Anthropic) comme moteur principal :
 
@@ -458,7 +484,7 @@ fournisseurs via `/api/chat/text-provider-status`.
 
 ---
 
-## 18. À propos du déploiement en ligne (Vercel)
+## 19. À propos du déploiement en ligne (Vercel)
 
 Cette app peut être déployée sur Vercel (voir `vercel.json`, `api/index.js`)
 pour obtenir un lien public permanent, en plus de l'usage local. Si tu as

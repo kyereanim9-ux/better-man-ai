@@ -38,8 +38,12 @@ const defaultData = {
   imageAnalyses: [],         // { id, userId, category, photo (ou null si non conservée), messages: [{role,content,createdAt}], providerUsed, modelUsed, createdAt }
   pepiteSaves: [],           // { id, userId, pepiteId, stash, stage, nextReview, mastered, savedAt }
   pepiteViews: [],           // { id, userId, pepiteId, date, createdAt }
-  pepiteCustom: []           // { id, userId, title, text, domain, source, action, createdAt }
+  pepiteCustom: [],          // { id, userId, title, text, domain, source, action, createdAt }
+  pushSubscriptions: [],     // { id, userId, endpoint, keys: { p256dh, auth }, userAgent, createdAt }
+  appConfig: {}              // réglages globaux générés par l'app (ex : clés VAPID des notifications)
 };
+// Préférences de notification : users[].notifPrefs { types, time, tz } et
+// users[].notifState { digest: 'AAAA-MM-JJ', streak: 'AAAA-MM-JJ' } (dernier envoi).
 
 // Domaines de vie utilisés partout dans l'app (scores, objectifs, habitudes,
 // situations...). Centralisé ici pour rester cohérent entre modules.
@@ -187,4 +191,5 @@ export function purgeUserData(userId) {
   db.data.pepiteSaves = db.data.pepiteSaves.filter(s => s.userId !== userId);
   db.data.pepiteViews = db.data.pepiteViews.filter(v => v.userId !== userId);
   db.data.pepiteCustom = db.data.pepiteCustom.filter(c => c.userId !== userId);
+  db.data.pushSubscriptions = db.data.pushSubscriptions.filter(s => s.userId !== userId);
 }

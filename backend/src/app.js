@@ -35,6 +35,7 @@ import relationshipsRoutes from './modules/relationships/routes.js';
 import nutritionRoutes from './modules/nutrition/routes.js';
 import imageAnalysisRoutes from './modules/image-analysis/routes.js';
 import pepitesRoutes from './modules/pepites/routes.js';
+import notificationsRoutes from './modules/notifications/routes.js';
 
 export const app = express();
 app.use(cors());
@@ -73,6 +74,7 @@ app.use('/api/relationships', relationshipsRoutes);
 app.use('/api/nutrition', nutritionRoutes);
 app.use('/api/image-analysis', imageAnalysisRoutes);
 app.use('/api/pepites', pepitesRoutes);
+app.use('/api/notifications', notificationsRoutes);
 
 // Résolution du dossier frontend, avec gestion d'erreur explicite pour ne
 // jamais planter la fonction si un chemin est introuvable en serverless.

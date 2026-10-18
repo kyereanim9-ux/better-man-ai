@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Better Man AI</title>
 <link rel="stylesheet" href="style.css" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<meta name="theme-color" content="#0f1220" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Better Man" />
 </head>
 <body>
 
@@ -52,6 +57,13 @@
         <div class="brand-line"><span class="brand">Better Man AI</span></div>
         <h1 id="greeting-text">Bonjour 👋</h1>
         <div class="quote" id="greeting-quote"></div>
+      </div>
+      <div class="notif-wrap">
+        <button class="notif-btn" id="notif-btn" aria-label="Notifications">🔔<span class="notif-badge hidden" id="notif-badge">0</span></button>
+        <div class="notif-panel hidden" id="notif-panel">
+          <div class="notif-head"><strong>Rappels</strong><button type="button" class="link-btn" data-view="account" id="notif-settings-link">⚙️ Réglages</button></div>
+          <div id="notif-list"><p class="meta">Chargement…</p></div>
+        </div>
       </div>
       <div class="profile-menu-wrap">
         <button class="avatar-btn" id="avatar-btn">?</button>
@@ -886,6 +898,24 @@
         <button type="button" class="small" id="menu-custom-reset" style="margin-top:12px;">Tout réafficher</button>
       </div>
 
+      <div class="card-block" id="notif-card">
+        <h3>🔔 Notifications</h3>
+        <p class="meta">Choisis ce dont l'app te prévient et à quelle heure.</p>
+        <div id="notif-types" class="notif-types"></div>
+        <label class="notif-time">Heure du rappel du jour
+          <input type="time" id="notif-time" value="08:00" />
+        </label>
+        <p class="meta" id="notif-tz"></p>
+        <div class="notif-push">
+          <p><strong>Sur cet appareil</strong> <span class="meta" id="notif-push-status"></span></p>
+          <div class="quiz-actions">
+            <button type="button" id="notif-push-btn">📲 Activer les notifications</button>
+            <button type="button" class="small" id="notif-test-btn">Envoyer un test</button>
+          </div>
+          <p class="meta" id="notif-push-help"></p>
+        </div>
+      </div>
+
       <div class="card-block" id="appearance-card">
         <h3>🎨 Apparence</h3>
         <p class="meta">Thème et couleur d'accent — appliqués immédiatement, mémorisés sur cet appareil.</p>
@@ -972,6 +1002,6 @@
 
 </div>
 
-<script src="app.js?v=20261013-1"></script>
+<script src="app.js?v=20261018-1"></script>
 </body>
 </html>

@@ -308,7 +308,12 @@ function showMain() {
   document.getElementById('pd-admin').classList.toggle('hidden', state.user.role !== 'admin');
   document.getElementById('nav-admin').classList.toggle('hidden', state.user.role !== 'admin');
 
-  switchView('daily');
+  // Notification touchée : ouvrir directement la bonne section (?view=bible...).
+  const viewParam = new URLSearchParams(location.search).get('view');
+  const startView = viewParam && document.getElementById('view-' + viewParam) ? viewParam : 'daily';
+  if (viewParam) history.replaceState(null, '', location.pathname);
+  switchView(startView);
+  loadNotifications();
 }
 
 // --- Navigation ---
@@ -356,7 +361,7 @@ function switchView(view) {
   if (view === 'pepites') loadPepites();
   if (view === 'profile-setup') loadOnboarding();
   if (view === 'whats-new') loadWhatsNew();
-  if (view === 'account') loadAccount();
+  if (view === 'account') { loadAccount(); renderNotifSettings(); }
   if (view === 'admin') loadAdmin();
 }
 
@@ -3519,3 +3524,161 @@ document.getElementById('pep-book-select').addEventListener('change', async (e) 
     });
   } catch (err) { out.innerHTML = `<p class="error">${escapeHtml(err.message)}</p>`; }
 });
+
+
+// --- NOTIFICATIONS : cloche dans l'app + notifications push sur l'appareil ---
+const notifPanel = document.getElementById('notif-panel');
+let notifData = null;
+const NOTIF_SEEN_KEY = 'bm_notif_seen';
+
+function notifSeenToday() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(NOTIF_SEEN_KEY) || '{}');
+    return saved.date === new Date().toISOString().slice(0, 10) ? saved.kinds || [] : [];
+  } catch (e) { return []; }
+}
+function markNotifsSeen() {
+  try { localStorage.setItem(NOTIF_SEEN_KEY, JSON.stringify({ date: new Date().toISOString().slice(0, 10), kinds: (notifData?.items || []).map(i => i.kind) })); } catch (e) { /* stockage indisponible */ }
+  renderNotifBadge();
+}
+function renderNotifBadge() {
+  const badge = document.getElementById('notif-badge');
+  const seen = notifSeenToday();
+  const unseen = (notifData?.items || []).filter(i => !seen.includes(i.kind)).length;
+  badge.textContent = unseen;
+  badge.classList.toggle('hidden', unseen === 0);
+}
+
+async function loadNotifications() {
+  try { notifData = await api('/notifications'); } catch (e) { return; }
+  renderNotifBadge();
+  const list = document.getElementById('notif-list');
+  list.innerHTML = notifData.items.length
+    ? notifData.items.map(i => `
+        <button type="button" class="notif-item" data-notif-view="${escapeHtml(i.view)}">
+          <span class="notif-icon">${i.icon}</span>
+          <span><strong>${escapeHtml(i.title)}</strong><span class="notif-body">${escapeHtml(i.body)}</span></span>
+        </button>`).join('')
+    : '<p class="meta">Rien pour le moment 🎉 Active d\'autres rappels dans les réglages.</p>';
+  list.querySelectorAll('[data-notif-view]').forEach(b => {
+    b.onclick = () => { notifPanel.classList.add('hidden'); switchView(b.dataset.notifView); };
+  });
+}
+
+document.getElementById('notif-btn').onclick = (e) => {
+  e.stopPropagation();
+  profileDropdown.classList.add('hidden');
+  const opening = notifPanel.classList.contains('hidden');
+  notifPanel.classList.toggle('hidden');
+  if (opening) { loadNotifications().then(markNotifsSeen); }
+};
+document.addEventListener('click', (e) => {
+  if (!notifPanel.classList.contains('hidden') && !e.target.closest('.notif-wrap')) notifPanel.classList.add('hidden');
+});
+document.getElementById('notif-settings-link').onclick = () => {
+  notifPanel.classList.add('hidden');
+  switchView('account');
+  setTimeout(() => document.getElementById('notif-card').scrollIntoView({ behavior: 'smooth' }), 80);
+};
+
+// Le service worker demande d'ouvrir une section quand on touche une notification.
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('message', (e) => {
+    if (e.data?.type === 'open-view' && document.getElementById('view-' + e.data.view)) switchView(e.data.view);
+  });
+}
+
+// --- Réglages des notifications (onglet Compte) ---
+const pushSupported = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+
+async function currentPushSubscription() {
+  if (!pushSupported()) return null;
+  const reg = await navigator.serviceWorker.getRegistration();
+  return reg ? reg.pushManager.getSubscription() : null;
+}
+
+async function renderNotifSettings() {
+  if (!notifData) { await loadNotifications(); if (!notifData) return; }
+  const { prefs, types } = notifData;
+  const box = document.getElementById('notif-types');
+  box.innerHTML = Object.entries(types).map(([key, label]) => `
+    <label class="notif-type"><input type="checkbox" data-notif-type="${key}" ${prefs.types[key] ? 'checked' : ''} /> ${escapeHtml(label)}</label>`).join('');
+  document.getElementById('notif-time').value = prefs.time;
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  document.getElementById('notif-tz').textContent = `Fuseau horaire : ${tz}`;
+  const save = async (silent) => {
+    const body = { time: document.getElementById('notif-time').value, tz, types: {} };
+    box.querySelectorAll('[data-notif-type]').forEach(c => { body.types[c.dataset.notifType] = c.checked; });
+    try {
+      notifData.prefs = await api('/notifications/prefs', { method: 'PUT', body });
+      if (silent !== true) { showToast('🔔 Préférences enregistrées'); loadNotifications(); }
+    } catch (err) { showToast(escapeHtml(err.message)); }
+  };
+  box.querySelectorAll('[data-notif-type]').forEach(c => { c.onchange = save; });
+  document.getElementById('notif-time').onchange = save;
+  // Le fuseau de l'appareil sert à envoyer le rappel à la bonne heure locale.
+  if (prefs.tz !== tz) save(true);
+  renderPushState();
+}
+
+async function renderPushState() {
+  const status = document.getElementById('notif-push-status');
+  const btn = document.getElementById('notif-push-btn');
+  const test = document.getElementById('notif-test-btn');
+  const help = document.getElementById('notif-push-help');
+  help.textContent = '';
+  if (!pushSupported()) {
+    btn.disabled = true; test.disabled = true;
+    status.textContent = '— non disponible sur ce navigateur';
+    help.textContent = isIOS() && !isStandalone()
+      ? 'Sur iPhone : touche le bouton Partager ⬆️ puis « Sur l\'écran d\'accueil », ouvre l\'app depuis l\'icône, puis reviens ici (iOS 16.4 ou plus).'
+      : 'Essaie avec Chrome, Edge, Firefox ou Safari récent. La cloche 🔔 en haut fonctionne partout.';
+    return;
+  }
+  const sub = await currentPushSubscription();
+  const denied = Notification.permission === 'denied';
+  btn.disabled = denied;
+  test.disabled = !sub;
+  btn.textContent = sub ? '🔕 Désactiver sur cet appareil' : '📲 Activer les notifications';
+  status.textContent = denied ? '— bloquées' : sub ? '— activées ✅' : '— désactivées';
+  if (denied) help.textContent = 'Les notifications sont bloquées pour ce site : autorise-les dans les réglages du navigateur (icône 🔒 à côté de l\'adresse), puis recharge la page.';
+}
+
+function urlBase64ToUint8Array(base64) {
+  const padding = '='.repeat((4 - base64.length % 4) % 4);
+  const raw = atob((base64 + padding).replace(/-/g, '+').replace(/_/g, '/'));
+  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+}
+
+document.getElementById('notif-push-btn').onclick = async () => {
+  const btn = document.getElementById('notif-push-btn');
+  btn.disabled = true;
+  try {
+    const existing = await currentPushSubscription();
+    if (existing) {
+      await api('/notifications/unsubscribe', { method: 'POST', body: { endpoint: existing.endpoint } });
+      await existing.unsubscribe();
+      showToast('🔕 Notifications désactivées sur cet appareil');
+    } else {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') { showToast('Notifications non autorisées.'); return; }
+      const reg = await navigator.serviceWorker.register('/sw.js');
+      await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(notifData.push.publicKey) });
+      await api('/notifications/subscribe', { method: 'POST', body: { subscription: sub.toJSON(), tz: Intl.DateTimeFormat().resolvedOptions().timeZone } });
+      showToast('📲 Notifications activées !');
+    }
+  } catch (err) {
+    showToast(escapeHtml(err.message || 'Impossible d\'activer les notifications.'));
+  } finally {
+    btn.disabled = false;
+    renderPushState();
+  }
+};
+
+document.getElementById('notif-test-btn').onclick = async () => {
+  try { const r = await api('/notifications/test', { method: 'POST' }); showToast(r.sent ? '🔔 Notification de test envoyée' : 'Envoi impossible, réactive les notifications.'); }
+  catch (err) { showToast(escapeHtml(err.message)); }
+};

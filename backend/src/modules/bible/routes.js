@@ -42,8 +42,11 @@ function pickForToday(list, salt = 0) {
   return list[hash % list.length];
 }
 
+// Exporté pour les notifications (même verset que l'onglet Bible).
+export const verseOfDay = () => pickForToday(verses, 1);
+
 router.get('/verse-of-day', (req, res) => {
-  res.json({ verse: pickForToday(verses, 1) });
+  res.json({ verse: verseOfDay() });
 });
 
 router.get('/reading-of-day', (req, res) => {

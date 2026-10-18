@@ -1,0 +1,28 @@
+# Envoi des rappels push de Better Man AI.
+# Toutes les 15 minutes, appelle l'app qui envoie à chaque utilisateur son
+# rappel du jour à l'heure qu'il a choisie (au plus une fois par jour).
+# À configurer une seule fois dans GitHub → Settings → Secrets and variables → Actions :
+#   - Variable  APP_URL      : adresse de l'app en ligne (ex : https://mon-app.vercel.app)
+#   - Secret    CRON_SECRET  : (optionnel) la même valeur que CRON_SECRET dans Vercel
+name: Rappels push
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Déclencher l'envoi des rappels
+        env:
+          APP_URL: ${{ vars.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$APP_URL" ]; then
+            echo "::notice::Variable APP_URL non définie : ajoute l'adresse de l'app dans Settings > Secrets and variables > Actions > Variables."
+            exit 0
+          fi
+          curl -fsS --max-time 60 -X POST "${APP_URL%/}/api/notifications/cron" -H "x-cron-secret: ${CRON_SECRET}"

@@ -17,7 +17,7 @@ const LEVELS = [
   { level: 7, name: 'Complete Self-Mastery', minXp: 2000 }
 ];
 
-function computeStreak(habits) {
+export function computeStreak(habits) {
   const doneDates = new Set();
   for (const h of habits) for (const d of h.doneDates) doneDates.add(d);
   if (doneDates.size === 0) return 0;
