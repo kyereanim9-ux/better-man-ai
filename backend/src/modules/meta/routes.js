@@ -9,6 +9,14 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.9.11',
+    date: '2026-10-18',
+    title: 'Nouveau logo : Sommet et étoile',
+    features: ["Nouveau logo de l'app sur l'écran d'accueil et dans l'onglet du navigateur : une montagne au sommet doré et une étoile"],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.9.10',
     date: '2026-10-18',
     title: 'Quiz biblique : un livre au choix (Apocalypse…)',
