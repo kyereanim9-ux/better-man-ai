@@ -290,7 +290,14 @@
 
       <div class="card-block">
         <h3>Quiz biblique</h3>
-        <button id="bible-quiz-btn">Nouveau quiz</button>
+        <div class="quiz-bar">
+          <select id="bible-quiz-source">
+            <option value="all">Tous les versets</option>
+            <option value="mine">Mes versets en mémorisation</option>
+          </select>
+          <button id="bible-quiz-btn">Nouveau quiz</button>
+        </div>
+        <p class="meta" id="bible-quiz-score"></p>
         <div id="bible-quiz-result"></div>
       </div>
 

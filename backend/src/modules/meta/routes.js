@@ -9,6 +9,18 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.9.5',
+    date: '2026-10-18',
+    title: 'Quiz biblique interactif, exercices de mémorisation et pépites du jour',
+    features: [
+      "Quiz biblique : une case pour écrire sa réponse, vérification (accents, majuscules et petites fautes tolérés), indice, bonne réponse affichée avec le verset complet, score de la session, choix entre tous les versets ou ses versets en mémorisation",
+      "Mémorisation : exercice « S'entraîner » avec mots à compléter (de plus en plus nombreux au fil des étapes), correction mot par mot, validation de l'étape à partir de 80 %",
+      "8 nouvelles pépites (319 au total), dont un nouveau thème : Paternité"
+    ],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.9.4',
     date: '2026-10-17',
     title: 'Nouvelle couleur : Bordeaux',
