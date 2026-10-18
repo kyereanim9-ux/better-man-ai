@@ -330,6 +330,11 @@ document.querySelectorAll('.bn-btn').forEach(btn => {
 });
 
 function switchView(view) {
+  // Quitter « Mes idées » en plein enregistrement : on le sauvegarde au lieu de laisser le micro ouvert.
+  if (view !== 'ideas') {
+    if (typeof ideaRecorder !== 'undefined' && ideaRecorder) stopIdeaRecording(false);
+    if (typeof ideaDictation !== 'undefined' && ideaDictation) ideaDictation.stop();
+  }
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
   document.querySelectorAll('.bn-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view && !b.dataset.scrollMission));
   document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
@@ -2950,10 +2955,20 @@ async function openIdea(id) {
 
     ${has('micro') ? `
     <div class="card-block">
-      <h3>🎤 Enregistrements</h3>
-      <div style="display:flex;align-items:center;gap:10px;">
+      <h3>🎤 Micro</h3>
+      <div class="rec-row">
         <button type="button" id="idea-rec-btn">🎤 Enregistrer</button>
-        <span class="meta" id="idea-rec-time">00:00</span>
+        <span class="rec-time" id="idea-rec-time">00:00</span>
+        <span class="rec-level"><span id="idea-rec-level"></span></span>
+      </div>
+      <p class="meta" id="idea-rec-status">Touche « Enregistrer » et parle. Ton enregistrement reste sur cet appareil.</p>
+      <div class="rec-row">
+        <button type="button" class="small" id="idea-dictate-btn">✍️ Dicter (voix → texte)</button>
+      </div>
+      <p class="meta" id="idea-dictate-status"></p>
+      <div id="idea-dictation" class="idea-dictation ${idea.dictation ? '' : 'hidden'}">
+        <p class="meta">Texte dicté (modifiable) :</p>
+        <textarea id="idea-dictation-text">${escapeHtml(idea.dictation || '')}</textarea>
       </div>
       <div id="idea-audio-list" style="margin-top:10px;"></div>
     </div>` : ''}
@@ -3045,6 +3060,7 @@ async function openIdea(id) {
   // Micro
   if (has('micro')) {
     document.getElementById('idea-rec-btn').onclick = () => toggleIdeaRecording(idea.id);
+    setupIdeaDictation(idea, save);
     renderIdeaAudios(idea.id);
   }
 
@@ -3162,37 +3178,148 @@ async function openIdea(id) {
   };
 }
 
+// --- Enregistrement vocal des idées ---
+// Robuste sur mobile : format choisi selon le navigateur (MP4/AAC d'abord, lisible
+// partout y compris sur iPhone), stockage en ArrayBuffer (Safari gère mal les Blob
+// dans IndexedDB), données récupérées chaque seconde, messages d'erreur précis.
+const IDEA_REC_MAX_SEC = 15 * 60;
+var ideaRecAudioCtx = null;
+var ideaRecLevelRaf = null;
+
+function pickRecorderMime() {
+  if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
+  return ['audio/mp4', 'audio/mp4;codecs=mp4a.40.2', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus']
+    .find(t => MediaRecorder.isTypeSupported(t)) || '';
+}
+
+function micErrorMessage(err) {
+  const inApp = /FBAN|FBAV|Instagram|Line\/|WhatsApp|Snapchat|TikTok/i.test(navigator.userAgent);
+  if (inApp) return "Le micro ne marche pas dans le navigateur intégré de cette app (WhatsApp, Instagram…). Ouvre Better Man AI dans Safari ou Chrome.";
+  switch (err && err.name) {
+    case 'NotAllowedError':
+    case 'PermissionDeniedError':
+      return isIOS()
+        ? "Micro refusé. Sur iPhone : Réglages → Safari → Micro → « Autoriser », puis recharge la page (ou touche « aA » à côté de l'adresse → Réglages du site → Micro)."
+        : "Micro refusé. Touche l'icône 🔒 à côté de l'adresse → Autorisations → Micro → Autoriser, puis recharge la page.";
+    case 'NotFoundError':
+    case 'DevicesNotFoundError':
+      return "Aucun micro détecté sur cet appareil.";
+    case 'NotReadableError':
+    case 'TrackStartError':
+      return "Le micro est déjà utilisé par une autre app (appel, mémo vocal…). Ferme-la puis réessaie.";
+    case 'SecurityError':
+      return "Le micro n'est disponible que sur une adresse sécurisée (https).";
+    default:
+      return `Impossible de démarrer le micro (${(err && (err.name || err.message)) || 'erreur inconnue'}).`;
+  }
+}
+
+function setRecStatus(text, isError) {
+  const el = document.getElementById('idea-rec-status');
+  if (el) { el.textContent = text; el.classList.toggle('error', !!isError); }
+}
+
+function startLevelMeter(stream) {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    ideaRecAudioCtx = new Ctx();
+    const analyser = ideaRecAudioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    ideaRecAudioCtx.createMediaStreamSource(stream).connect(analyser);
+    const data = new Uint8Array(analyser.frequencyBinCount);
+    const tick = () => {
+      analyser.getByteTimeDomainData(data);
+      let peak = 0;
+      for (const v of data) peak = Math.max(peak, Math.abs(v - 128));
+      const bar = document.getElementById('idea-rec-level');
+      if (bar) bar.style.width = Math.min(100, Math.round(peak / 128 * 180)) + '%';
+      ideaRecLevelRaf = requestAnimationFrame(tick);
+    };
+    tick();
+  } catch (e) { /* jauge facultative */ }
+}
+function stopLevelMeter() {
+  cancelAnimationFrame(ideaRecLevelRaf);
+  try { ideaRecAudioCtx && ideaRecAudioCtx.close(); } catch (e) { /* déjà fermé */ }
+  ideaRecAudioCtx = null;
+  const bar = document.getElementById('idea-rec-level');
+  if (bar) bar.style.width = '0%';
+}
+
 async function toggleIdeaRecording(ideaId) {
   const btn = document.getElementById('idea-rec-btn');
   if (ideaRecorder) { stopIdeaRecording(false); return; }
-  if (!navigator.mediaDevices || !window.MediaRecorder) { showToast('Enregistrement non supporté sur ce navigateur.'); return; }
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    ideaRecChunks = [];
-    ideaRecorder = new MediaRecorder(stream);
-    ideaRecorder.ondataavailable = (e) => { if (e.data.size) ideaRecChunks.push(e.data); };
-    ideaRecorder.onstop = async () => {
-      stream.getTracks().forEach(t => t.stop());
-      const discard = ideaRecorder && ideaRecorder._discard;
-      const duration = Math.round((Date.now() - ideaRecStart) / 1000);
-      const blob = new Blob(ideaRecChunks, { type: ideaRecChunks[0]?.type || 'audio/webm' });
-      ideaRecorder = null;
-      if (discard || !blob.size) return;
-      await mediaPut({ id: newId('au'), ideaId, type: 'audio', blob, duration, createdAt: Date.now() });
-      showToast('Enregistrement sauvegardé 🎤');
-      if (document.getElementById('idea-audio-list')) renderIdeaAudios(ideaId);
-    };
-    ideaRecStart = Date.now();
-    ideaRecorder.start();
-    btn.textContent = '⏹️ Arrêter';
-    ideaRecTimer = setInterval(() => {
-      const s = Math.floor((Date.now() - ideaRecStart) / 1000);
-      const t = document.getElementById('idea-rec-time');
-      if (t) t.textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
-    }, 250);
-  } catch (err) {
-    showToast('Micro refusé : autorise le micro dans ton navigateur.');
+  if (!window.isSecureContext) { setRecStatus(micErrorMessage({ name: 'SecurityError' }), true); return; }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+    setRecStatus(isIOS() ? "Enregistrement non supporté : mets à jour iOS (14.3 ou plus) et utilise Safari." : "Enregistrement non supporté par ce navigateur. Essaie Chrome, Safari ou Firefox à jour.", true);
+    return;
   }
+  btn.disabled = true;
+  setRecStatus('Demande d\'accès au micro…');
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+  } catch (err) {
+    btn.disabled = false;
+    setRecStatus(micErrorMessage(err), true);
+    return;
+  }
+  try {
+    const mimeType = pickRecorderMime();
+    ideaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+  } catch (err) {
+    stream.getTracks().forEach(t => t.stop());
+    btn.disabled = false;
+    setRecStatus(micErrorMessage(err), true);
+    return;
+  }
+  ideaRecChunks = [];
+  const recorder = ideaRecorder;
+  recorder.ondataavailable = (e) => { if (e.data && e.data.size) ideaRecChunks.push(e.data); };
+  recorder.onerror = (e) => setRecStatus(micErrorMessage(e.error), true);
+  recorder.onstop = async () => {
+    stream.getTracks().forEach(t => t.stop());
+    stopLevelMeter();
+    const discard = recorder._discard;
+    const duration = Math.round((Date.now() - ideaRecStart) / 1000);
+    const type = (recorder.mimeType || ideaRecChunks[0]?.type || 'audio/webm').split(';')[0];
+    const blob = new Blob(ideaRecChunks, { type });
+    ideaRecChunks = [];
+    if (ideaRecorder === recorder) ideaRecorder = null;
+    if (discard) return;
+    if (!blob.size) { setRecStatus("L'enregistrement est vide : vérifie que le micro capte bien le son, puis réessaie.", true); return; }
+    try {
+      const data = await blob.arrayBuffer();
+      await mediaPut({ id: newId('au'), ideaId, type: 'audio', data, mime: type, size: blob.size, duration, createdAt: Date.now() });
+      setRecStatus(`✅ Enregistrement sauvegardé (${duration} s).`);
+      showToast('Enregistrement sauvegardé 🎤');
+    } catch (err) {
+      setRecStatus(`Enregistrement non sauvegardé : ${err.message || err.name}. Mémoire de l'appareil pleine ?`, true);
+    }
+    if (document.getElementById('idea-audio-list')) renderIdeaAudios(ideaId);
+  };
+  ideaRecStart = Date.now();
+  try {
+    recorder.start(1000); // récupère les données chaque seconde : rien n'est perdu si la page passe en arrière-plan
+  } catch (err) {
+    stream.getTracks().forEach(t => t.stop());
+    ideaRecorder = null;
+    btn.disabled = false;
+    setRecStatus(micErrorMessage(err), true);
+    return;
+  }
+  btn.disabled = false;
+  btn.textContent = '⏹️ Arrêter';
+  btn.classList.add('recording');
+  setRecStatus('🔴 Enregistrement en cours… touche « Arrêter » quand tu as fini.');
+  startLevelMeter(stream);
+  ideaRecTimer = setInterval(() => {
+    const sec = Math.floor((Date.now() - ideaRecStart) / 1000);
+    const t = document.getElementById('idea-rec-time');
+    if (t) t.textContent = String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
+    if (sec >= IDEA_REC_MAX_SEC) { stopIdeaRecording(false); showToast('Enregistrement arrêté après 15 minutes.'); }
+  }, 250);
 }
 
 function stopIdeaRecording(discard) {
@@ -3202,24 +3329,93 @@ function stopIdeaRecording(discard) {
     ideaRecorder.stop();
   }
   const btn = document.getElementById('idea-rec-btn');
-  if (btn) btn.textContent = '🎤 Enregistrer';
+  if (btn) { btn.textContent = '🎤 Enregistrer'; btn.classList.remove('recording'); }
   const t = document.getElementById('idea-rec-time');
   if (t) t.textContent = '00:00';
+}
+
+// Les anciens enregistrements étaient des Blob ; les nouveaux, des ArrayBuffer.
+function audioBlobOf(a) {
+  if (a.blob) return a.blob;
+  return new Blob([a.data], { type: a.mime || 'audio/webm' });
 }
 
 async function renderIdeaAudios(ideaId) {
   const box = document.getElementById('idea-audio-list');
   if (!box) return;
+  box.querySelectorAll('audio').forEach(el => { if (el.src.startsWith('blob:')) URL.revokeObjectURL(el.src); });
   const items = (await mediaForIdea(ideaId)).filter(m => m.type === 'audio').sort((a, b) => b.createdAt - a.createdAt);
-  box.innerHTML = items.length ? items.map(a => `
-    <div class="card" style="flex-wrap:wrap;gap:8px;">
-      <audio controls src="${URL.createObjectURL(a.blob)}" style="flex:1;min-width:200px;"></audio>
-      <span class="meta">${new Date(a.createdAt).toLocaleString('fr-FR')} · ${a.duration || 0}s</span>
-      <button class="small danger" data-del-au="${a.id}">✕</button>
-    </div>`).join('') : '<p class="meta">Aucun enregistrement.</p>';
+  const probe = document.createElement('audio');
+  box.innerHTML = items.length ? items.map(a => {
+    const blob = audioBlobOf(a);
+    const url = URL.createObjectURL(blob);
+    const playable = !blob.type || probe.canPlayType(blob.type) !== '';
+    const ext = (blob.type.split('/')[1] || 'webm').replace('mpeg', 'mp3');
+    return `
+    <div class="card rec-item">
+      <audio controls preload="metadata" src="${url}"></audio>
+      <div class="rec-item-meta">
+        <span class="meta">${new Date(a.createdAt).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })} · ${a.duration || 0} s</span>
+        <a class="small-link" href="${url}" download="idee-${new Date(a.createdAt).toISOString().slice(0, 16).replace(/[T:]/g, '-')}.${ext}">⬇️ Télécharger</a>
+        <button class="small danger" data-del-au="${a.id}">✕</button>
+      </div>
+      ${playable ? '' : '<p class="meta">⚠️ Ce format ne se lit pas sur ce navigateur (enregistré sur un autre appareil). Télécharge-le pour l\'écouter.</p>'}
+    </div>`;
+  }).join('') : '<p class="meta">Aucun enregistrement.</p>';
   box.querySelectorAll('[data-del-au]').forEach(b => {
     b.onclick = async () => { if (confirm('Supprimer cet enregistrement ?')) { await mediaDel(b.dataset.delAu); renderIdeaAudios(ideaId); } };
   });
+}
+
+// Dictée : la voix est transcrite en texte (reconnaissance vocale du navigateur, gratuite).
+var ideaDictation = null;
+function setupIdeaDictation(idea, save) {
+  const btn = document.getElementById('idea-dictate-btn');
+  const status = document.getElementById('idea-dictate-status');
+  const wrap = document.getElementById('idea-dictation');
+  const ta = document.getElementById('idea-dictation-text');
+  let saveTimer;
+  ta.oninput = () => { clearTimeout(saveTimer); saveTimer = setTimeout(async () => { idea.dictation = ta.value; await save(); }, 500); };
+  if (!SpeechRecognitionAPI) {
+    btn.disabled = true;
+    status.textContent = isIOS() ? 'Dictée : utilise plutôt le 🎙️ du clavier de l\'iPhone dans une zone de texte.' : 'Dictée non disponible sur ce navigateur (essaie Chrome).';
+    return;
+  }
+  btn.onclick = () => {
+    if (ideaDictation) { ideaDictation.stop(); return; }
+    if (ideaRecorder) { status.textContent = 'Arrête d\'abord l\'enregistrement en cours.'; return; }
+    const rec = new SpeechRecognitionAPI();
+    ideaDictation = rec;
+    rec.lang = getAppLangBCP47();
+    rec.continuous = true;
+    rec.interimResults = true;
+    const base = ta.value ? ta.value.replace(/\s*$/, ' ') : '';
+    let finalText = '';
+    wrap.classList.remove('hidden');
+    rec.onresult = (e) => {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) finalText += e.results[i][0].transcript + ' ';
+        else interim += e.results[i][0].transcript;
+      }
+      ta.value = base + finalText + interim;
+    };
+    rec.onerror = (e) => {
+      const messages = { 'not-allowed': micErrorMessage({ name: 'NotAllowedError' }), 'no-speech': 'Aucune voix détectée, réessaie en parlant plus près.', 'network': 'La dictée a besoin d\'une connexion Internet.', 'audio-capture': 'Aucun micro détecté.' };
+      status.textContent = messages[e.error] || `Erreur de dictée (${e.error}).`;
+    };
+    rec.onend = async () => {
+      ideaDictation = null;
+      btn.textContent = '✍️ Dicter (voix → texte)';
+      idea.dictation = (base + finalText).trim();
+      ta.value = idea.dictation;
+      await save();
+      if (!status.textContent.startsWith('Erreur') && idea.dictation) status.textContent = '✅ Texte enregistré.';
+    };
+    try { rec.start(); } catch (err) { ideaDictation = null; status.textContent = micErrorMessage(err); return; }
+    btn.textContent = '⏹️ Arrêter la dictée';
+    status.textContent = '🎙️ Je t\'écoute… parle normalement.';
+  };
 }
 
 async function renderIdeaPhotos(ideaId) {

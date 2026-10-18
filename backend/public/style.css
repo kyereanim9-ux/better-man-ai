@@ -451,3 +451,17 @@ header.app-header {
 .notif-push p { margin: 0 0 8px; }
 #notif-card .quiz-actions button.small { padding: 6px 10px; font-size: 12.5px; background: transparent; border: 1px solid var(--border); color: var(--text); box-shadow: none; }
 #notif-card button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ---------- Mes idées : micro ---------- */
+.rec-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 4px 0; }
+.rec-time { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--muted); }
+.rec-level { flex: 1; min-width: 60px; height: 8px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.rec-level span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--success), var(--accent)); transition: width .08s linear; }
+#idea-rec-btn.recording { background: var(--danger); animation: rec-pulse 1.4s ease-in-out infinite; }
+@keyframes rec-pulse { 50% { box-shadow: 0 0 0 6px var(--danger-soft); } }
+#idea-rec-status.error, #idea-dictate-status.error { color: var(--danger); }
+.idea-dictation textarea { width: 100%; box-sizing: border-box; }
+.rec-item { flex-direction: column; align-items: stretch; gap: 6px; }
+.rec-item audio { width: 100%; }
+.rec-item-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.small-link { font-size: 12.5px; color: var(--accent); text-decoration: none; }
