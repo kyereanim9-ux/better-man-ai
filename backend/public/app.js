@@ -1013,14 +1013,15 @@ function renderQuizScore() {
 
 async function loadBibleQuiz() {
   const source = document.getElementById('bible-quiz-source').value;
+  const book = document.getElementById('bible-quiz-book').value;
   const el = document.getElementById('bible-quiz-result');
   let quiz;
-  try { quiz = await api(`/bible/quiz?source=${source}`); }
+  try { quiz = await api(`/bible/quiz?source=${source}${source === 'book' ? `&book=${encodeURIComponent(book)}` : ''}`); }
   catch (e) { el.innerHTML = `<p class="error">${escapeHtml(e.message)}</p>`; return; }
   el.innerHTML = `
     ${source === 'mine' && quiz.source !== 'mine' ? '<p class="meta">Tu n\'as pas encore de verset en mémorisation : question tirée de la sélection de versets.</p>' : ''}
     <p class="quiz-prompt">${escapeHtml(quiz.prompt).replace('_____', '<span class="quiz-blank">_____</span>')}</p>
-    <p class="meta">${escapeHtml(quiz.ref)} — mot de ${quiz.answerLength} lettres</p>
+    <p class="meta">${quiz.bookName ? `📖 Quiz : ${escapeHtml(quiz.bookName)} · ` : ''}${escapeHtml(quiz.ref)} — mot de ${quiz.answerLength} lettres</p>
     <form id="bible-quiz-form" class="quiz-form">
       <input type="text" id="bible-quiz-answer" placeholder="Ta réponse" autocomplete="off" autocapitalize="off" />
       <button type="submit">Vérifier</button>
@@ -1071,6 +1072,22 @@ async function loadBibleQuiz() {
   document.getElementById('bible-quiz-reveal').onclick = () => check(true);
 }
 document.getElementById('bible-quiz-btn').onclick = loadBibleQuiz;
+
+// « Un livre précis » : liste des 66 livres, Apocalypse sélectionnée par défaut.
+document.getElementById('bible-quiz-source').addEventListener('change', async (e) => {
+  const sel = document.getElementById('bible-quiz-book');
+  const isBook = e.target.value === 'book';
+  sel.classList.toggle('hidden', !isBook);
+  if (isBook && !sel.options.length) {
+    await initBibleFinder();
+    if (!bibleBooks) return;
+    sel.innerHTML = `<optgroup label="Ancien Testament">${bibleBooks.slice(0, 39).map(b => `<option value="${b.index}">${escapeHtml(b.name)}</option>`).join('')}</optgroup>` +
+      `<optgroup label="Nouveau Testament">${bibleBooks.slice(39).map(b => `<option value="${b.index}">${escapeHtml(b.name)}</option>`).join('')}</optgroup>`;
+    sel.value = String(bibleBooks.findIndex(b => b.name === 'Apocalypse'));
+  }
+  quizScore.good = 0; quizScore.total = 0; renderQuizScore();
+});
+document.getElementById('bible-quiz-book').addEventListener('change', () => { quizScore.good = 0; quizScore.total = 0; renderQuizScore(); });
 
 // --- Exercice à trous pour un verset en mémorisation ---
 // Plus l'étape est avancée, plus il y a de mots à retrouver.

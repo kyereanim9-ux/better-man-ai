@@ -506,3 +506,4 @@ body.no-scroll { overflow: hidden; }
 .pep-story-nav button { flex: 1; }
 .pep-story-nav button.small { background: var(--panel); border: 1px solid var(--border); color: var(--text); box-shadow: none; }
 .pep-story-nav button:disabled { opacity: 0.4; }
+#bible-quiz-book { width: 100%; margin-top: 2px; }

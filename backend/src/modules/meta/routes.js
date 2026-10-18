@@ -9,6 +9,14 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.9.10',
+    date: '2026-10-18',
+    title: 'Quiz biblique : un livre au choix (Apocalypse…)',
+    features: ["Quiz biblique : nouvelle option « Un livre précis » — Apocalypse par défaut, ou n'importe lequel des 66 livres"],
+    fixes: ["Quiz sur toute la Bible : évite les versets sans bon mot à cacher (généalogies, listes de noms)"],
+    improvements: []
+  },
+  {
     version: '0.9.9',
     date: '2026-10-18',
     title: 'Récitation réparée, plans de lecture, versets favoris, pépites en mode lecture',

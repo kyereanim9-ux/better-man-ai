@@ -116,8 +116,10 @@ export function searchText(q, limit = 50) {
   };
 }
 
-export function randomVerse() {
-  const all = index();
+// Verset au hasard dans toute la Bible, ou dans un seul livre (index 0-65).
+export function randomVerse(bookIndex = null) {
+  const all = bookIndex === null ? index() : index().filter(e => e.b === bookIndex);
+  if (!all.length) return null;
   const e = all[Math.floor(Math.random() * all.length)];
   return { ref: refLabel(e.b, e.c + 1, e.v + 1), text: load().books[e.b].chapters[e.c][e.v] };
 }
