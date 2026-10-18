@@ -255,6 +255,28 @@
     <div class="view hidden" id="view-bible">
       <h2>📖 Bible</h2>
 
+      <div class="card-block" id="bible-finder">
+        <h3>🔎 Chercher dans la Bible</h3>
+        <p class="meta">Toute la Bible Louis Segond 1910 : une référence (Jean 3:16, Ps 23, 1 Co 13:4-7) ou un mot (paix, pardon, berger…).</p>
+        <form id="bible-lookup-form">
+          <input type="search" id="bible-lookup-input" placeholder="Jean 3:16 ou un mot…" autocomplete="off" />
+          <button type="submit">Chercher</button>
+        </form>
+        <div class="bible-browse">
+          <select id="bible-book-select" aria-label="Livre"><option value="">📚 Parcourir un livre…</option></select>
+          <select id="bible-chapter-select" aria-label="Chapitre" disabled><option value="">Chapitre</option></select>
+        </div>
+        <div id="bible-lookup-results"></div>
+        <details class="bible-custom">
+          <summary>➕ Ajouter un verset d'une autre traduction</summary>
+          <form id="bible-custom-form" class="pep-form">
+            <input type="text" id="bible-custom-ref" placeholder="Référence (ex : Jean 3:16, version Semeur)" maxlength="80" required />
+            <textarea id="bible-custom-text" placeholder="Colle ou écris le texte du verset" maxlength="1500" required></textarea>
+            <button type="submit">Ajouter à la mémorisation</button>
+          </form>
+        </details>
+      </div>
+
       <div class="card-block">
         <h3>Verset du jour</h3>
         <div id="bible-verse-of-day">Chargement...</div>
@@ -294,6 +316,7 @@
           <select id="bible-quiz-source">
             <option value="all">Tous les versets</option>
             <option value="mine">Mes versets en mémorisation</option>
+            <option value="bible">Toute la Bible (31 000 versets)</option>
           </select>
           <button id="bible-quiz-btn">Nouveau quiz</button>
         </div>

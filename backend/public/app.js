@@ -780,6 +780,7 @@ function escapeHtml(str) {
 
 // --- BIBLE ---
 async function loadBible() {
+  initBibleFinder();
   try {
     const [vod, rod, qod] = await Promise.all([
       api('/bible/verse-of-day'),
@@ -812,6 +813,7 @@ function renderVerseBlock(verse) {
     <div class="verse-ref">${escapeHtml(verse.ref)}</div>
     ${speakerHTML(verse.text)}
     <button class="small" data-add-mem="${escapeHtml(verse.ref)}">➕ Ajouter à la mémorisation</button>
+    <button class="small" data-read-ref="${escapeHtml(verse.ref)}">📖 Lire le chapitre</button>
   `;
 }
 
@@ -824,11 +826,125 @@ function bindAddMemButtons(container) {
         btn.disabled = true;
         loadMemorization();
       } catch (err) {
-        alert(err.message);
+        showToast(escapeHtml(err.message));
       }
     };
   });
+  // « Lire le chapitre » : ouvre le lecteur en haut de la page Bible.
+  container.querySelectorAll('[data-read-ref]').forEach(btn => {
+    btn.onclick = () => {
+      const chapterRef = btn.dataset.readRef.replace(/:\d+(-\d+)?$/, '');
+      runBibleLookup(chapterRef, true);
+    };
+  });
 }
+
+// --- Bible complète : recherche, lecture par chapitre, ajout à la mémorisation ---
+let bibleBooks = null;
+async function initBibleFinder() {
+  if (bibleBooks) return;
+  try { bibleBooks = await api('/bible/books'); } catch (e) { return; }
+  const bookSel = document.getElementById('bible-book-select');
+  bookSel.innerHTML = '<option value="">📚 Parcourir un livre…</option>' +
+    `<optgroup label="Ancien Testament">${bibleBooks.slice(0, 39).map(b => `<option value="${b.index}">${escapeHtml(b.name)}</option>`).join('')}</optgroup>` +
+    `<optgroup label="Nouveau Testament">${bibleBooks.slice(39).map(b => `<option value="${b.index}">${escapeHtml(b.name)}</option>`).join('')}</optgroup>`;
+}
+
+function fillChapterSelect(bookIndex, selected) {
+  const chSel = document.getElementById('bible-chapter-select');
+  const book = bibleBooks?.[bookIndex];
+  if (!book) { chSel.disabled = true; chSel.innerHTML = '<option value="">Chapitre</option>'; return; }
+  chSel.disabled = false;
+  chSel.innerHTML = Array.from({ length: book.chapters }, (_, i) => `<option value="${i + 1}" ${i + 1 === selected ? 'selected' : ''}>Chapitre ${i + 1}</option>`).join('');
+}
+
+function verseRowHTML(v, showRef) {
+  return `
+    <div class="bible-verse-row">
+      <div class="bible-verse-text">${showRef ? '' : `<sup>${v.verse}</sup> `}${v.html || escapeHtml(v.text)}</div>
+      <div class="bible-verse-meta">
+        ${showRef ? `<span class="verse-ref">${escapeHtml(v.ref)}</span>` : ''}
+        <button type="button" class="small" data-add-mem="${escapeHtml(v.ref)}">➕ Mémoriser</button>
+        ${showRef ? `<button type="button" class="small" data-read-ref="${escapeHtml(v.ref)}">📖 Chapitre</button>` : ''}
+      </div>
+    </div>`;
+}
+
+function highlightWords(text, query) {
+  const words = stripAccentsClient(query.toLowerCase()).split(/\s+/).filter(w => w.length > 1);
+  return text.split(/(\s+)/).map(tok => {
+    const t = stripAccentsClient(tok.toLowerCase()).replace(/^[^a-z0-9]+/, '');
+    return words.some(w => t.startsWith(w) || t.includes("'" + w) || t.includes('’' + w)) ? `<mark>${escapeHtml(tok)}</mark>` : escapeHtml(tok);
+  }).join('');
+}
+
+async function runBibleLookup(q, scrollIntoView) {
+  const out = document.getElementById('bible-lookup-results');
+  document.getElementById('bible-lookup-input').value = q;
+  out.innerHTML = '<p class="meta">Recherche…</p>';
+  if (scrollIntoView) document.getElementById('bible-finder').scrollIntoView({ behavior: 'smooth' });
+  let data;
+  try { data = await api(`/bible/lookup?q=${encodeURIComponent(q)}`); }
+  catch (e) { out.innerHTML = `<p class="error">${escapeHtml(e.message)}</p>`; return; }
+
+  if (data.type === 'ref') {
+    await initBibleFinder();
+    document.getElementById('bible-book-select').value = String(data.bookIndex);
+    fillChapterSelect(data.bookIndex, data.chapter);
+    // Plage de versets demandée (« 1 Co 13:4-7 ») : on propose de la mémoriser d'un coup.
+    const isPassage = q.includes(':') && data.verses.length > 1 && data.verses.length <= 10;
+    const passageRef = isPassage ? `${data.book} ${data.chapter}:${data.verses[0].verse}-${data.verses.at(-1).verse}` : null;
+    out.innerHTML = `
+      <div class="bible-reader-head">
+        <button type="button" class="small" data-ch-nav="-1" ${data.chapter <= 1 ? 'disabled' : ''}>◀</button>
+        <strong>${escapeHtml(data.book)} ${data.chapter}</strong>
+        <button type="button" class="small" data-ch-nav="1" ${data.chapter >= data.chapters ? 'disabled' : ''}>▶</button>
+      </div>
+      ${passageRef ? `<button type="button" class="small" data-add-mem="${escapeHtml(passageRef)}">➕ Mémoriser tout le passage (${escapeHtml(passageRef)})</button>` : ''}
+      ${data.verses.length < 40 && data.verses.length > 1 ? speakerHTML(data.verses.map(v => v.text).join(' ')) : ''}
+      ${data.verses.map(v => verseRowHTML(v, false)).join('')}
+      ${data.verses.length === 1 || passageRef ? `<button type="button" class="small" data-read-ref="${escapeHtml(data.verses[0].ref)}">📖 Lire tout le chapitre</button>` : ''}`;
+    out.querySelectorAll('[data-ch-nav]').forEach(b => {
+      b.onclick = () => runBibleLookup(`${data.book} ${data.chapter + Number(b.dataset.chNav)}`);
+    });
+  } else {
+    document.getElementById('bible-book-select').value = '';
+    fillChapterSelect(-1);
+    out.innerHTML = data.total
+      ? `<p class="meta">${data.total} verset(s) trouvé(s)${data.total > data.results.length ? ` — les ${data.results.length} premiers, précise ta recherche avec plus de mots` : ''}.</p>` +
+        data.results.map(v => verseRowHTML({ ...v, html: highlightWords(v.text, q) }, true)).join('')
+      : '<p class="meta">Aucun verset ne contient tous ces mots. Essaie un autre mot, ou une référence comme « Jean 3:16 ».</p>';
+  }
+  bindAddMemButtons(out);
+}
+
+document.getElementById('bible-lookup-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const q = document.getElementById('bible-lookup-input').value.trim();
+  if (q) runBibleLookup(q);
+});
+document.getElementById('bible-book-select').addEventListener('change', (e) => {
+  if (e.target.value === '') { fillChapterSelect(-1); return; }
+  const b = Number(e.target.value);
+  fillChapterSelect(b, 1);
+  runBibleLookup(`${bibleBooks[b].name} 1`);
+});
+document.getElementById('bible-chapter-select').addEventListener('change', (e) => {
+  const b = Number(document.getElementById('bible-book-select').value);
+  runBibleLookup(`${bibleBooks[b].name} ${e.target.value}`);
+});
+document.getElementById('bible-custom-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    await api('/bible/memorization', { method: 'POST', body: {
+      ref: document.getElementById('bible-custom-ref').value,
+      text: document.getElementById('bible-custom-text').value
+    } });
+    e.target.reset();
+    showToast('✅ Verset ajouté à ta mémorisation.');
+    loadMemorization();
+  } catch (err) { showToast(escapeHtml(err.message)); }
+});
 
 document.getElementById('bible-search-form').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -872,7 +988,7 @@ async function loadBibleQuiz() {
   try { quiz = await api(`/bible/quiz?source=${source}`); }
   catch (e) { el.innerHTML = `<p class="error">${escapeHtml(e.message)}</p>`; return; }
   el.innerHTML = `
-    ${source === 'mine' && quiz.source !== 'mine' ? '<p class="meta">Tu n\'as pas encore de verset en mémorisation : question tirée de toute la bibliothèque.</p>' : ''}
+    ${source === 'mine' && quiz.source !== 'mine' ? '<p class="meta">Tu n\'as pas encore de verset en mémorisation : question tirée de la sélection de versets.</p>' : ''}
     <p class="quiz-prompt">${escapeHtml(quiz.prompt).replace('_____', '<span class="quiz-blank">_____</span>')}</p>
     <p class="meta">${escapeHtml(quiz.ref)} — mot de ${quiz.answerLength} lettres</p>
     <form id="bible-quiz-form" class="quiz-form">
@@ -1011,7 +1127,14 @@ async function loadMemorization() {
         <h4>${title} (${items.length})</h4>
         ${items.map(m => `
           <div class="card mem-item">
-            <span>${escapeHtml(m.ref)} <span class="meta">— ${escapeHtml(m.stageLabel)}</span></span>
+            <span>${escapeHtml(m.ref)}${m.custom ? ' <span class="meta">(perso)</span>' : ''}
+              <span class="meta">${escapeHtml(m.stageLabel)}</span>
+              <span class="mem-progress-row">
+                <span class="mem-progress"><span style="width:${Math.round(Math.min(m.stage, 6) / 6 * 100)}%"></span></span>
+                <span class="meta">${m.status === 'mastered' ? '🏆 Maîtrisé' : `Étape ${m.stage + 1}/6`}</span>
+              </span>
+              ${m.nextReviewAt && !m.isDue ? `<span class="meta">Prochaine révision : ${new Date(m.nextReviewAt).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}</span>` : ''}
+            </span>
             <div>
               <button class="small" data-exercise="${m.id}">🧩 S'entraîner</button>
               <button class="small" data-recite="${m.id}" data-recite-text="${escapeHtml(m.text)}" data-recite-ref="${escapeHtml(m.ref)}">🎤 Réciter</button>
