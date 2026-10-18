@@ -266,8 +266,7 @@ profileDropdown.querySelectorAll('[data-view]').forEach(btn => {
 });
 document.querySelector('[data-pd-action="theme"]').addEventListener('click', () => {
   profileDropdown.classList.add('hidden');
-  switchView('account');
-  document.getElementById('appearance-card').scrollIntoView({ behavior: 'smooth' });
+  openSettings('appearance');
 });
 
 const GREETING_QUOTES = [
@@ -368,7 +367,7 @@ function switchView(view) {
   else stopStudyAudio();
   if (view === 'profile-setup') loadOnboarding();
   if (view === 'whats-new') loadWhatsNew();
-  if (view === 'account') { loadAccount(); renderNotifSettings(); }
+  if (view === 'account') { showSettingsPanel(null); loadAccount(); renderNotifSettings(); }
   if (view === 'admin') loadAdmin();
 }
 
@@ -3917,8 +3916,7 @@ document.addEventListener('click', (e) => {
 });
 document.getElementById('notif-settings-link').onclick = () => {
   notifPanel.classList.add('hidden');
-  switchView('account');
-  setTimeout(() => document.getElementById('notif-card').scrollIntoView({ behavior: 'smooth' }), 80);
+  openSettings('notifications');
 };
 
 // Le service worker demande d'ouvrir une section quand on touche une notification.
@@ -4239,13 +4237,13 @@ async function loadStudy() {
   box.innerHTML = '<p class="meta">Chargement…</p>';
   try { study.sets = await api('/study'); } catch (err) { box.innerHTML = `<p class="meta">${escapeHtml(err.message)}</p>`; return; }
   if (!study.sets.length) {
-    box.innerHTML = '<div class="pep-card"><div class="pep-title">Aucune liste pour l\'instant</div><div class="pep-text">Crée ta première liste (ex. les titres des chapitres de l\'Apocalypse) ou rejoins celle de ton groupe avec un code.</div></div>';
+    box.innerHTML = '<div class="pep-card"><div class="pep-title">Aucune liste pour l\'instant</div><div class="pep-text">Crée ta première liste (ex. les titres des chapitres de l\'Apocalypse).</div></div>';
     return;
   }
   box.innerHTML = study.sets.map(s => `
     <button type="button" class="study-set" data-study-open="${s.id}">
       <span class="study-set-title">${escapeHtml(s.title)}</span>
-      <span class="meta">${s.total} carte${s.total > 1 ? 's' : ''} · ${studyCountdown(s)}${s.isOwner ? '' : ` · par ${escapeHtml(s.owner)}`}</span>
+      <span class="meta">${s.total} carte${s.total > 1 ? 's' : ''} · ${studyCountdown(s)}${s.isOwner ? '' : ` · par ${escapeHtml(s.owner)}`}${s.visibility === 'private' ? ' · 🔒 privée' : ''}</span>
       <span class="study-bar"><span style="width:${s.total ? Math.round(s.mastered * 100 / s.total) : 0}%"></span></span>
       <span class="meta">${s.mastered}/${s.total} maîtrisées${s.due ? ` · <strong>${s.due} à revoir aujourd'hui</strong>` : ' · rien à revoir aujourd\'hui ✅'}</span>
     </button>`).join('');
@@ -4258,17 +4256,6 @@ function studyCountdown(s) {
   if (s.daysLeft === 0) return '<strong>test aujourd\'hui</strong>';
   return `test dans ${s.daysLeft} jour${s.daysLeft > 1 ? 's' : ''}`;
 }
-
-document.getElementById('study-join-form').onsubmit = async (e) => {
-  e.preventDefault();
-  const input = document.getElementById('study-join-code');
-  try {
-    const set = await api('/study/join', { method: 'POST', body: { code: input.value } });
-    input.value = '';
-    showToast(`Liste « ${escapeHtml(set.title)} » ajoutée ✅`);
-    openStudySet(set.id);
-  } catch (err) { showToast(escapeHtml(err.message)); }
-};
 
 // --- Création / modification d'une liste ---
 document.getElementById('study-new-btn').onclick = () => openStudyEditor(null);
@@ -4288,6 +4275,7 @@ async function openStudyEditor(set) {
   document.getElementById('study-title').value = set?.title || '';
   document.getElementById('study-exam-date').value = set?.examDate || '';
   document.getElementById('study-desc').value = set?.description || '';
+  document.getElementById('study-visibility').value = set?.visibility || 'all';
   document.getElementById('study-text').value = set ? set.items.map(i => `${i.q} | ${i.a}`).join('\n') : '';
   updateStudyTextCount();
   studyShow('study-editor');
@@ -4317,6 +4305,7 @@ document.getElementById('study-edit-form').onsubmit = async (e) => {
     title: document.getElementById('study-title').value,
     examDate: document.getElementById('study-exam-date').value,
     description: document.getElementById('study-desc').value,
+    visibility: document.getElementById('study-visibility').value,
     text: document.getElementById('study-text').value
   };
   try {
@@ -4367,7 +4356,7 @@ function renderStudyDetail() {
       <div class="meta">${studyCountdown(s)} · ${s.total} carte${s.total > 1 ? 's' : ''}${s.incomplete ? ` · ${s.incomplete} sans réponse` : ''}${s.isOwner ? '' : ` · liste de ${escapeHtml(s.owner)}`}</div>
       <span class="study-bar"><span style="width:${s.total ? Math.round(s.mastered * 100 / s.total) : 0}%"></span></span>
       <div class="meta">${s.mastered}/${s.total} maîtrisées · ${s.due} à revoir aujourd'hui${perDay ? ` · objectif : ${perDay} nouvelle${perDay > 1 ? 's' : ''} carte${perDay > 1 ? 's' : ''} maîtrisée${perDay > 1 ? 's' : ''} par jour` : ''}</div>
-      ${s.isOwner ? `<div class="study-share">Code du groupe : <strong>${s.shareCode}</strong> <button type="button" class="small" id="study-copy-code">Copier</button><span class="meta"> · ${s.members} membre${s.members > 1 ? 's' : ''}</span></div>` : ''}
+      <div class="meta study-share">${s.visibility === 'private' ? '🔒 Visible seulement par toi' : `👥 Visible par tous les utilisateurs de l'app · ${s.learners} personne${s.learners > 1 ? 's' : ''} révise${s.learners > 1 ? 'nt' : ''}`}</div>
     </div>
     ${s.total ? `
     <div class="study-options">
@@ -4379,28 +4368,25 @@ function renderStudyDetail() {
       <button type="button" class="study-mode" data-study-mode="${m.key}"><span class="study-mode-icon">${m.icon}</span><strong>${m.name}${m.key === 'due' && s.due ? ` (${s.due})` : ''}</strong><span class="meta">${m.desc}</span></button>`).join('')}
     </div>` : '<p class="meta">Ajoute les réponses dans « Modifier » pour commencer à réviser.</p>'}
     <div id="study-session"></div>
-    <div class="card-block"><h3>🏆 Groupe</h3><div id="study-group" class="meta">Chargement…</div></div>
+    ${s.visibility === 'private' ? '' : '<div class="card-block"><h3>🏆 Classement</h3><div id="study-group" class="meta">Chargement…</div></div>'}
     <div class="pep-buttons">
-      ${s.isOwner ? '<button type="button" class="small" id="study-edit">✏️ Modifier</button>' : ''}
+      ${s.canEdit ? '<button type="button" class="small" id="study-edit">✏️ Modifier</button>' : ''}
       <button type="button" class="small" id="study-reset">↺ Recommencer ma progression</button>
-      <button type="button" class="small danger" id="study-delete">${s.isOwner ? '🗑️ Supprimer la liste' : '🚪 Quitter la liste'}</button>
+      ${s.canEdit ? '<button type="button" class="small danger" id="study-delete">🗑️ Supprimer la liste</button>' : ''}
     </div>`;
   box.querySelector('#study-back').onclick = loadStudy;
-  box.querySelector('#study-copy-code')?.addEventListener('click', () => {
-    navigator.clipboard?.writeText(s.shareCode).then(() => showToast('Code copié 📋'), () => showToast(`Code : ${s.shareCode}`));
-  });
   box.querySelector('#study-edit')?.addEventListener('click', () => openStudyEditor(s));
   box.querySelector('#study-reset').onclick = async () => {
     if (!confirm('Remettre ta progression à zéro sur cette liste ?')) return;
     await api(`/study/${s.id}/reset`, { method: 'POST' }).catch(err => showToast(escapeHtml(err.message)));
     openStudySet(s.id);
   };
-  box.querySelector('#study-delete').onclick = async () => {
-    if (!confirm(s.isOwner ? 'Supprimer cette liste pour tout le groupe ?' : 'Quitter cette liste ?')) return;
+  box.querySelector('#study-delete')?.addEventListener('click', async () => {
+    if (!confirm(s.visibility === 'private' ? 'Supprimer cette liste ?' : 'Supprimer cette liste pour tous les utilisateurs ?')) return;
     try { await api(`/study/${s.id}`, { method: 'DELETE' }); loadStudy(); } catch (err) { showToast(escapeHtml(err.message)); }
-  };
+  });
   box.querySelectorAll('[data-study-mode]').forEach(b => { b.onclick = () => startStudyMode(b.dataset.studyMode); });
-  loadStudyGroup();
+  if (s.visibility !== 'private') loadStudyGroup();
 }
 async function loadStudyGroup() {
   const el = document.getElementById('study-group');
@@ -4408,7 +4394,7 @@ async function loadStudyGroup() {
     const rows = await api(`/study/${study.current.id}/group`);
     el.innerHTML = rows.length > 1
       ? rows.map((r, k) => `<div class="study-rank${r.me ? ' me' : ''}"><span>${['🥇', '🥈', '🥉'][k] || `${k + 1}.`} ${escapeHtml(r.name)}${r.me ? ' (toi)' : ''}</span><span>${r.percent} %</span></div>`).join('')
-      : (study.current.isOwner ? `Partage le code <strong>${study.current.shareCode}</strong> : chacun l'entre dans « Rejoindre la liste d'un groupe » et a sa propre progression.` : 'Tu es la seule personne sur cette liste pour l\'instant.');
+      : 'Tu es la première personne à réviser cette liste. Les autres utilisateurs de l\'app la voient aussi dans leurs Révisions.';
   } catch { el.textContent = ''; }
 }
 
@@ -4611,8 +4597,15 @@ function renderStudyMatch() {
     b.onclick = () => {
       if (!picked) return showToast('Touche d\'abord une question.');
       const qBtn = el.querySelector(`[data-mq="${picked}"]`);
-      if (b.dataset.ma === picked) {
+      const sameText = round.find(c => c.id === b.dataset.ma).a === round.find(c => c.id === picked).a;
+      if (b.dataset.ma === picked || sameText) {
         const card = round.find(c => c.id === picked);
+        if (b.dataset.ma !== picked) {
+          // Réponse identique d'une autre carte : on échange pour garder chaque bouton à sa place logique.
+          const twin = el.querySelector(`[data-ma="${picked}"]`);
+          twin.dataset.ma = b.dataset.ma;
+          b.dataset.ma = picked;
+        }
         qBtn.disabled = b.disabled = true;
         qBtn.classList.add('right'); b.classList.add('right');
         studyRecord(card, !missed.has(card.id));
@@ -4735,3 +4728,39 @@ function studyDictate(input, btn) {
   rec.onend = () => { btn.disabled = false; btn.textContent = '🎤 Dicter'; input.focus(); };
   try { rec.start(); } catch { rec.onend(); }
 }
+
+
+// --- RÉGLAGES : une liste de rubriques, chacune ouvre son panneau ---
+const ACCENT_NAMES = { bleu: 'Bleu', violet: 'Violet', vert: 'Vert', orange: 'Orange', bordeaux: 'Bordeaux' };
+function showSettingsPanel(key) {
+  document.getElementById('settings-home').classList.toggle('hidden', !!key);
+  document.querySelectorAll('[data-settings-panel]').forEach(p => p.classList.toggle('hidden', p.dataset.settingsPanel !== key));
+  if (!key) renderSettingsHome();
+  window.scrollTo({ top: 0 });
+}
+function openSettings(key) {
+  switchView('account');
+  showSettingsPanel(key);
+}
+function renderSettingsHome() {
+  const user = state.user || {};
+  document.getElementById('settings-hero-name').textContent = user.name || '';
+  document.getElementById('settings-hero-email').textContent = user.email ? `${user.email} · Modifier le profil` : 'Modifier le profil';
+  const img = document.getElementById('settings-hero-avatar');
+  const fallback = document.getElementById('settings-hero-fallback');
+  img.classList.toggle('hidden', !user.avatar);
+  fallback.classList.toggle('hidden', !!user.avatar);
+  if (user.avatar) img.src = user.avatar;
+  else fallback.textContent = (user.name || '?').trim().slice(0, 1).toUpperCase();
+  const summary = (key, text) => { const el = document.querySelector(`[data-settings-summary="${key}"]`); if (el) el.textContent = text; };
+  summary('appearance', `${(localStorage.getItem('bm_theme') || 'dark') === 'dark' ? 'Sombre' : 'Clair'} · ${ACCENT_NAMES[localStorage.getItem('bm_accent') || 'bleu'] || ''}`);
+  summary('language', { fr: 'Français', en: 'English', ko: '한국어' }[getAppLang()] || 'Français');
+  summary('lock', localStorage.getItem('bm_lock_pin') ? 'Activé sur cet appareil' : 'Désactivé');
+  const hidden = getHiddenSections();
+  summary('menu', hidden.length ? `${hidden.length} section${hidden.length > 1 ? 's' : ''} masquée${hidden.length > 1 ? 's' : ''}` : 'Toutes les sections affichées');
+  const perm = typeof Notification === 'undefined' ? 'unsupported' : Notification.permission;
+  summary('notifications', perm === 'granted' ? 'Activées sur cet appareil' : perm === 'denied' ? 'Bloquées sur cet appareil' : 'Rappels et alertes');
+}
+document.querySelectorAll('[data-settings-open]').forEach(b => { b.onclick = () => showSettingsPanel(b.dataset.settingsOpen); });
+document.querySelectorAll('[data-settings-back]').forEach(b => { b.onclick = () => showSettingsPanel(null); });
+document.getElementById('settings-logout').onclick = doLogout;

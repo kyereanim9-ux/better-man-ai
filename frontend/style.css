@@ -37,7 +37,7 @@
   --shadow: 0 8px 28px rgba(10, 14, 30, 0.35);
   --shadow-glow: 0 0 0 1px var(--accent-soft), 0 8px 28px rgba(10, 14, 30, 0.35);
 
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color-scheme: dark;
 }
 
@@ -566,3 +566,55 @@ button.study-wrong { background: var(--danger-soft); color: var(--danger); borde
 .study-hidden.shown { color: var(--text); text-shadow: none; border-style: solid; }
 .study-rank { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); color: var(--text); }
 .study-rank.me { font-weight: 800; color: var(--accent); }
+
+/* ---------- Finitions : formulaires empilés ---------- */
+.card-block form#daily-reflection-form { flex-direction: column; }
+#daily-reflection-form textarea { width: 100%; min-height: 64px; }
+#daily-reflection-form button { align-self: flex-end; }
+input, textarea, select, button { font-family: inherit; }
+h2 { font-weight: 800; }
+
+/* ---------- Réglages ---------- */
+#settings-home h2 { font-size: 26px; margin: 8px 0 16px; }
+.settings-hero {
+  display: flex; align-items: center; gap: 14px; width: 100%; text-align: left;
+  background: var(--panel); color: var(--text); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow-sm); margin-bottom: 22px;
+}
+.settings-hero:hover, .settings-row:hover { transform: none; box-shadow: var(--shadow-sm); }
+.settings-hero-avatar { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.settings-hero-avatar.fallback {
+  display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 22px; color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+.settings-label { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.settings-label strong { font-size: 15px; font-weight: 600; }
+.settings-hero .settings-label strong { font-size: 17px; font-weight: 700; }
+.settings-label .meta { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; }
+.settings-chevron { color: var(--muted-2); font-size: 22px; line-height: 1; flex-shrink: 0; }
+.settings-group-title { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 4px 8px; }
+.settings-group {
+  background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+  overflow: hidden; margin-bottom: 22px; box-shadow: var(--shadow-sm);
+}
+.settings-row {
+  display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+  background: transparent; color: var(--text); border: none; border-radius: 0; box-shadow: none;
+  padding: 12px 14px; font-weight: 500;
+}
+.settings-row + .settings-row { border-top: 1px solid var(--border); }
+.settings-row:active { background: var(--panel-2); transform: none; }
+.settings-row.danger strong { color: var(--danger); }
+.settings-icon {
+  width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 17px;
+  background: color-mix(in srgb, var(--tint) 18%, transparent);
+}
+.settings-panel-head { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin: 4px 0 14px; }
+.settings-panel-head h3 { font-size: 24px; font-weight: 800; margin: 0; color: var(--text); text-transform: none; letter-spacing: -0.01em; }
+.settings-back { background: transparent; color: var(--accent); box-shadow: none; padding: 4px 0; font-size: 15px; font-weight: 600; }
+.settings-back:hover { transform: none; box-shadow: none; }
+.settings-card { margin-top: 0; }
+/* Le dégradé de fond couvre tout l'écran, même sur une page courte. */
+body { min-height: 100vh; background-attachment: fixed; }
+.settings-card > .meta:first-child { margin-top: 0; }

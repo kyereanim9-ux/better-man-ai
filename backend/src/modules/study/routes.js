@@ -1,12 +1,20 @@
 // Révisions : listes de questions/réponses à apprendre pour un test (ex. les
 // titres des chapitres de l'Apocalypse). Une liste se colle d'un bloc (une
-// ligne = « question | réponse »), se partage au groupe avec un code, et
-// chaque membre a sa propre progression (boîtes de Leitner : une carte sue
-// revient de plus en plus tard, une carte ratée revient tout de suite).
+// ligne = « question | réponse »). Par défaut elle est visible par tous les
+// utilisateurs de l'app (ou privée), et chacun a sa propre progression
+// (boîtes de Leitner : une carte sue revient de plus en plus tard, une carte
+// ratée revient tout de suite). Les listes de data/builtin.json sont créées
+// automatiquement pour tout le monde ; les admins peuvent les modifier.
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { Router } from 'express';
 import { nanoid } from 'nanoid';
 import { requireAuth } from '../../middleware/auth.js';
 import { db } from '../../db.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const BUILTIN = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'builtin.json'), 'utf-8'));
 
 const router = Router();
 router.use(requireAuth);
@@ -41,16 +49,29 @@ export function parseItems(text, previous = []) {
   return items;
 }
 
-const newCode = () => {
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code;
-  do { code = Array.from({ length: 6 }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join(''); }
-  while (db.data.studySets.some(s => s.shareCode === code));
-  return code;
-};
+// Ajoute une seule fois les listes fournies avec l'app (supprimées = pas recréées).
+function ensureBuiltin() {
+  const seeded = db.data.appConfig.studySeeded || (db.data.appConfig.studySeeded = []);
+  let changed = false;
+  for (const b of BUILTIN) {
+    if (seeded.includes(b.id)) continue;
+    const now = new Date().toISOString();
+    if (!db.data.studySets.some(s => s.id === b.id)) {
+      db.data.studySets.push({ id: b.id, ownerId: null, title: b.title, description: b.description || '', examDate: null, visibility: 'all', items: b.items, createdAt: now, updatedAt: now });
+    }
+    seeded.push(b.id);
+    changed = true;
+  }
+  return changed;
+}
 
+const isPublic = (set) => (set.visibility || 'all') === 'all';
 function canAccess(set, uid) {
-  return set.ownerId === uid || db.data.studyMembers.some(m => m.setId === set.id && m.userId === uid);
+  return isPublic(set) || set.ownerId === uid || db.data.studyMembers.some(m => m.setId === set.id && m.userId === uid);
+}
+// Le créateur modifie sa liste ; un admin peut modifier les listes publiques.
+function canEdit(set, user) {
+  return set.ownerId === user.id || (user.role === 'admin' && isPublic(set));
 }
 function findSet(req, res) {
   const set = db.data.studySets.find(s => s.id === req.params.id);
@@ -62,7 +83,7 @@ function progressOf(uid, set) {
   const mine = new Map(db.data.studyProgress.filter(p => p.userId === uid && p.setId === set.id).map(p => [p.itemId, p]));
   return set.items.map(i => mine.get(i.id) || null);
 }
-function summary(set, uid) {
+function summary(set, uid, role) {
   const ready = set.items.filter(i => i.a);
   const progress = new Map(db.data.studyProgress.filter(p => p.userId === uid && p.setId === set.id).map(p => [p.itemId, p]));
   const t = today();
@@ -70,16 +91,18 @@ function summary(set, uid) {
   const due = ready.filter(i => { const p = progress.get(i.id); return !p || p.due <= t; }).length;
   return {
     id: set.id, title: set.title, description: set.description, examDate: set.examDate, daysLeft: daysUntil(set.examDate),
-    isOwner: set.ownerId === uid, shareCode: set.ownerId === uid ? set.shareCode : undefined,
-    owner: db.data.users.find(u => u.id === set.ownerId)?.name || '',
+    isOwner: set.ownerId === uid, canEdit: canEdit(set, { id: uid, role }), visibility: set.visibility || 'all',
+    owner: set.ownerId ? (db.data.users.find(u => u.id === set.ownerId)?.name || '') : 'Better Man AI',
     total: ready.length, incomplete: set.items.length - ready.length, mastered, due,
-    members: db.data.studyMembers.filter(m => m.setId === set.id).length + 1, updatedAt: set.updatedAt
+    learners: new Set(db.data.studyProgress.filter(p => p.setId === set.id).map(p => p.userId)).size, updatedAt: set.updatedAt
   };
 }
 
 // Nombre de cartes à revoir aujourd'hui, toutes listes confondues (rappels).
+// Seulement les listes que la personne a créées ou déjà commencé à réviser.
 export function studyDue(uid) {
-  return db.data.studySets.filter(s => canAccess(s, uid))
+  const started = new Set(db.data.studyProgress.filter(p => p.userId === uid).map(p => p.setId));
+  return db.data.studySets.filter(s => canAccess(s, uid) && (s.ownerId === uid || started.has(s.id)))
     .map(s => ({ title: s.title, due: summary(s, uid).due })).filter(s => s.due > 0);
 }
 
@@ -87,13 +110,15 @@ function cleanMeta(body, current = {}) {
   const title = String(body.title ?? current.title ?? '').trim().slice(0, 120);
   const description = String(body.description ?? current.description ?? '').trim().slice(0, 500);
   const examDate = /^\d{4}-\d{2}-\d{2}$/.test(body.examDate) ? body.examDate : (body.examDate === '' ? null : current.examDate || null);
-  return { title, description, examDate };
+  const visibility = ['all', 'private'].includes(body.visibility) ? body.visibility : (current.visibility || 'all');
+  return { title, description, examDate, visibility };
 }
 
 router.get('/', async (req, res) => {
   await db.read();
+  if (ensureBuiltin()) await db.write();
   const uid = req.user.id;
-  const sets = db.data.studySets.filter(s => canAccess(s, uid)).map(s => summary(s, uid));
+  const sets = db.data.studySets.filter(s => canAccess(s, uid)).map(s => summary(s, uid, req.user.role));
   sets.sort((a, b) => (a.daysLeft ?? 9999) - (b.daysLeft ?? 9999) || String(b.updatedAt).localeCompare(String(a.updatedAt)));
   res.json(sets);
 });
@@ -105,22 +130,10 @@ router.post('/', async (req, res) => {
   const items = parseItems(req.body.text);
   if (!items.length) return res.status(400).json({ error: 'Ajoute au moins une ligne « question | réponse ».' });
   const now = new Date().toISOString();
-  const set = { id: nanoid(), ownerId: req.user.id, ...meta, shareCode: newCode(), items, createdAt: now, updatedAt: now };
+  const set = { id: nanoid(), ownerId: req.user.id, ...meta, items, createdAt: now, updatedAt: now };
   db.data.studySets.push(set);
   await db.write();
-  res.status(201).json(summary(set, req.user.id));
-});
-
-router.post('/join', async (req, res) => {
-  await db.read();
-  const code = String(req.body.code || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
-  const set = db.data.studySets.find(s => s.shareCode === code);
-  if (!set) return res.status(404).json({ error: 'Aucune liste avec ce code.' });
-  if (!canAccess(set, req.user.id)) {
-    db.data.studyMembers.push({ id: nanoid(), userId: req.user.id, setId: set.id, joinedAt: new Date().toISOString() });
-    await db.write();
-  }
-  res.json(summary(set, req.user.id));
+  res.status(201).json(summary(set, req.user.id, req.user.role));
 });
 
 router.get('/:id', async (req, res) => {
@@ -129,7 +142,7 @@ router.get('/:id', async (req, res) => {
   if (!set) return;
   const progress = progressOf(req.user.id, set);
   res.json({
-    ...summary(set, req.user.id),
+    ...summary(set, req.user.id, req.user.role),
     items: set.items.map((i, k) => ({
       ...i, box: progress[k]?.box || 0, due: progress[k]?.due || null,
       right: progress[k]?.right || 0, wrong: progress[k]?.wrong || 0, tip: progress[k]?.tip || ''
@@ -137,12 +150,14 @@ router.get('/:id', async (req, res) => {
   });
 });
 
-// Classement du groupe : prénom et part des cartes maîtrisées.
+// Classement : prénom et part des cartes maîtrisées de chaque personne qui
+// révise cette liste (et de son créateur).
 router.get('/:id/group', async (req, res) => {
   await db.read();
   const set = findSet(req, res);
   if (!set) return;
-  const ids = [set.ownerId, ...db.data.studyMembers.filter(m => m.setId === set.id).map(m => m.userId)];
+  const ids = [...new Set([set.ownerId, req.user.id, ...db.data.studyProgress.filter(p => p.setId === set.id).map(p => p.userId)])]
+    .filter(uid => uid && db.data.users.some(u => u.id === uid && u.active));
   const ready = set.items.filter(i => i.a).length || 1;
   const rows = ids.map(uid => {
     const user = db.data.users.find(u => u.id === uid);
@@ -156,7 +171,7 @@ router.put('/:id', async (req, res) => {
   await db.read();
   const set = findSet(req, res);
   if (!set) return;
-  if (set.ownerId !== req.user.id) return res.status(403).json({ error: 'Seule la personne qui a créé la liste peut la modifier.' });
+  if (!canEdit(set, req.user)) return res.status(403).json({ error: 'Seule la personne qui a créé la liste peut la modifier.' });
   const meta = cleanMeta(req.body, set);
   if (!meta.title) return res.status(400).json({ error: 'Donne un titre à ta liste.' });
   if (req.body.text !== undefined) {
@@ -168,16 +183,17 @@ router.put('/:id', async (req, res) => {
   }
   Object.assign(set, meta, { updatedAt: new Date().toISOString() });
   await db.write();
-  res.json(summary(set, req.user.id));
+  res.json(summary(set, req.user.id, req.user.role));
 });
 
-// Créateur : supprime la liste pour tout le groupe. Membre : quitte la liste.
+// Créateur (ou admin) : supprime la liste pour tout le monde. Sinon : remet sa
+// progression à zéro et quitte la liste si elle était partagée par code.
 router.delete('/:id', async (req, res) => {
   await db.read();
   const set = findSet(req, res);
   if (!set) return;
   const uid = req.user.id;
-  if (set.ownerId === uid) {
+  if (canEdit(set, req.user)) {
     db.data.studySets = db.data.studySets.filter(s => s.id !== set.id);
     db.data.studyMembers = db.data.studyMembers.filter(m => m.setId !== set.id);
     db.data.studyProgress = db.data.studyProgress.filter(p => p.setId !== set.id);
@@ -222,7 +238,7 @@ router.post('/:id/review', async (req, res) => {
     p.lastAt = new Date().toISOString();
   }
   await db.write();
-  res.json(summary(set, req.user.id));
+  res.json(summary(set, req.user.id, req.user.role));
 });
 
 // Astuce personnelle (moyen mnémotechnique) pour une carte.
@@ -242,7 +258,7 @@ router.post('/:id/reset', async (req, res) => {
   if (!set) return;
   db.data.studyProgress = db.data.studyProgress.filter(p => !(p.setId === set.id && p.userId === req.user.id));
   await db.write();
-  res.json(summary(set, req.user.id));
+  res.json(summary(set, req.user.id, req.user.role));
 });
 
 export default router;
