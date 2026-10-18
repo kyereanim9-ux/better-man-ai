@@ -46,6 +46,8 @@ router.get('/export', async (req, res) => {
     pepiteSaves: db.data.pepiteSaves.filter(s => s.userId === uid),
     pepiteViews: db.data.pepiteViews.filter(v => v.userId === uid),
     pepiteCustom: db.data.pepiteCustom.filter(c => c.userId === uid),
+    bibleReadingPlans: db.data.bibleReadingPlans.filter(p => p.userId === uid),
+    bibleFavorites: db.data.bibleFavorites.filter(f => f.userId === uid),
     notificationPrefs: user.notifPrefs || null,
     pushSubscriptions: db.data.pushSubscriptions.filter(s => s.userId === uid).map(({ endpoint, userAgent, createdAt }) => ({ endpoint, userAgent, createdAt }))
   };

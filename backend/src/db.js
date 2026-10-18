@@ -39,6 +39,8 @@ const defaultData = {
   pepiteSaves: [],           // { id, userId, pepiteId, stash, stage, nextReview, mastered, savedAt }
   pepiteViews: [],           // { id, userId, pepiteId, date, createdAt }
   pepiteCustom: [],          // { id, userId, title, text, domain, source, action, createdAt }
+  bibleReadingPlans: [],     // { id, userId, planKey, startedAt, done: [numéros de jours lus] }
+  bibleFavorites: [],        // { id, userId, ref, text, note, createdAt }
   pushSubscriptions: [],     // { id, userId, endpoint, keys: { p256dh, auth }, userAgent, createdAt }
   appConfig: {}              // réglages globaux générés par l'app (ex : clés VAPID des notifications)
 };
@@ -192,4 +194,6 @@ export function purgeUserData(userId) {
   db.data.pepiteViews = db.data.pepiteViews.filter(v => v.userId !== userId);
   db.data.pepiteCustom = db.data.pepiteCustom.filter(c => c.userId !== userId);
   db.data.pushSubscriptions = db.data.pushSubscriptions.filter(s => s.userId !== userId);
+  db.data.bibleReadingPlans = db.data.bibleReadingPlans.filter(p => p.userId !== userId);
+  db.data.bibleFavorites = db.data.bibleFavorites.filter(f => f.userId !== userId);
 }

@@ -791,6 +791,8 @@ function escapeHtml(str) {
 // --- BIBLE ---
 async function loadBible() {
   initBibleFinder();
+  loadBiblePlans();
+  loadBibleFavorites();
   try {
     const [vod, rod, qod] = await Promise.all([
       api('/bible/verse-of-day'),
@@ -840,6 +842,23 @@ function bindAddMemButtons(container) {
       }
     };
   });
+  container.querySelectorAll('[data-fav-ref]').forEach(btn => {
+    btn.onclick = async () => {
+      const ref = btn.dataset.favRef;
+      try {
+        if (bibleFavRefs.has(ref)) {
+          const fav = bibleFavorites.find(f => f.ref === ref);
+          if (fav) await api(`/bible/favorites/${fav.id}`, { method: 'DELETE' });
+          btn.textContent = '☆ Favori';
+        } else {
+          await api('/bible/favorites', { method: 'POST', body: { ref } });
+          btn.textContent = '⭐ Favori';
+          showToast('⭐ Ajouté à tes versets favoris');
+        }
+        loadBibleFavorites();
+      } catch (err) { showToast(escapeHtml(err.message)); }
+    };
+  });
   // « Lire le chapitre » : ouvre le lecteur en haut de la page Bible.
   container.querySelectorAll('[data-read-ref]').forEach(btn => {
     btn.onclick = () => {
@@ -875,6 +894,7 @@ function verseRowHTML(v, showRef) {
       <div class="bible-verse-meta">
         ${showRef ? `<span class="verse-ref">${escapeHtml(v.ref)}</span>` : ''}
         <button type="button" class="small" data-add-mem="${escapeHtml(v.ref)}">➕ Mémoriser</button>
+        <button type="button" class="small" data-fav-ref="${escapeHtml(v.ref)}">${bibleFavRefs.has(v.ref) ? '⭐ Favori' : '☆ Favori'}</button>
         ${showRef ? `<button type="button" class="small" data-read-ref="${escapeHtml(v.ref)}">📖 Chapitre</button>` : ''}
       </div>
     </div>`;
@@ -1164,10 +1184,10 @@ async function loadMemorization() {
     renderGroup('Maîtrisés', data.mastered, false) ||
     '<p class="meta">Aucun verset en mémorisation. Ajoute-en un depuis le verset du jour ou une recherche.</p>';
 
-  el.querySelectorAll('[data-recite]').forEach(btn => {
-    btn.onclick = () => openRecitationPanel(btn.dataset.recite, btn.dataset.reciteText, btn.dataset.reciteRef);
-  });
   const allItems = [...data.due, ...data.inProgress, ...data.mastered];
+  el.querySelectorAll('[data-recite]').forEach(btn => {
+    btn.onclick = () => openRecitationPanel(btn.dataset.recite, btn.dataset.reciteText, btn.dataset.reciteRef, data.due.some(d => d.id === btn.dataset.recite));
+  });
   el.querySelectorAll('[data-exercise]').forEach(btn => {
     const item = allItems.find(m => m.id === btn.dataset.exercise);
     btn.onclick = () => openMemExercise(item, data.due.some(d => d.id === item.id));
@@ -1181,13 +1201,6 @@ async function loadMemorization() {
 }
 
 // --- Récitation biblique via reconnaissance vocale du navigateur (gratuite) ---
-function wordOverlapScore(target, said) {
-  const norm = s => stripAccentsClient(s.toLowerCase()).replace(/[^a-z\s]/g, ' ').split(/\s+/).filter(Boolean);
-  const targetWords = norm(target);
-  const saidWords = new Set(norm(said));
-  const matched = targetWords.filter(w => saidWords.has(w)).length;
-  return targetWords.length ? Math.round((matched / targetWords.length) * 100) : 0;
-}
 function stripAccentsClient(s) { return s.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
 
 // Micro générique : transcrit la voix directement dans une zone de texte.
@@ -1241,67 +1254,172 @@ function attachVoiceToTextarea(btnId, textareaId, statusId) {
 attachVoiceToTextarea('journal-voice-btn', 'journal-input', 'journal-voice-status');
 attachVoiceToTextarea('situation-voice-btn', 'situation-input', 'situation-voice-status');
 
-function openRecitationPanel(id, text, ref) {
+// --- Récitation d'un verset : à voix haute (reconnaissance vocale) ou par écrit ---
+// Correction mot par mot dans l'ordre du verset (plus longue sous-suite commune),
+// toujours en français puisque les versets sont en Louis Segond.
+const reciteWords = (s) => stripAccentsClient(String(s).toLowerCase()).replace(/[’']/g, ' ').replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+
+function alignRecitation(target, said) {
+  const display = target.split(/\s+/).filter(Boolean);
+  const t = display.map(w => reciteWords(w).join(''));
+  const a = reciteWords(said);
+  const dp = Array.from({ length: t.length + 1 }, () => new Uint16Array(a.length + 1));
+  for (let i = t.length - 1; i >= 0; i--) {
+    for (let j = a.length - 1; j >= 0; j--) {
+      dp[i][j] = t[i] && t[i] === a[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+    }
+  }
+  const found = new Array(t.length).fill(false);
+  for (let i = 0, j = 0; i < t.length && j < a.length;) {
+    if (t[i] && t[i] === a[j]) { found[i] = true; i++; j++; }
+    else if (dp[i + 1][j] >= dp[i][j + 1]) i++;
+    else j++;
+  }
+  const counted = t.filter(Boolean).length || 1;
+  const score = Math.round(found.filter((f, i) => f && t[i]).length / counted * 100);
+  const html = display.map((w, i) => `<span class="${found[i] || !t[i] ? 'rw-ok' : 'rw-miss'}">${escapeHtml(w)}</span>`).join(' ');
+  return { score, html };
+}
+
+function speechErrorMessage(code) {
+  const ios = isIOS();
+  const map = {
+    'not-allowed': ios
+      ? "Micro ou reconnaissance vocale refusés. Sur iPhone : Réglages → Safari → Micro → Autoriser, et Réglages → Général → Clavier → « Activer Dictée »."
+      : "Micro refusé : touche l'icône 🔒 à côté de l'adresse → Micro → Autoriser, puis recharge la page.",
+    'service-not-allowed': ios
+      ? "La reconnaissance vocale est désactivée. Active la Dictée : Réglages → Général → Clavier → « Activer Dictée ». Si l'app est ouverte depuis l'écran d'accueil, essaie dans Safari."
+      : "La reconnaissance vocale n'est pas autorisée sur ce navigateur. Essaie Chrome à jour.",
+    'network': "La reconnaissance vocale a besoin d'Internet (elle passe par les serveurs du navigateur). Vérifie ta connexion, ou récite par écrit.",
+    'no-speech': "Je n'ai rien entendu. Parle un peu plus fort, plus près du micro, puis réessaie.",
+    'audio-capture': "Aucun micro détecté, ou il est utilisé par une autre app.",
+    'language-not-supported': "Le français n'est pas disponible pour la reconnaissance vocale sur cet appareil.",
+    'aborted': null
+  };
+  return code in map ? map[code] : `Erreur de reconnaissance (${code}).`;
+}
+
+function openRecitationPanel(id, text, ref, canValidate) {
   const panel = document.getElementById(`recite-panel-${id}`);
   // Le même panneau sert à l'exercice à trous : basculer au lieu de fermer.
   const isOpen = !panel.classList.contains('hidden') && panel.dataset.mode !== 'exercise';
   document.querySelectorAll('[id^="recite-panel-"]').forEach(p => p.classList.add('hidden'));
+  if (window._recitation) { try { window._recitation.abort(); } catch (e) { /* déjà arrêtée */ } window._recitation = null; }
   if (isOpen) return;
   panel.dataset.mode = 'recite';
   panel.classList.remove('hidden');
-
-  if (!SpeechRecognitionAPI) {
-    panel.innerHTML = `<div class="card-block"><p class="meta">🎤 La reconnaissance vocale n'est pas supportée par ce navigateur. Essaie avec Chrome sur mobile ou ordinateur.</p></div>`;
-    return;
-  }
+  const voiceOk = !!SpeechRecognitionAPI;
 
   panel.innerHTML = `
-    <div class="card-block">
-      <p class="meta">Récite "${escapeHtml(ref)}" à voix haute, puis arrête l'enregistrement.</p>
-      <div class="speaker">
-        <button data-recite-start="${id}">🎤 Démarrer</button>
-        <button data-recite-stop="${id}">⏹️ Arrêter</button>
+    <div class="card-block recite">
+      <p class="meta">Récite « ${escapeHtml(ref)} » de mémoire, sans regarder.</p>
+      <div class="pep-tabs recite-tabs">
+        <button type="button" class="pep-tab ${voiceOk ? 'active' : ''}" data-rmode="voice">🎤 À voix haute</button>
+        <button type="button" class="pep-tab ${voiceOk ? '' : 'active'}" data-rmode="text">⌨️ Par écrit</button>
       </div>
-      <p class="meta" id="recite-status-${id}"></p>
-      <p id="recite-transcript-${id}" style="font-style:italic;"></p>
-      <p id="recite-score-${id}" style="font-weight:700;"></p>
-    </div>
-  `;
+      <div data-rpanel="voice" class="${voiceOk ? '' : 'hidden'}">
+        <div class="rec-row">
+          <button type="button" data-rstart>🎤 Démarrer</button>
+          <button type="button" class="small" data-rstop disabled>⏹️ Arrêter</button>
+        </div>
+        <p class="meta" data-rstatus>Touche « Démarrer », récite le verset, puis « Arrêter ».</p>
+        <p class="recite-live" data-rlive></p>
+      </div>
+      <div data-rpanel="text" class="${voiceOk ? 'hidden' : ''}">
+        ${voiceOk ? '' : '<p class="meta">La reconnaissance vocale n\'est pas disponible sur ce navigateur : récite par écrit.</p>'}
+        <textarea data-rtext placeholder="Écris le verset de mémoire…"></textarea>
+        <button type="button" data-rcheck>Vérifier</button>
+      </div>
+      <div data-rresult></div>
+    </div>`;
 
-  const recognition = new SpeechRecognitionAPI();
-  recognition.lang = getAppLangBCP47();
-  recognition.continuous = true;
-  recognition.interimResults = true;
-  let finalTranscript = '';
+  const $ = (sel) => panel.querySelector(sel);
+  panel.querySelectorAll('[data-rmode]').forEach(b => {
+    b.onclick = () => {
+      if (window._recitation) window._recitation.stop();
+      panel.querySelectorAll('[data-rmode]').forEach(x => x.classList.toggle('active', x === b));
+      panel.querySelectorAll('[data-rpanel]').forEach(x => x.classList.toggle('hidden', x.dataset.rpanel !== b.dataset.rmode));
+    };
+  });
 
-  recognition.onresult = (e) => {
-    let interim = '';
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      if (e.results[i].isFinal) finalTranscript += e.results[i][0].transcript + ' ';
-      else interim += e.results[i][0].transcript;
-    }
-    document.getElementById(`recite-transcript-${id}`).textContent = finalTranscript + interim;
-  };
-  recognition.onerror = (e) => {
-    const messages = { 'not-allowed': "Permission micro refusée — active-la dans les réglages du navigateur.", 'no-speech': "Aucune voix détectée.", 'network': "Problème réseau." };
-    document.getElementById(`recite-status-${id}`).textContent = messages[e.error] || `Erreur de reconnaissance (${e.error}) — réessaie.`;
-  };
-  recognition.onend = () => {
-    document.getElementById(`recite-status-${id}`).textContent = 'Arrêté.';
-    if (finalTranscript.trim()) {
-      const score = wordOverlapScore(text, finalTranscript);
-      document.getElementById(`recite-score-${id}`).textContent = `Correspondance approximative : ${score}%`;
-    }
+  const showResult = (said) => {
+    if (!said.trim()) return;
+    const { score, html } = alignRecitation(text, said);
+    $('[data-rresult]').innerHTML = `
+      <div class="quiz-feedback ${score >= 80 ? 'ok' : 'ko'}">
+        <strong>${score >= 90 ? '🏆' : score >= 80 ? '✅' : '🔁'} ${score} % du verset retrouvé</strong>
+        <p class="recite-diff">${html}</p>
+        <p class="meta">En vert : les mots retrouvés · en rouge : ceux qui manquent.</p>
+        ${score >= 80 && canValidate ? '<button type="button" data-rvalidate>✅ Valider cette étape</button>' : ''}
+        ${score < 80 ? '<p class="meta">Objectif : 80 %. Relis les mots en rouge et réessaie.</p>' : ''}
+      </div>`;
+    const v = $('[data-rvalidate]');
+    if (v) v.onclick = async () => {
+      await api(`/bible/memorization/${id}/advance`, { method: 'POST' });
+      showToast('✅ Étape validée, bravo !');
+      loadMemorization();
+    };
   };
 
-  panel.querySelector(`[data-recite-start="${id}"]`).onclick = () => {
-    finalTranscript = '';
-    document.getElementById(`recite-transcript-${id}`).textContent = '';
-    document.getElementById(`recite-score-${id}`).textContent = '';
-    document.getElementById(`recite-status-${id}`).textContent = 'Écoute en cours...';
+  $('[data-rcheck]').onclick = () => {
+    const said = $('[data-rtext]').value;
+    if (!said.trim()) { $('[data-rtext]').focus(); return; }
+    showResult(said);
+  };
+
+  if (!voiceOk) return;
+  // Android : le mode « continu » duplique ou coupe des mots ; on enchaîne des
+  // écoutes courtes à la place, relancées tant que l'utilisateur n'a pas arrêté.
+  const android = /android/i.test(navigator.userAgent);
+  let finalText = '';
+  let wantStop = true;
+  let recognition = null;
+
+  const setStatus = (msg, error) => { const el = $('[data-rstatus]'); if (el) { el.textContent = msg; el.classList.toggle('error', !!error); } };
+  const setButtons = (listening) => { $('[data-rstart]').disabled = listening; $('[data-rstop]').disabled = !listening; };
+
+  const listen = () => {
+    recognition = new SpeechRecognitionAPI();
+    window._recitation = recognition;
+    recognition.lang = 'fr-FR';
+    recognition.continuous = !android;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+    recognition.onresult = (e) => {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) finalText += e.results[i][0].transcript + ' ';
+        else interim += e.results[i][0].transcript;
+      }
+      $('[data-rlive]').textContent = finalText + interim;
+    };
+    recognition.onerror = (e) => {
+      const msg = speechErrorMessage(e.error);
+      if (e.error === 'no-speech' && !wantStop && android) return; // silence entre deux phrases : on relance
+      if (msg) { setStatus(msg + (['network', 'service-not-allowed', 'not-allowed', 'language-not-supported'].includes(e.error) ? ' Tu peux aussi utiliser « Par écrit ».' : ''), true); wantStop = true; }
+    };
+    recognition.onend = () => {
+      if (!wantStop) { try { listen(); return; } catch (err) { /* relance impossible */ } }
+      window._recitation = null;
+      setButtons(false);
+      if (!$('[data-rstatus]').classList.contains('error')) setStatus(finalText.trim() ? 'Écoute terminée.' : 'Rien n\'a été reconnu. Réessaie, ou récite par écrit.', !finalText.trim());
+      showResult(finalText);
+    };
     recognition.start();
   };
-  panel.querySelector(`[data-recite-stop="${id}"]`).onclick = () => recognition.stop();
+
+  $('[data-rstart]').onclick = () => {
+    if (window._recitation) return; // déjà en écoute : un 2e démarrage ferait planter la reconnaissance
+    finalText = '';
+    wantStop = false;
+    $('[data-rlive]').textContent = '';
+    $('[data-rresult]').innerHTML = '';
+    setStatus('🎙️ Je t\'écoute… récite le verset.');
+    setButtons(true);
+    try { listen(); }
+    catch (err) { wantStop = true; window._recitation = null; setButtons(false); setStatus(`Impossible de démarrer la reconnaissance (${err.name || err.message}). Récite par écrit.`, true); }
+  };
+  $('[data-rstop]').onclick = () => { wantStop = true; if (recognition) recognition.stop(); };
 }
 
 // --- PROGRESSION ---
@@ -3628,6 +3746,7 @@ async function loadPepiteReview() {
       <div id="pep-review-hidden" class="hidden">
         <div class="pep-text">${escapeHtml(p.text)}</div>
         ${p.action ? `<div class="pep-action">👉 ${escapeHtml(p.action)}</div>` : ''}
+        ${p.note ? `<div class="pep-my-note">📝 <em>${escapeHtml(p.note)}</em></div>` : ''}
         <p class="meta">L'as-tu appliquée ou t'en souvenais-tu ?</p>
         <div class="pep-buttons">
           <button type="button" data-pep-rev="1">👍 Je m'en souvenais</button>
@@ -3659,10 +3778,15 @@ async function loadPepiteStashes() {
       ${s.items.map(p => `
         <div class="pep-stash-item">
           ${pepiteCardHTML(p, { compact: true })}
+          <textarea class="pep-note" data-pep-note="${escapeHtml(p.saveId)}" placeholder="📝 Ce que j'en retiens, comment je vais l'appliquer…">${escapeHtml(p.note || '')}</textarea>
           <div class="meta">${p.mastered ? '🏆 Maîtrisée' : `Prochaine révision : ${escapeHtml(p.nextReview || '')}`}
             <button type="button" class="small danger" data-pep-unsave="${escapeHtml(p.saveId)}">Retirer</button></div>
         </div>`).join('')}
     </div>`).join('');
+  el.querySelectorAll('[data-pep-note]').forEach(ta => {
+    let t;
+    ta.oninput = () => { clearTimeout(t); t = setTimeout(() => api(`/pepites/saves/${ta.dataset.pepNote}`, { method: 'PATCH', body: { note: ta.value } }).catch(() => {}), 600); };
+  });
   el.querySelectorAll('[data-pep-unsave]').forEach(b => {
     b.onclick = async () => { await api(`/pepites/saves/${b.dataset.pepUnsave}`, { method: 'DELETE' }); loadPepiteStashes(); loadPepiteStats(); };
   });
@@ -3878,3 +4002,168 @@ document.getElementById('notif-test-btn').onclick = async () => {
   try { const r = await api('/notifications/test', { method: 'POST' }); showToast(r.sent ? '🔔 Notification de test envoyée' : 'Envoi impossible, réactive les notifications.'); }
   catch (err) { showToast(escapeHtml(err.message)); }
 };
+
+
+// --- Plans de lecture ---
+async function loadBiblePlans() {
+  const box = document.getElementById('bible-plans');
+  let data;
+  try { data = await api('/bible/plans'); } catch (e) { box.innerHTML = `<p class="error">${escapeHtml(e.message)}</p>`; return; }
+  const mineKeys = new Set(data.mine.map(p => p.planKey));
+  box.innerHTML = `
+    ${data.mine.map(p => `
+      <div class="plan-item">
+        <div class="plan-head"><strong>${escapeHtml(p.label)}</strong><span class="meta">${p.doneCount}/${p.days} jours · ${p.percent} %</span></div>
+        <span class="mem-progress plan-progress"><span style="width:${p.percent}%"></span></span>
+        ${p.finished ? '<p>🏆 Plan terminé, bravo !</p>' : `
+          <p class="plan-today">📖 Jour ${p.next.day + 1} : <strong>${escapeHtml(p.next.label)}</strong></p>
+          ${p.late > 1 ? `<p class="meta">Tu as ${p.late - 1} jour(s) de retard : pas de souci, continue simplement où tu en es.</p>` : ''}
+          <div class="quiz-actions">
+            <button type="button" class="small" data-plan-read="${p.next.first.book}:${p.next.first.chapter}">📖 Lire</button>
+            <button type="button" data-plan-done="${p.id}:${p.next.day}">✅ Marquer comme lu</button>
+          </div>`}
+        <button type="button" class="link-btn plan-stop" data-plan-stop="${p.id}">Arrêter ce plan</button>
+      </div>`).join('')}
+    <details class="plan-catalog" ${data.mine.length ? '' : 'open'}>
+      <summary>${data.mine.length ? '➕ Commencer un autre plan' : 'Choisis un plan pour lire la Bible chaque jour :'}</summary>
+      ${data.catalog.filter(c => !mineKeys.has(c.key)).map(c => `
+        <div class="plan-choice">
+          <span><strong>${escapeHtml(c.label)}</strong><span class="meta"> · ${c.chapters} chapitres, ~${Math.max(1, Math.round(c.chapters / c.days))} par jour</span></span>
+          <button type="button" class="small" data-plan-start="${c.key}">Commencer</button>
+        </div>`).join('') || '<p class="meta">Tu suis déjà tous les plans.</p>'}
+    </details>`;
+  box.querySelectorAll('[data-plan-start]').forEach(b => {
+    b.onclick = async () => { await api('/bible/plans', { method: 'POST', body: { planKey: b.dataset.planStart } }); showToast('📅 Plan commencé !'); loadBiblePlans(); };
+  });
+  box.querySelectorAll('[data-plan-read]').forEach(b => {
+    b.onclick = () => {
+      const [book, chapter] = b.dataset.planRead.split(':').map(Number);
+      const name = bibleBooks?.[book]?.name;
+      if (name) runBibleLookup(`${name} ${chapter}`, true);
+      else initBibleFinder().then(() => runBibleLookup(`${bibleBooks[book].name} ${chapter}`, true));
+    };
+  });
+  box.querySelectorAll('[data-plan-done]').forEach(b => {
+    b.onclick = async () => {
+      const [id, day] = b.dataset.planDone.split(':');
+      await api(`/bible/plans/${id}/days/${day}`, { method: 'POST', body: { done: true } });
+      showToast('✅ Lecture du jour faite !');
+      loadBiblePlans();
+    };
+  });
+  box.querySelectorAll('[data-plan-stop]').forEach(b => {
+    b.onclick = async () => { if (!confirm('Arrêter ce plan ? Ta progression sera effacée.')) return; await api(`/bible/plans/${b.dataset.planStop}`, { method: 'DELETE' }); loadBiblePlans(); };
+  });
+}
+
+// --- Versets favoris avec note personnelle ---
+var bibleFavorites = [];
+var bibleFavRefs = new Set();
+async function loadBibleFavorites() {
+  const box = document.getElementById('bible-favorites');
+  try { bibleFavorites = await api('/bible/favorites'); } catch (e) { return; }
+  bibleFavRefs = new Set(bibleFavorites.map(f => f.ref));
+  box.innerHTML = bibleFavorites.length ? bibleFavorites.map(f => `
+    <div class="fav-item">
+      <div class="bible-verse-text">${escapeHtml(f.text)}</div>
+      <div class="bible-verse-meta">
+        <span class="verse-ref">${escapeHtml(f.ref)}</span>
+        <button type="button" class="small" data-add-mem="${escapeHtml(f.ref)}">➕ Mémoriser</button>
+        <button type="button" class="small" data-read-ref="${escapeHtml(f.ref)}">📖 Chapitre</button>
+        <button type="button" class="small danger" data-fav-del="${f.id}">✕</button>
+      </div>
+      <textarea class="fav-note" data-fav-note="${f.id}" placeholder="📝 Ce que ce verset me dit…">${escapeHtml(f.note || '')}</textarea>
+    </div>`).join('')
+    : '<p class="meta">Aucun favori. Touche « ☆ Favori » sur un verset trouvé dans la recherche ou le lecteur.</p>';
+  bindAddMemButtons(box);
+  box.querySelectorAll('[data-fav-del]').forEach(b => {
+    b.onclick = async () => { await api(`/bible/favorites/${b.dataset.favDel}`, { method: 'DELETE' }); loadBibleFavorites(); };
+  });
+  box.querySelectorAll('[data-fav-note]').forEach(ta => {
+    let t;
+    ta.oninput = () => { clearTimeout(t); t = setTimeout(() => api(`/bible/favorites/${ta.dataset.favNote}`, { method: 'PATCH', body: { note: ta.value } }).catch(() => {}), 600); };
+  });
+}
+
+
+// --- Pépites en mode lecture : une carte plein écran à la fois (comme des « stories ») ---
+var pepStory = { items: [], index: 0 };
+async function openPepStory() {
+  let data;
+  try { data = await api(`/pepites/feed?domain=${encodeURIComponent(pepState.domain)}&theme=${encodeURIComponent(pepState.theme)}&limit=30`); }
+  catch (e) { showToast(escapeHtml(e.message)); return; }
+  if (!data.items.length) { showToast('Aucune pépite à afficher.'); return; }
+  rememberPepites(data.items);
+  pepStory = { items: data.items, index: 0 };
+  document.getElementById('pep-story').classList.remove('hidden');
+  document.body.classList.add('no-scroll');
+  renderPepStory();
+}
+function closePepStory() {
+  document.getElementById('pep-story').classList.add('hidden');
+  document.body.classList.remove('no-scroll');
+  if (isSpeechSupported()) window.speechSynthesis.cancel();
+  loadPepiteStats();
+  if (!document.getElementById('view-pepites').classList.contains('hidden')) loadPepiteFeed();
+}
+function renderPepStory() {
+  const { items, index } = pepStory;
+  const p = items[index];
+  document.getElementById('pep-story-bar').innerHTML = items.map((_, i) => `<span class="${i < index ? 'done' : i === index ? 'now' : ''}"></span>`).join('');
+  document.getElementById('pep-story-card').innerHTML = `
+    <div class="pep-top">
+      <span class="pep-domain">${escapeHtml(DOMAIN_LABELS[p.domain] || p.domain)}</span>
+      ${p.theme ? `<span class="pep-theme">${escapeHtml(p.theme)}</span>` : ''}
+      <span class="meta">${index + 1} / ${items.length}</span>
+    </div>
+    <div class="pep-title">${escapeHtml(p.title)}</div>
+    <div class="pep-text">${escapeHtml(p.text)}</div>
+    ${p.action ? `<div class="pep-action">👉 ${escapeHtml(p.action)}</div>` : ''}
+    <div class="pep-source">${escapeHtml(p.source || '')}</div>
+    ${speakerHTML(`${p.title}. ${p.text} ${p.action ? 'Action : ' + p.action : ''}`)}`;
+  document.getElementById('pep-story-prev').disabled = index === 0;
+  document.getElementById('pep-story-next').textContent = index === items.length - 1 ? 'Terminer ✓' : 'Suivante ▶';
+  document.getElementById('pep-story-save').textContent = pepCache[p.id]?.saved ? `🔖 ${pepCache[p.id].stash}` : '🔖 Garder';
+  api(`/pepites/${p.id}/seen`, { method: 'POST' }).catch(() => {});
+}
+function pepStoryGo(delta) {
+  if (isSpeechSupported()) window.speechSynthesis.cancel();
+  const next = pepStory.index + delta;
+  if (next >= pepStory.items.length) { closePepStory(); showToast(`✨ ${pepStory.items.length} pépites lues, bravo !`); return; }
+  if (next < 0) return;
+  pepStory.index = next;
+  renderPepStory();
+}
+document.getElementById('pep-story-btn').onclick = openPepStory;
+document.getElementById('pep-story-close').onclick = closePepStory;
+document.getElementById('pep-story-next').onclick = () => pepStoryGo(1);
+document.getElementById('pep-story-prev').onclick = () => pepStoryGo(-1);
+document.getElementById('pep-story-save').onclick = async () => {
+  const p = pepStory.items[pepStory.index];
+  const stash = prompt('Dans quelle collection ? (ex : Favoris, Couple, Travail)', pepCache[p.id]?.stash || 'Favoris');
+  if (stash === null) return;
+  try {
+    const save = await api(`/pepites/${p.id}/save`, { method: 'POST', body: { stash } });
+    pepCache[p.id] = { ...p, saved: true, stash: save.stash, saveId: save.id };
+    renderPepStory();
+    showToast('🔖 Pépite gardée');
+  } catch (e) { showToast(escapeHtml(e.message)); }
+};
+// Glisser vers la gauche/droite pour changer de pépite ; flèches et Échap au clavier.
+(function () {
+  const el = document.getElementById('pep-story');
+  let x0 = null, y0 = null;
+  el.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+  el.addEventListener('touchend', (e) => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) pepStoryGo(dx < 0 ? 1 : -1);
+    x0 = null;
+  });
+  document.addEventListener('keydown', (e) => {
+    if (el.classList.contains('hidden')) return;
+    if (e.key === 'ArrowRight') pepStoryGo(1);
+    if (e.key === 'ArrowLeft') pepStoryGo(-1);
+    if (e.key === 'Escape') closePepStory();
+  });
+})();
