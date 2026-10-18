@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Better Man AI</title>
 <link rel="stylesheet" href="style.css" />
-<link rel="manifest" href="manifest.webmanifest?v=2" crossorigin="use-credentials" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="manifest" href="manifest.webmanifest?v=2" crossorigin="use-credentials" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2" />
 <link rel="icon" type="image/svg+xml" href="logo.svg" />
 <meta name="theme-color" content="#0f1220" />
@@ -84,7 +87,7 @@
             <div class="name" id="pd-name"></div>
             <div class="role" id="pd-role"></div>
           </div>
-          <button class="menu-item" data-view="account">⚙️ Mon profil</button>
+          <button class="menu-item" data-view="account">⚙️ Réglages</button>
           <button class="menu-item" data-pd-action="theme">🎨 Apparence</button>
           <button class="menu-item" data-view="whats-new">🆕 Nouveautés</button>
           <button class="menu-item hidden" id="pd-admin" data-view="admin">🛠️ Admin</button>
@@ -460,17 +463,10 @@
     <!-- PÉPITES : idées courtes à lire en 1 minute -->
     <div class="view hidden" id="view-study">
       <h2>📝 Révisions</h2>
-      <p class="meta">Prépare tes tests : colle ta liste de questions et réponses, entraîne-toi avec plusieurs méthodes et partage-la à ton groupe.</p>
+      <p class="meta">Prépare tes tests : colle ta liste de questions et réponses et entraîne-toi avec plusieurs méthodes. Les listes sont visibles par tous les utilisateurs de l'app, chacun avec sa progression.</p>
 
       <div id="study-home">
         <div id="study-sets"></div>
-        <div class="card-block">
-          <h3>Rejoindre la liste d'un groupe</h3>
-          <form id="study-join-form">
-            <input id="study-join-code" placeholder="Code (ex. K7P2QX)" maxlength="12" autocapitalize="characters" />
-            <button type="submit">Rejoindre</button>
-          </form>
-        </div>
         <button type="button" id="study-new-btn">➕ Nouvelle liste à apprendre</button>
         <details class="card-block study-methods">
           <summary>💡 Comment bien mémoriser ? (les méthodes)</summary>
@@ -482,7 +478,7 @@
             <li><strong>Mot-clé</strong> : retiens un seul mot qui résume le titre (ex. « Lettres », « Trône », « Sceaux »), puis reconstruis le titre autour.</li>
             <li><strong>Palais de mémoire</strong> : place chaque chapitre dans une pièce de ta maison, dans l'ordre (entrée = Ap 1, salon = Ap 2…), puis fais la visite dans ta tête.</li>
             <li><strong>Écouter</strong> : « 🎧 Écouter la liste » lit tout à voix haute, idéal en marchant ou dans les transports.</li>
-            <li><strong>Expliquer à quelqu'un</strong> : réciter à une autre personne du groupe, ou au micro, oblige à vraiment savoir.</li>
+            <li><strong>Expliquer à quelqu'un</strong> : réciter à une autre personne, ou au micro, oblige à vraiment savoir.</li>
             <li><strong>Mélanger l'ordre</strong> : au test, les questions ne seront peut-être pas dans l'ordre. Entraîne-toi en ordre puis en aléatoire.</li>
             <li><strong>Dormir</strong> : réviser un peu le soir puis dormir aide le cerveau à garder ce qu'il a appris.</li>
           </ul>
@@ -496,6 +492,12 @@
             <input id="study-title" placeholder="Titre (ex. Titres des chapitres de l'Apocalypse)" maxlength="120" required />
             <label class="meta">Date du test (facultatif) <input type="date" id="study-exam-date" /></label>
             <input id="study-desc" placeholder="Note (facultatif)" maxlength="500" />
+            <label class="meta">Qui peut la voir ?
+              <select id="study-visibility">
+                <option value="all">Tous les utilisateurs de l'app</option>
+                <option value="private">Seulement moi</option>
+              </select>
+            </label>
             <p class="meta">Une ligne par carte : <strong>question | réponse</strong>. « : », « = » ou « - » marchent aussi. Ex. : <em>Apocalypse 1 | La vision du Fils de l'homme</em></p>
             <div class="study-prefill">
               <select id="study-prefill-book"></select>
@@ -971,59 +973,37 @@
 
     <!-- COMPTE / CONFIDENTIALITÉ -->
     <div class="view hidden" id="view-account">
-      <h2>⚙️ Mon compte</h2>
-
-      <div class="card-block" id="menu-custom-card">
-        <h3>🧩 Personnaliser mon menu</h3>
-        <p class="meta">Coche les sections à afficher sur l'Accueil. Décoche pour les masquer (tes données sont conservées).</p>
-        <div id="menu-custom-list" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;"></div>
-        <button type="button" class="small" id="menu-custom-reset" style="margin-top:12px;">Tout réafficher</button>
-      </div>
-
-      <div class="card-block" id="notif-card">
-        <h3>🔔 Notifications</h3>
-        <p class="meta">Choisis ce dont l'app te prévient et à quelle heure.</p>
-        <div id="notif-types" class="notif-types"></div>
-        <label class="notif-time">Heure du rappel du jour
-          <input type="time" id="notif-time" value="08:00" />
-        </label>
-        <p class="meta" id="notif-tz"></p>
-        <div class="notif-push">
-          <p><strong>Sur cet appareil</strong> <span class="meta" id="notif-push-status"></span></p>
-          <div class="quiz-actions">
-            <button type="button" id="notif-push-btn">📲 Activer les notifications</button>
-            <button type="button" class="small" id="notif-test-btn">Envoyer un test</button>
-          </div>
-          <p class="meta" id="notif-push-help"></p>
+      <div id="settings-home">
+        <h2>Réglages</h2>
+        <button type="button" class="settings-hero" data-settings-open="profile">
+          <img id="settings-hero-avatar" class="settings-hero-avatar hidden" alt="" />
+          <span id="settings-hero-fallback" class="settings-hero-avatar fallback"></span>
+          <span class="settings-label"><strong id="settings-hero-name"></strong><span class="meta" id="settings-hero-email"></span></span>
+          <span class="settings-chevron">›</span>
+        </button>
+        <p class="settings-group-title">Préférences</p>
+        <div class="settings-group">
+          <button type="button" class="settings-row" data-settings-open="notifications"><span class="settings-icon" style="--tint:#ff9f43">🔔</span><span class="settings-label"><strong>Notifications</strong><span class="meta" data-settings-summary="notifications">Rappels et alertes</span></span><span class="settings-chevron">›</span></button>
+          <button type="button" class="settings-row" data-settings-open="appearance"><span class="settings-icon" style="--tint:#9b6cff">🎨</span><span class="settings-label"><strong>Apparence</strong><span class="meta" data-settings-summary="appearance">Thème et couleur</span></span><span class="settings-chevron">›</span></button>
+          <button type="button" class="settings-row" data-settings-open="language"><span class="settings-icon" style="--tint:#4fd1ff">🌐</span><span class="settings-label"><strong>Langue de la voix</strong><span class="meta" data-settings-summary="language">Voix et réponses de l'IA</span></span><span class="settings-chevron">›</span></button>
+          <button type="button" class="settings-row" data-settings-open="menu"><span class="settings-icon" style="--tint:#34d399">🧩</span><span class="settings-label"><strong>Menu d'accueil</strong><span class="meta" data-settings-summary="menu">Sections affichées</span></span><span class="settings-chevron">›</span></button>
+        </div>
+        <p class="settings-group-title">Sécurité et données</p>
+        <div class="settings-group">
+          <button type="button" class="settings-row" data-settings-open="lock"><span class="settings-icon" style="--tint:#6c8cff">🔒</span><span class="settings-label"><strong>Verrouillage</strong><span class="meta" data-settings-summary="lock">Code sur cet appareil</span></span><span class="settings-chevron">›</span></button>
+          <button type="button" class="settings-row" data-settings-open="export"><span class="settings-icon" style="--tint:#34d399">📦</span><span class="settings-label"><strong>Exporter mes données</strong><span class="meta" data-settings-summary="export">Fichier JSON</span></span><span class="settings-chevron">›</span></button>
+          <button type="button" class="settings-row danger" data-settings-open="delete"><span class="settings-icon" style="--tint:#ff6c6c">🗑️</span><span class="settings-label"><strong>Supprimer mon compte</strong><span class="meta" data-settings-summary="delete">Action définitive</span></span><span class="settings-chevron">›</span></button>
+        </div>
+        <p class="settings-group-title">À propos</p>
+        <div class="settings-group">
+          <button type="button" class="settings-row" data-view="whats-new"><span class="settings-icon" style="--tint:#ffd27a">🆕</span><span class="settings-label"><strong>Nouveautés</strong><span class="meta">Ce qui a changé dans l'app</span></span><span class="settings-chevron">›</span></button>
+          <button type="button" class="settings-row" id="settings-logout"><span class="settings-icon" style="--tint:#9aa3c7">🚪</span><span class="settings-label"><strong>Déconnexion</strong></span><span class="settings-chevron">›</span></button>
         </div>
       </div>
 
-      <div class="card-block" id="appearance-card">
-        <h3>🎨 Apparence</h3>
-        <p class="meta">Thème et couleur d'accent — appliqués immédiatement, mémorisés sur cet appareil.</p>
-        <div class="theme-toggle-row" id="theme-toggle-row">
-          <button type="button" data-theme-choice="dark">🌙 Sombre</button>
-          <button type="button" data-theme-choice="light">☀️ Clair</button>
-        </div>
-        <p class="meta" style="margin-top:14px;">Couleur</p>
-        <div class="accent-picker-row" id="accent-picker-row">
-          <button type="button" class="accent-dot" data-accent-choice="bleu" title="Bleu"></button>
-          <button type="button" class="accent-dot" data-accent-choice="violet" title="Violet"></button>
-          <button type="button" class="accent-dot" data-accent-choice="vert" title="Vert"></button>
-          <button type="button" class="accent-dot" data-accent-choice="orange" title="Orange"></button>
-          <button type="button" class="accent-dot" data-accent-choice="bordeaux" title="Bordeaux"></button>
-        </div>
-        <p class="meta" style="margin-top:14px;">Langue de la voix et des réponses IA (Coach, Bible...)</p>
-        <div class="theme-toggle-row" id="lang-toggle-row">
-          <button type="button" data-lang-choice="fr">🇫🇷 Français</button>
-          <button type="button" data-lang-choice="en">🇬🇧 English</button>
-          <button type="button" data-lang-choice="ko">🇰🇷 한국어</button>
-        </div>
-        <p class="meta">Ne traduit pas les menus de l'app, seulement la voix et le contenu généré par l'IA.</p>
-      </div>
-
-      <div class="card-block">
-        <h3>Mon profil</h3>
+      <section class="settings-panel hidden" data-settings-panel="profile">
+        <div class="settings-panel-head"><button type="button" class="settings-back" data-settings-back>‹ Réglages</button><h3>Mon profil</h3></div>
+      <div class="card-block settings-card">
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
           <img id="account-avatar-preview" style="width:64px;height:64px;border-radius:50%;object-fit:cover;display:none;border:2px solid var(--border);" />
           <div id="account-avatar-fallback" class="avatar-btn" style="width:64px;height:64px;font-size:22px;cursor:default;"></div>
@@ -1039,21 +1019,81 @@
         </form>
         <p class="meta" id="account-name-status"></p>
       </div>
-
-      <div class="card-block">
-        <h3>Verrouillage local</h3>
+      </section>
+      <section class="settings-panel hidden" data-settings-panel="notifications">
+        <div class="settings-panel-head"><button type="button" class="settings-back" data-settings-back>‹ Réglages</button><h3>Notifications</h3></div>
+      <div class="card-block settings-card" id="notif-card">
+        <p class="meta">Choisis ce dont l'app te prévient et à quelle heure.</p>
+        <div id="notif-types" class="notif-types"></div>
+        <label class="notif-time">Heure du rappel du jour
+          <input type="time" id="notif-time" value="08:00" />
+        </label>
+        <p class="meta" id="notif-tz"></p>
+        <div class="notif-push">
+          <p><strong>Sur cet appareil</strong> <span class="meta" id="notif-push-status"></span></p>
+          <div class="quiz-actions">
+            <button type="button" id="notif-push-btn">📲 Activer les notifications</button>
+            <button type="button" class="small" id="notif-test-btn">Envoyer un test</button>
+          </div>
+          <p class="meta" id="notif-push-help"></p>
+        </div>
+      </div>
+      </section>
+      <section class="settings-panel hidden" data-settings-panel="appearance">
+        <div class="settings-panel-head"><button type="button" class="settings-back" data-settings-back>‹ Réglages</button><h3>Apparence</h3></div>
+      <div class="card-block settings-card" id="appearance-card">
+        <p class="meta">Thème et couleur d'accent — appliqués immédiatement, mémorisés sur cet appareil.</p>
+        <div class="theme-toggle-row" id="theme-toggle-row">
+          <button type="button" data-theme-choice="dark">🌙 Sombre</button>
+          <button type="button" data-theme-choice="light">☀️ Clair</button>
+        </div>
+        <p class="meta" style="margin-top:14px;">Couleur</p>
+        <div class="accent-picker-row" id="accent-picker-row">
+          <button type="button" class="accent-dot" data-accent-choice="bleu" title="Bleu"></button>
+          <button type="button" class="accent-dot" data-accent-choice="violet" title="Violet"></button>
+          <button type="button" class="accent-dot" data-accent-choice="vert" title="Vert"></button>
+          <button type="button" class="accent-dot" data-accent-choice="orange" title="Orange"></button>
+          <button type="button" class="accent-dot" data-accent-choice="bordeaux" title="Bordeaux"></button>
+        </div>
+      </div>
+      </section>
+      <section class="settings-panel hidden" data-settings-panel="language">
+        <div class="settings-panel-head"><button type="button" class="settings-back" data-settings-back>‹ Réglages</button><h3>Langue de la voix</h3></div>
+      <div class="card-block settings-card" id="language-card">
+        <p class="meta">Langue de la voix et des réponses IA (Coach, Bible…).</p>
+        <div class="theme-toggle-row" id="lang-toggle-row">
+          <button type="button" data-lang-choice="fr">🇫🇷 Français</button>
+          <button type="button" data-lang-choice="en">🇬🇧 English</button>
+          <button type="button" data-lang-choice="ko">🇰🇷 한국어</button>
+        </div>
+        <p class="meta">Ne traduit pas les menus de l'app, seulement la voix et le contenu généré par l'IA.</p>
+      </div>
+      </section>
+      <section class="settings-panel hidden" data-settings-panel="menu">
+        <div class="settings-panel-head"><button type="button" class="settings-back" data-settings-back>‹ Réglages</button><h3>Menu d'accueil</h3></div>
+      <div class="card-block settings-card" id="menu-custom-card">
+        <p class="meta">Coche les sections à afficher sur l'Accueil. Décoche pour les masquer (tes données sont conservées).</p>
+        <div id="menu-custom-list" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;"></div>
+        <button type="button" class="small" id="menu-custom-reset" style="margin-top:12px;">Tout réafficher</button>
+      </div>
+      </section>
+      <section class="settings-panel hidden" data-settings-panel="lock">
+        <div class="settings-panel-head"><button type="button" class="settings-back" data-settings-back>‹ Réglages</button><h3>Verrouillage</h3></div>
+      <div class="card-block settings-card">
         <p class="meta">Protège l'accès à l'app sur cet appareil avec un code (stocké uniquement dans ce navigateur, ce n'est pas un chiffrement).</p>
         <div id="lock-controls"></div>
       </div>
-
-      <div class="card-block">
-        <h3>Exporter mes données</h3>
+      </section>
+      <section class="settings-panel hidden" data-settings-panel="export">
+        <div class="settings-panel-head"><button type="button" class="settings-back" data-settings-back>‹ Réglages</button><h3>Exporter mes données</h3></div>
+      <div class="card-block settings-card">
         <p class="meta">Télécharge toutes tes données personnelles (journal, habitudes, objectifs, situations, finances...) au format JSON.</p>
         <button id="export-btn">Exporter mes données</button>
       </div>
-
-      <div class="card-block">
-        <h3>Supprimer mon compte</h3>
+      </section>
+      <section class="settings-panel hidden" data-settings-panel="delete">
+        <div class="settings-panel-head"><button type="button" class="settings-back" data-settings-back>‹ Réglages</button><h3>Supprimer mon compte</h3></div>
+      <div class="card-block settings-card">
         <p class="meta">Action définitive : supprime ton compte et toutes tes données. Demande ton mot de passe pour confirmer.</p>
         <form id="delete-account-form">
           <input type="password" id="delete-account-password" placeholder="Mot de passe" />
@@ -1061,6 +1101,7 @@
         </form>
         <p id="delete-account-status" class="meta"></p>
       </div>
+      </section>
     </div>
 
     <!-- ADMIN -->

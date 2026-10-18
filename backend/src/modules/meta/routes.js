@@ -9,6 +9,23 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.11.0',
+    date: '2026-10-18',
+    title: 'Réglages rangés, titres de l\'Apocalypse et apparence plus soignée',
+    features: [
+      "La liste « 22e examen de vérification de scellage — Titres de l'Apocalypse » est disponible pour tout le monde dans 📝 Révisions",
+      "Les listes de révision sont visibles par tous les utilisateurs de l'app (ou privées au choix), avec un classement de ceux qui révisent"
+    ],
+    fixes: [
+      "Associer : deux cartes avec la même réponse (Apocalypse 2 et 3) sont toutes les deux acceptées",
+      "Bilan du soir : les champs s'affichaient en colonnes très étroites"
+    ],
+    improvements: [
+      "Réglages réorganisés : une liste claire (Notifications, Apparence, Langue, Menu, Verrouillage, Données) qui ouvre chaque rubrique séparément",
+      "Police Inter et fond qui couvre tout l'écran pour un rendu plus professionnel"
+    ]
+  },
+  {
     version: '0.10.0',
     date: '2026-10-18',
     title: 'Révisions : apprendre pour ses tests, en groupe',
