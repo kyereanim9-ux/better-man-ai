@@ -49,7 +49,9 @@ export const TEXT_AI_PROVIDERS = [
     id: 'mistral',
     name: 'Mistral AI',
     baseUrl: 'https://api.mistral.ai/v1',
-    model: 'mistral-small-latest',
+    // Ministral 8B : inclus dans l'offre gratuite de Mistral (mistral-small y
+    // répond « Rate limit exceeded »). Modifiable avec MISTRAL_MODEL.
+    model: process.env.MISTRAL_MODEL || 'ministral-8b-latest',
     apiKeyEnvVar: 'MISTRAL_API_KEY'
   },
   {
