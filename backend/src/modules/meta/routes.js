@@ -9,6 +9,17 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.12.0',
+    date: '2026-10-19',
+    title: 'Mot de passe oublié',
+    features: [
+      "« Mot de passe oublié ? » sur la page de connexion : un lien valable 1 heure est envoyé à l'email du compte pour choisir un nouveau mot de passe",
+      "Admin : bouton « 🔑 Lien mot de passe » pour générer ce lien et l'envoyer soi-même (SMS, WhatsApp…)"
+    ],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.11.2',
     date: '2026-10-19',
     title: 'Coach IA réparé et une seule adresse',

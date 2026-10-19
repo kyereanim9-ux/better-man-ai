@@ -506,6 +506,11 @@ une base **Neon**.
   `backend/src/config/geminiModel.js` (alias toujours à jour, secours Lite en
   cas de surcharge) ; `MISTRAL_API_KEY` ajoute une deuxième IA de secours.
 
+- **Mot de passe oublié** : emails envoyés par SMTP (gratuit avec Gmail) —
+  `SMTP_USER` = l'adresse Gmail, `SMTP_PASS` = un *mot de passe d'application*
+  Google (Compte Google → Sécurité → Validation en deux étapes → Mots de passe
+  des applications). Sans eux, l'admin génère le lien depuis l'espace Admin.
+
 Variables à vérifier dans Vercel (Settings → Environment Variables) :
 
 - **`JWT_SECRET`** — une longue chaîne aléatoire. Sans elle, l'authentification échoue.

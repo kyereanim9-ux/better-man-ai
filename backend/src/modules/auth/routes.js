@@ -3,6 +3,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
 import { db } from '../../db.js';
+import { createResetLink, findValidReset, RESET_TTL_MIN } from './passwordReset.js';
+import { isMailConfigured, sendMail } from '../../shared/mailer.js';
 
 const router = Router();
 
@@ -58,5 +60,61 @@ router.post('/login', async (req, res) => {
   const token = signToken(user);
   res.json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role, avatar: user.avatar || null } });
 });
+
+// Mot de passe oublié : même réponse que le compte existe ou non, pour ne
+// pas révéler quels emails sont inscrits.
+router.post('/forgot', async (req, res) => {
+  const email = String(req.body.email || '').trim().toLowerCase();
+  const done = () => res.json({ ok: true, message: 'Si un compte existe avec cet email, un lien pour choisir un nouveau mot de passe vient d\'être envoyé. Pense à regarder dans les spams.' });
+  if (!email) return res.status(400).json({ error: 'Indique ton email.' });
+  if (!isMailConfigured()) {
+    return res.status(503).json({ error: 'L\'envoi d\'emails n\'est pas encore configuré. Demande à l\'administrateur un lien de réinitialisation.' });
+  }
+  await db.read();
+  const user = db.data.users.find(u => u.email.toLowerCase() === email && u.active);
+  if (!user) return done();
+  const link = createResetLink(user.id);
+  if (!link) return done();
+  await db.write();
+  try {
+    await sendMail({
+      to: user.email,
+      subject: 'Better Man AI — choisir un nouveau mot de passe',
+      text: `Bonjour ${user.name},\n\nPour choisir un nouveau mot de passe, ouvre ce lien (valable ${RESET_TTL_MIN} minutes, une seule fois) :\n${link}\n\nSi tu n'as rien demandé, ignore cet email : ton mot de passe actuel reste valable.\n\nBetter Man AI`,
+      html: `<p>Bonjour ${escapeHtml(user.name)},</p><p>Pour choisir un nouveau mot de passe, appuie sur le bouton ci-dessous (valable ${RESET_TTL_MIN} minutes, une seule fois) :</p><p><a href="${link}" style="display:inline-block;padding:12px 20px;background:#3b82f6;color:#fff;border-radius:10px;text-decoration:none;font-weight:600">Choisir un nouveau mot de passe</a></p><p style="color:#666;font-size:13px">Si tu n'as rien demandé, ignore cet email : ton mot de passe actuel reste valable.</p>`
+    });
+  } catch (err) {
+    console.error('[mot de passe oublié] envoi impossible :', err.message);
+    return res.status(502).json({ error: 'L\'email n\'a pas pu être envoyé. Réessaie plus tard ou demande un lien à l\'administrateur.' });
+  }
+  done();
+});
+
+// Vérifie un lien avant d'afficher le formulaire.
+router.get('/reset/:token', async (req, res) => {
+  await db.read();
+  const r = findValidReset(req.params.token);
+  if (!r) return res.status(400).json({ error: 'Ce lien n\'est plus valable. Demande un nouveau lien.' });
+  const user = db.data.users.find(u => u.id === r.userId);
+  res.json({ ok: true, email: user?.email || '' });
+});
+
+router.post('/reset', async (req, res) => {
+  const { token, password } = req.body;
+  if (!password || String(password).length < 8) return res.status(400).json({ error: 'Le mot de passe doit faire au moins 8 caractères.' });
+  await db.read();
+  const r = findValidReset(token);
+  if (!r) return res.status(400).json({ error: 'Ce lien n\'est plus valable. Demande un nouveau lien.' });
+  const user = db.data.users.find(u => u.id === r.userId);
+  if (!user || !user.active) return res.status(400).json({ error: 'Compte introuvable ou désactivé.' });
+  user.passwordHash = await bcrypt.hash(String(password), 10);
+  r.usedAt = new Date().toISOString();
+  await db.write();
+  res.json({ ok: true, email: user.email });
+});
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
 
 export default router;

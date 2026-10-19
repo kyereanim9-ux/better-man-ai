@@ -618,3 +618,9 @@ h2 { font-weight: 800; }
 /* Le dégradé de fond couvre tout l'écran, même sur une page courte. */
 body { min-height: 100vh; background-attachment: fixed; }
 .settings-card > .meta:first-child { margin-top: 0; }
+
+/* ---------- Mot de passe oublié ---------- */
+#auth-screen .auth-link { background: transparent; color: var(--accent); box-shadow: none; padding: 4px 0; font-weight: 600; align-self: center; }
+#auth-screen .auth-link:hover { transform: none; box-shadow: none; }
+.admin-reset-link { margin-top: 8px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.admin-reset-link input { flex: 1; min-width: 0; font-size: 12px; }

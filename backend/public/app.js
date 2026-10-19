@@ -144,11 +144,74 @@ document.getElementById('tab-login').onclick = () => switchAuthTab('login');
 document.getElementById('tab-register').onclick = () => switchAuthTab('register');
 
 function switchAuthTab(which) {
-  document.getElementById('tab-login').classList.toggle('active', which === 'login');
+  document.getElementById('tab-login').classList.toggle('active', which === 'login' || which === 'forgot');
   document.getElementById('tab-register').classList.toggle('active', which === 'register');
-  document.getElementById('login-form').classList.toggle('hidden', which !== 'login');
-  document.getElementById('register-form').classList.toggle('hidden', which !== 'register');
+  for (const f of ['login', 'register', 'forgot', 'reset']) document.getElementById(`${f}-form`).classList.toggle('hidden', which !== f);
 }
+
+// --- Mot de passe oublié : demande du lien, puis nouveau mot de passe ---
+document.getElementById('forgot-link').onclick = () => {
+  document.getElementById('forgot-email').value = document.getElementById('login-email').value;
+  document.getElementById('forgot-status').textContent = '';
+  switchAuthTab('forgot');
+};
+document.querySelectorAll('[data-auth-back]').forEach(b => { b.onclick = () => switchAuthTab('login'); });
+document.getElementById('forgot-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const status = document.getElementById('forgot-status');
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true;
+  status.textContent = 'Envoi…';
+  try {
+    const data = await api('/auth/forgot', { method: 'POST', body: { email: document.getElementById('forgot-email').value } });
+    status.textContent = data.message;
+  } catch (err) {
+    status.textContent = err.message;
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+let resetToken = null;
+async function openResetFromLink() {
+  const params = new URLSearchParams(location.search);
+  resetToken = params.get('reset');
+  if (!resetToken) return false;
+  // Le jeton ne reste pas dans la barre d'adresse ni dans l'historique.
+  history.replaceState(null, '', location.pathname);
+  authScreen.classList.remove('hidden');
+  mainScreen.classList.add('hidden');
+  document.getElementById('bottom-nav').classList.add('hidden');
+  switchAuthTab('reset');
+  try {
+    const data = await api(`/auth/reset/${encodeURIComponent(resetToken)}`);
+    document.getElementById('reset-intro').textContent = `Choisis un nouveau mot de passe pour ${data.email}.`;
+  } catch (err) {
+    document.getElementById('reset-error').textContent = err.message;
+  }
+  return true;
+}
+document.getElementById('reset-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const error = document.getElementById('reset-error');
+  const password = document.getElementById('reset-password').value;
+  if (password !== document.getElementById('reset-password2').value) {
+    error.textContent = 'Les deux mots de passe ne sont pas identiques.';
+    return;
+  }
+  try {
+    const data = await api('/auth/reset', { method: 'POST', body: { token: resetToken, password } });
+    resetToken = null;
+    e.target.reset();
+    error.textContent = '';
+    doLogout();
+    document.getElementById('login-email').value = data.email;
+    switchAuthTab('login');
+    showToast('Mot de passe changé ✅ Connecte-toi avec le nouveau.');
+  } catch (err) {
+    error.textContent = err.message;
+  }
+});
 
 document.getElementById('login-form').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -772,9 +835,24 @@ async function loadAdmin() {
       <span>${escapeHtml(u.name)} — ${escapeHtml(u.email)} <span class="meta">(${u.role}${u.active ? '' : ', désactivé'})</span></span>
       <div>
         <button class="small" data-toggle="${u.id}" data-active="${u.active}">${u.active ? 'Désactiver' : 'Activer'}</button>
+        <button class="small" data-reset-link="${u.id}">🔑 Lien mot de passe</button>
       </div>
+      <div class="meta admin-reset-link hidden" data-reset-out="${u.id}"></div>
     </div>
   `).join('');
+
+  // Lien « nouveau mot de passe » à envoyer soi-même (SMS, WhatsApp…).
+  el.querySelectorAll('button[data-reset-link]').forEach(btn => {
+    btn.onclick = async () => {
+      const out = el.querySelector(`[data-reset-out="${btn.dataset.resetLink}"]`);
+      try {
+        const { link, expiresInMinutes } = await api(`/admin/users/${btn.dataset.resetLink}/reset-link`, { method: 'POST' });
+        out.innerHTML = `Lien valable ${expiresInMinutes} min, une seule fois : <input readonly value="${escapeHtml(link)}" /> <button class="small" type="button">Copier</button>`;
+        out.classList.remove('hidden');
+        out.querySelector('button').onclick = () => navigator.clipboard?.writeText(link).then(() => showToast('Lien copié 📋'));
+      } catch (err) { showToast(escapeHtml(err.message)); }
+    };
+  });
 
   el.querySelectorAll('button[data-toggle]').forEach(btn => {
     btn.onclick = async () => {
@@ -2904,7 +2982,7 @@ async function loadImageAnalysisHistory() {
 
 // --- Init ---
 checkAppLock();
-if (state.token && state.user) showMain();
+openResetFromLink().then(opened => { if (!opened && state.token && state.user) showMain(); });
 
 // --- PERSONNALISER MON MENU (afficher / masquer les cartes de l'Accueil) ---
 (function initMenuCustomization() {
