@@ -2,7 +2,8 @@
 # Toutes les 15 minutes, appelle l'app qui envoie à chaque utilisateur son
 # rappel du jour à l'heure qu'il a choisie (au plus une fois par jour).
 # À configurer une seule fois dans GitHub → Settings → Secrets and variables → Actions :
-#   - Variable  APP_URL      : adresse de l'app en ligne (ex : https://mon-app.vercel.app)
+#   - Variable  APP_URL      : (optionnel) adresse de l'app en ligne ; par défaut
+#                              https://better-man-ai-church-av-assistant.vercel.app
 #   - Secret    CRON_SECRET  : (optionnel) la même valeur que CRON_SECRET dans Vercel
 name: Rappels push
 
@@ -18,11 +19,19 @@ jobs:
     steps:
       - name: Déclencher l'envoi des rappels
         env:
-          APP_URL: ${{ vars.APP_URL }}
+          APP_URL: ${{ vars.APP_URL || 'https://better-man-ai-church-av-assistant.vercel.app' }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          if [ -z "$APP_URL" ]; then
-            echo "::notice::Variable APP_URL non définie : ajoute l'adresse de l'app dans Settings > Secrets and variables > Actions > Variables."
-            exit 0
-          fi
-          curl -fsS --max-time 60 -X POST "${APP_URL%/}/api/notifications/cron" -H "x-cron-secret: ${CRON_SECRET}"
+          # Sans -L : une redirection (protection Vercel activée) doit faire échouer
+          # la tâche au lieu de passer pour un succès.
+          code=$(curl -sS --max-time 60 -o response.txt -w '%{http_code}' -X POST "${APP_URL%/}/api/notifications/cron" -H "x-cron-secret: ${CRON_SECRET}")
+          cat response.txt; echo
+          case "$code" in
+            301|302|307|308)
+              echo "::error::L'app est protégée par Vercel (code $code) : désactive Vercel Authentication dans Settings > Deployment Protection."
+              exit 1 ;;
+            401)
+              echo "::error::Clé refusée : le secret CRON_SECRET de GitHub doit être identique à celui de Vercel."
+              exit 1 ;;
+          esac
+          [ "$code" -lt 400 ] || { echo "::error::Erreur $code de l'app"; exit 1; }
