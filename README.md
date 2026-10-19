@@ -459,10 +459,9 @@ Automatisations et nouvelles intégrations restent hors scope pour une app
   et les garde dans la base (ou utilise `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY`
   si elles sont définies).
 - **Envoi programmé** : sur Vercel (serverless), le fichier
-  `.github/workflows/notifications.yml` appelle l'app toutes les 15 min.
-  À faire **une seule fois** : GitHub → Settings → Secrets and variables →
-  Actions → onglet *Variables* → `APP_URL` = adresse de l'app en ligne.
-  (Optionnel : définir `CRON_SECRET` dans Vercel **et** dans les secrets
+  `.github/workflows/notifications.yml` appelle l'app toutes les 15 min
+  (adresse par défaut : celle de Vercel ; une variable GitHub `APP_URL` peut
+  la remplacer). (Optionnel : définir `CRON_SECRET` dans Vercel **et** dans les secrets
   GitHub pour réserver l'appel à GitHub.) En local, un minuteur intégré au
   serveur s'en charge. Chaque rappel part au plus une fois par jour, et
   jamais plus de 3 h après l'heure choisie.
@@ -490,12 +489,24 @@ fournisseurs via `/api/chat/text-provider-status`.
 
 ---
 
-## 19. À propos du déploiement en ligne (Vercel)
+## 19. Déploiement en ligne (Vercel + Neon)
 
-Cette app peut être déployée sur Vercel (voir `vercel.json`, `api/index.js`)
-pour obtenir un lien public permanent, en plus de l'usage local. Si tu as
-suivi ce chemin, deux points à vérifier dans les paramètres du projet Vercel
-(Settings → Environment Variables) pour que tout fonctionne correctement :
+L'app tourne sur **Vercel** : https://better-man-ai.vercel.app (aussi
+https://better-man-ai-church-av-assistant.vercel.app), avec ses données dans
+une base **Neon**.
+
+- **Mise en ligne automatique** : le projet Vercel est relié au dépôt GitHub ;
+  chaque fusion dans `main` est déployée toute seule. Réglages du projet :
+  *Root Directory* = `backend`, *Framework* = Express (point d'entrée
+  `backend/index.js`).
+- **Ancienne adresse Render** (better-man-ai-web.onrender.com) : conservée
+  comme simple redirection grâce à la variable `REDIRECT_TO` ; ce serveur ne
+  touche plus à la base.
+- **IA** : `GEMINI_API_KEY` (gratuit). Le modèle est réglé dans
+  `backend/src/config/geminiModel.js` (alias toujours à jour, secours Lite en
+  cas de surcharge) ; `MISTRAL_API_KEY` ajoute une deuxième IA de secours.
+
+Variables à vérifier dans Vercel (Settings → Environment Variables) :
 
 - **`JWT_SECRET`** — une longue chaîne aléatoire. Sans elle, l'authentification échoue.
 - **`DATABASE_URL`** — une base PostgreSQL gratuite (ex : [Neon](https://neon.tech))
