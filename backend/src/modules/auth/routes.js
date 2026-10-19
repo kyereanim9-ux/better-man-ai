@@ -61,20 +61,22 @@ router.post('/login', async (req, res) => {
   res.json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role, avatar: user.avatar || null } });
 });
 
-// Mot de passe oublié : même réponse que le compte existe ou non, pour ne
-// pas révéler quels emails sont inscrits.
+// Mot de passe oublié : seul un email enregistré est accepté (choix de
+// l'app : l'inscription indique déjà si un email est pris). Le lien part
+// toujours à l'adresse du compte enregistrée en base, jamais à une autre.
 router.post('/forgot', async (req, res) => {
   const email = String(req.body.email || '').trim().toLowerCase();
-  const done = () => res.json({ ok: true, message: 'Si un compte existe avec cet email, un lien pour choisir un nouveau mot de passe vient d\'être envoyé. Pense à regarder dans les spams.' });
+  const done = () => res.json({ ok: true, message: 'Un lien pour choisir un nouveau mot de passe vient d\'être envoyé à ton adresse email. Pense à regarder dans les spams.' });
   if (!email) return res.status(400).json({ error: 'Indique ton email.' });
   if (!isMailConfigured()) {
     return res.status(503).json({ error: 'L\'envoi d\'emails n\'est pas encore configuré. Demande à l\'administrateur un lien de réinitialisation.' });
   }
   await db.read();
-  const user = db.data.users.find(u => u.email.toLowerCase() === email && u.active);
-  if (!user) return done();
+  const user = db.data.users.find(u => u.email.toLowerCase() === email);
+  if (!user) return res.status(404).json({ error: 'Aucun compte n\'utilise cet email. Vérifie l\'adresse utilisée lors de l\'inscription.' });
+  if (!user.active) return res.status(403).json({ error: 'Ce compte a été désactivé. Contacte l\'administrateur.' });
   const link = createResetLink(user.id);
-  if (!link) return done();
+  if (!link) return res.status(429).json({ error: 'Trop de demandes pour ce compte. Utilise le dernier email reçu ou réessaie dans une heure.' });
   await db.write();
   try {
     await sendMail({
