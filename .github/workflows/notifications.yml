@@ -3,7 +3,9 @@
 # rappel du jour à l'heure qu'il a choisie (au plus une fois par jour).
 # À configurer une seule fois dans GitHub → Settings → Secrets and variables → Actions :
 #   - Variable  APP_URL      : (optionnel) adresse de l'app en ligne ; par défaut
-#                              https://better-man-ai-church-av-assistant.vercel.app
+#                              https://better-man-ai-web.onrender.com (Render). Cet appel
+#                              régulier réveille aussi le service gratuit Render, qui
+#                              s'endort après 15 minutes sans visite.
 #   - Secret    CRON_SECRET  : (optionnel) la même valeur que CRON_SECRET dans Vercel
 name: Rappels push
 
@@ -19,12 +21,12 @@ jobs:
     steps:
       - name: Déclencher l'envoi des rappels
         env:
-          APP_URL: ${{ vars.APP_URL || 'https://better-man-ai-church-av-assistant.vercel.app' }}
+          APP_URL: ${{ vars.APP_URL || 'https://better-man-ai-web.onrender.com' }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
           # Sans -L : une redirection (protection Vercel activée) doit faire échouer
           # la tâche au lieu de passer pour un succès.
-          code=$(curl -sS --max-time 60 -o response.txt -w '%{http_code}' -X POST "${APP_URL%/}/api/notifications/cron" -H "x-cron-secret: ${CRON_SECRET}")
+          code=$(curl -sS --max-time 120 --retry 2 --retry-delay 10 -o response.txt -w '%{http_code}' -X POST "${APP_URL%/}/api/notifications/cron" -H "x-cron-secret: ${CRON_SECRET}")
           cat response.txt; echo
           case "$code" in
             301|302|307|308)
