@@ -574,6 +574,7 @@ function renderMessages(messages) {
       <div>${m.hasPhoto ? '📷 ' : ''}${escapeHtml(m.content)}</div>
       ${m.role === 'assistant' ? speakerHTML(m.content) : ''}
       ${m.role === 'assistant' && m.source ? `<div class="meta" style="margin-top:4px;">${m.source === 'local' ? '⚙️ Coach local (aucune IA externe configurée ou toutes indisponibles)' : `✅ Répondu par ${escapeHtml(m.source)}`}</div>` : ''}
+      ${m.role === 'assistant' && m.fallbackReason ? `<div class="meta" style="margin-top:2px;">🛠️ (visible par l'admin) ${escapeHtml(m.fallbackReason)}</div>` : ''}
     </div>
   `).join('');
   el.scrollTop = el.scrollHeight;
