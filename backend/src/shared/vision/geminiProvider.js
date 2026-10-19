@@ -1,6 +1,8 @@
 // Google Gemini a un palier gratuit généreux (Gemini Flash), adapté à
 // l'esprit "0€ pour commencer" du projet. Clé gratuite sur
 // https://aistudio.google.com/apikey
+import { GEMINI_MODEL } from '../../config/geminiModel.js';
+
 export async function analyzeFoodPhotoGemini(photoDataUrl, description, apiKey) {
   const match = photoDataUrl.match(/^data:(image\/[a-z]+);base64,(.+)$/);
   if (!match) throw new Error('Format de photo invalide.');
@@ -16,7 +18,7 @@ Reste prudent : donne un ordre de grandeur, pas une valeur exacte impossible à 
   let res;
   try {
     res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

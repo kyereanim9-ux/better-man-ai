@@ -9,6 +9,18 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.11.2',
+    date: '2026-10-19',
+    title: 'Coach IA réparé et une seule adresse',
+    features: [],
+    fixes: [
+      "Coach IA : Gemini ne répondait plus (modèle retiré par Google, erreur 404) — utilise maintenant toujours le modèle Gemini actuel",
+      "Analyse photo et repas : même correction (l'ancien modèle Gemini 1.5 n'existait plus)",
+      "Rappels du matin : envoyés de nouveau (l'envoi n'appelait pas la bonne adresse)"
+    ],
+    improvements: ["L'ancienne adresse de l'app renvoie automatiquement vers la nouvelle : rien à changer sur les téléphones"]
+  },
+  {
     version: '0.11.1',
     date: '2026-10-19',
     title: '8 nouvelles pépites',
