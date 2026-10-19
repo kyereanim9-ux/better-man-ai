@@ -11,5 +11,9 @@ initDB().then(() => {
   });
   // Serveur classique (local, Render...) : envoi des rappels toutes les 5 min.
   // Sur Vercel (serverless), c'est la tâche GitHub Actions qui s'en charge.
-  setInterval(() => runNotificationCron().catch(e => console.error('[notifications]', e.message)), 5 * 60 * 1000);
+  // Pas quand ce serveur ne fait que rediriger vers la nouvelle adresse
+  // (REDIRECT_TO) : il écrirait dans la même base en même temps que la vraie app.
+  if (!process.env.REDIRECT_TO) {
+    setInterval(() => runNotificationCron().catch(e => console.error('[notifications]', e.message)), 5 * 60 * 1000);
+  }
 });
