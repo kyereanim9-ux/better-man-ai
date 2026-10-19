@@ -39,6 +39,15 @@ import notificationsRoutes from './modules/notifications/routes.js';
 import studyRoutes from './modules/study/routes.js';
 
 export const app = express();
+
+// Ancienne adresse conservée : si REDIRECT_TO est défini (ex. sur Render),
+// toute visite est renvoyée vers la nouvelle adresse de l'app, en gardant le
+// chemin. Les raccourcis déjà installés sur les téléphones continuent de marcher.
+const REDIRECT_TO = (process.env.REDIRECT_TO || '').replace(/\/+$/, '');
+if (REDIRECT_TO) {
+  app.use((req, res) => res.redirect(308, REDIRECT_TO + req.originalUrl));
+}
+
 app.use(cors());
 app.use(express.json());
 
