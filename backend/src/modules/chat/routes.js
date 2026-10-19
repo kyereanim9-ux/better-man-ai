@@ -82,6 +82,7 @@ router.post('/conversations/:id/messages', async (req, res) => {
 
   let reply;
   let source = 'local';
+  let fallbackReason = null;
   if (photo) {
     const result = await routeImageChat({
       systemPrompt: buildSystemPrompt('coach'),
@@ -102,12 +103,19 @@ router.post('/conversations/:id/messages', async (req, res) => {
       const result = await chatWithFallback([{ role: 'system', content: COACH_SYSTEM_PROMPT + langInstruction }, ...history]);
       reply = result.content;
       source = result.providerUsed;
-    } catch {
+    } catch (err) {
       reply = await getCoachReply(conv.messages, { userId: req.user.id });
       source = 'local';
+      // Pour un admin seulement : pourquoi l'IA n'a pas répondu (clé refusée,
+      // modèle introuvable, quota…), sans avoir accès aux logs du serveur.
+      if (req.user.role === 'admin') {
+        fallbackReason = err.attempts?.length
+          ? err.attempts.map(a => `${a.provider} : ${a.error}`).join(' · ').slice(0, 500)
+          : 'Aucune clé d\'IA configurée sur le serveur.';
+      }
     }
   }
-  const assistantMsg = { role: 'assistant', content: reply, source, createdAt: new Date().toISOString() };
+  const assistantMsg = { role: 'assistant', content: reply, source, ...(fallbackReason ? { fallbackReason } : {}), createdAt: new Date().toISOString() };
   conv.messages.push(assistantMsg);
 
   await db.write();
