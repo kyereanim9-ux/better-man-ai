@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/kit.css">
+<style>
+  #phone { left: 1210px; top: 75px; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="glow" id="glow"></div>
+  <div class="copy">
+    <div class="eyebrow" id="e">Bible</div>
+    <div class="headline" id="h"><span class="line">La Parole,</span><span class="line grad">au quotidien.</span></div>
+    <div class="sub" id="s">Verset du jour, plans de lecture et mémorisation par répétition espacée.</div>
+  </div>
+  <div class="phone" id="phone"><div class="screen"><img src="assets/screens/bible.png" id="img"></div></div>
+  <div class="veil" id="veil"></div>
+</div>
+<script type="module">
+import { rise, edges, drift, loaded, span, out5, lerp } from './assets/kit.js';
+const D = 4.5;
+const phone = document.getElementById('phone');
+window.film = {
+  duration: D,
+  ready: loaded(),
+  frame(t) {
+    rise(document.getElementById('e'), t, 0.2);
+    rise(document.getElementById('h'), t, 0.35);
+    rise(document.getElementById('s'), t, 0.6);
+    const p = out5(span(t, 0.1, 1.4));
+    phone.style.opacity = p;
+    phone.style.transform = `translateY(${(1 - p) * 220}px) scale(${lerp(1, 1.04, span(t, 1.5, D - 1.5))})`;
+    drift(document.getElementById('glow'), t, 1420, 540);
+    edges(document.getElementById('veil'), t, D);
+  },
+};
+</script>
+</body>
+</html>

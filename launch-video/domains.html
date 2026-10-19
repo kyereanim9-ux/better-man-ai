@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/kit.css">
+<style>
+  .copy { width: 760px; }
+  #back { left: 1000px; top: 110px; }
+  #front { left: 1370px; top: 60px; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="glow" id="glow"></div>
+  <div class="copy">
+    <div class="eyebrow" id="e">Progression</div>
+    <div class="headline" id="h"><span class="line">11 domaines</span><span class="line grad">de ta vie.</span></div>
+    <div class="sub" id="s">Spirituel, physique, relationnel, financier… Tes habitudes et tes objectifs nourrissent une seule vue claire.</div>
+  </div>
+  <div class="phone" id="back"><div class="screen"><img src="assets/screens/habits.png"></div></div>
+  <div class="phone" id="front"><div class="screen"><img src="assets/screens/domains.png"></div></div>
+  <div class="veil" id="veil"></div>
+</div>
+<script type="module">
+import { rise, edges, drift, loaded, span, out5, lerp } from './assets/kit.js';
+const D = 5;
+const back = document.getElementById('back'), front = document.getElementById('front');
+window.film = {
+  duration: D,
+  ready: loaded(),
+  frame(t) {
+    rise(document.getElementById('e'), t, 0.2);
+    rise(document.getElementById('h'), t, 0.35);
+    rise(document.getElementById('s'), t, 0.6);
+    const a = out5(span(t, 0.1, 1.3)), b = out5(span(t, 0.5, 1.3));
+    const drift2 = span(t, 1.5, D - 1.5);
+    back.style.opacity = a * 0.85;
+    back.style.transform = `translateY(${(1 - a) * 200 + lerp(0, 20, drift2)}px) scale(0.9) rotate(-4deg)`;
+    front.style.opacity = b;
+    front.style.transform = `translateY(${(1 - b) * 240 + lerp(0, -20, drift2)}px) rotate(${lerp(3, 2, drift2)}deg)`;
+    drift(document.getElementById('glow'), t, 1420, 540);
+    edges(document.getElementById('veil'), t, D);
+  },
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/kit.css">
+<style>
+  .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .big { font-size: 128px; font-weight: 800; letter-spacing: -0.035em; line-height: 1.05; }
+  .w { display: inline-block; margin: 0 0.12em; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="glow" id="glow"></div>
+  <div class="center">
+    <div class="big" id="l1"><span class="w">Devenir</span><span class="w">meilleur,</span></div>
+    <div class="big grad" id="l2"><span class="w">un</span><span class="w">jour</span><span class="w">à</span><span class="w">la</span><span class="w">fois.</span></div>
+  </div>
+  <div class="veil" id="veil"></div>
+</div>
+<script type="module">
+import { rise, edges, drift, loaded, span, out3 } from './assets/kit.js';
+const D = 4;
+const words = [...document.querySelectorAll('.w')];
+window.film = {
+  duration: D,
+  ready: loaded(),
+  frame(t) {
+    words.forEach((w, i) => rise(w, t, 0.25 + i * 0.16 + (i > 1 ? 0.35 : 0), 0.9, 60));
+    const s = 1 + span(t, 0, D) * 0.04;
+    document.querySelector('.center').style.transform = `scale(${s})`;
+    drift(document.getElementById('glow'), t, 960, 600);
+    edges(document.getElementById('veil'), t, D, 0.01, 0.5);
+  },
+};
+</script>
+</body>
+</html>

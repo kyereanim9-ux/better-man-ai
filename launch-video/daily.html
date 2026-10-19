@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/kit.css">
+<style>
+  #phone { left: 1210px; top: 75px; }
+  .ring { position: absolute; left: 3.6%; top: 30.8%; width: 92.8%; height: 38.6%; border-radius: 40px;
+          box-shadow: 0 0 0 4px #ffffff, 0 0 60px rgba(79, 209, 255, 0.7); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="glow" id="glow"></div>
+  <div class="copy">
+    <div class="eyebrow" id="e">Daily</div>
+    <div class="headline" id="h"><span class="line">Une mission</span><span class="line grad">chaque jour.</span></div>
+    <div class="sub" id="s">Quelques actions concrètes, tirées de tes habitudes et de tes objectifs.</div>
+  </div>
+  <div class="phone" id="phone"><div class="screen"><img src="assets/screens/daily.png"><div class="ring" id="ring"></div></div></div>
+  <div class="veil" id="veil"></div>
+</div>
+<script type="module">
+import { rise, edges, drift, loaded, span, out5, lerp } from './assets/kit.js';
+const D = 5;
+const phone = document.getElementById('phone'), ring = document.getElementById('ring');
+window.film = {
+  duration: D,
+  ready: loaded(),
+  frame(t) {
+    rise(document.getElementById('e'), t, 0.2);
+    rise(document.getElementById('h'), t, 0.35);
+    rise(document.getElementById('s'), t, 0.6);
+    const p = out5(span(t, 0.1, 1.4));
+    const z = lerp(1, 1.05, span(t, 1.5, D - 1.5));
+    phone.style.opacity = p;
+    phone.style.transform = `translateY(${(1 - p) * 220}px) scale(${z})`;
+    const r = out5(span(t, 2.0, 0.6));
+    ring.style.opacity = r * (0.75 + 0.25 * Math.cos((t - 2.6) * 4) * (t > 2.6 ? 1 : 0));
+    ring.style.transform = `scale(${1.06 - 0.06 * r})`;
+    drift(document.getElementById('glow'), t, 1420, 540);
+    edges(document.getElementById('veil'), t, D);
+  },
+};
+</script>
+</body>
+</html>

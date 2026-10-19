@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/kit.css">
+<style>
+  .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .logo { width: 220px; height: 220px; border-radius: 52px; overflow: hidden; box-shadow: 0 40px 100px rgba(52, 211, 153, 0.25), 0 0 0 2px rgba(255,255,255,0.08); }
+  .logo img { width: 100%; height: 100%; display: block; }
+  .name { margin-top: 56px; font-size: 140px; font-weight: 800; letter-spacing: -0.04em; }
+  .tag { margin-top: 18px; font-size: 44px; font-weight: 500; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="glow" id="glow"></div>
+  <div class="center">
+    <div class="logo" id="logo"><img src="assets/logo.svg"></div>
+    <div class="name" id="name">Better Man <span class="grad">AI</span></div>
+    <div class="tag" id="tag">Ton coach personnel.</div>
+  </div>
+  <div class="veil" id="veil"></div>
+</div>
+<script type="module">
+import { rise, edges, drift, loaded, span, out5 } from './assets/kit.js';
+const D = 3.5;
+const logo = document.getElementById('logo');
+window.film = {
+  duration: D,
+  ready: loaded(),
+  frame(t) {
+    const p = out5(span(t, 0.1, 1.1));
+    logo.style.opacity = p;
+    logo.style.transform = `scale(${0.6 + 0.4 * p}) rotate(${(1 - p) * -8}deg)`;
+    rise(document.getElementById('name'), t, 0.45, 1.0, 50);
+    rise(document.getElementById('tag'), t, 0.8, 1.0, 30);
+    drift(document.getElementById('glow'), t, 960, 420);
+    edges(document.getElementById('veil'), t, D, 0.3, 0.4);
+  },
+};
+</script>
+</body>
+</html>

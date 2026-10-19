@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/kit.css">
+<style>
+  .copy { width: 760px; }
+  .card { position: absolute; left: 1150px; top: 100px; width: 600px; border-radius: 40px; overflow: hidden;
+          box-shadow: 0 0 0 2px #2b3358, 0 60px 120px rgba(0,0,0,0.55), 0 0 160px rgba(108,140,255,0.18); }
+  .card img { width: 100%; display: block; }
+  .hl { position: absolute; left: 3%; width: 94%; border-radius: 12px; background: rgba(108, 140, 255, 0.16);
+        box-shadow: inset 6px 0 0 #6c8cff; }
+  .q1 { top: 21.6%; height: 8%; } .q2 { top: 29.9%; height: 8%; } .q3 { top: 38.2%; height: 8%; }
+  .act { top: 56.6%; height: 32%; background: rgba(79, 209, 255, 0.14); box-shadow: inset 6px 0 0 #4fd1ff; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="glow" id="glow"></div>
+  <div class="copy">
+    <div class="eyebrow" id="e">Situation réelle</div>
+    <div class="headline" id="h"><span class="line">Réfléchis</span><span class="line">avant de</span><span class="line grad">réagir.</span></div>
+    <div class="sub" id="s">Décris ce qui vient de se passer. Trois questions, puis une seule action concrète.</div>
+  </div>
+  <div class="card" id="card">
+    <img src="assets/screens/situation-card.png">
+    <div class="hl q1"></div><div class="hl q2"></div><div class="hl q3"></div><div class="hl act"></div>
+  </div>
+  <div class="veil" id="veil"></div>
+</div>
+<script type="module">
+import { rise, edges, drift, loaded, span, out5, lerp } from './assets/kit.js';
+const D = 6;
+const card = document.getElementById('card');
+const hls = [...document.querySelectorAll('.hl')];
+const starts = [1.8, 2.4, 3.0, 3.9];
+window.film = {
+  duration: D,
+  ready: loaded(),
+  frame(t) {
+    rise(document.getElementById('e'), t, 0.2);
+    rise(document.getElementById('h'), t, 0.35);
+    rise(document.getElementById('s'), t, 0.65);
+    const p = out5(span(t, 0.2, 1.3));
+    card.style.opacity = p;
+    card.style.transform = `translateX(${(1 - p) * 160}px) translateY(${lerp(0, -40, span(t, 1.5, D - 1.5))}px)`;
+    hls.forEach((el, i) => {
+      const a = out5(span(t, starts[i], 0.45));
+      // questions dim once the action is lit, so the eye lands on it
+      const dim = i < 3 ? 1 - 0.7 * out5(span(t, starts[3], 0.5)) : 1;
+      el.style.opacity = a * dim;
+      el.style.transform = `scaleX(${0.96 + 0.04 * a})`;
+    });
+    drift(document.getElementById('glow'), t, 1400, 520);
+    edges(document.getElementById('veil'), t, D);
+  },
+};
+</script>
+</body>
+</html>

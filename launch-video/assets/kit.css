@@ -1,0 +1,52 @@
+/* Shared look for every shot: Better Man AI's own palette (frontend/style.css) */
+@font-face { font-family: "Inter Display"; font-weight: 400; src: url("fonts/InterDisplay-Regular.otf"); }
+@font-face { font-family: "Inter Display"; font-weight: 500; src: url("fonts/InterDisplay-Medium.otf"); }
+@font-face { font-family: "Inter Display"; font-weight: 600; src: url("fonts/InterDisplay-SemiBold.otf"); }
+@font-face { font-family: "Inter Display"; font-weight: 700; src: url("fonts/InterDisplay-Bold.otf"); }
+@font-face { font-family: "Inter Display"; font-weight: 800; src: url("fonts/InterDisplay-ExtraBold.otf"); }
+
+:root {
+  --bg: #0b0e1a;
+  --bg-2: #0f1220;
+  --text: #eef0fa;
+  --muted: #9aa3c7;
+  --accent: #6c8cff;
+  --accent-2: #4fd1ff;
+  --grad: linear-gradient(100deg, #6c8cff 0%, #4fd1ff 100%);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+body {
+  font-family: "Inter Display", sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.stage { position: absolute; inset: 0; overflow: hidden; }
+.glow {
+  position: absolute; width: 1400px; height: 1400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(108, 140, 255, 0.22) 0%, rgba(79, 209, 255, 0.06) 40%, transparent 70%);
+  pointer-events: none;
+}
+.veil { position: absolute; inset: 0; background: var(--bg); pointer-events: none; }
+
+.eyebrow {
+  font-size: 30px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+  background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.headline { font-size: 96px; font-weight: 800; line-height: 1.02; letter-spacing: -0.03em; }
+.sub { font-size: 38px; font-weight: 500; line-height: 1.35; color: var(--muted); }
+.grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.copy { position: absolute; left: 160px; top: 50%; width: 820px; transform: translateY(-50%); }
+.copy > * + * { margin-top: 28px; }
+.copy .line { display: block; }
+
+.phone {
+  position: absolute; width: 430px; height: 930px; border-radius: 68px;
+  background: #05070f; padding: 14px;
+  box-shadow: 0 0 0 2px #2b3358, 0 60px 120px rgba(0, 0, 0, 0.55), 0 0 160px rgba(108, 140, 255, 0.18);
+}
+.phone .screen { width: 100%; height: 100%; border-radius: 56px; overflow: hidden; position: relative; background: #0f1220; }
+.phone .screen img { width: 100%; display: block; }
