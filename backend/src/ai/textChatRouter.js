@@ -61,6 +61,18 @@ async function callProvider(provider, messages) {
   }
 }
 
+// Surcharge passagère (429 trop de requêtes, 503 « high demand ») : une
+// seconde tentative après une courte pause suffit souvent.
+async function callWithRetry(provider, messages) {
+  try {
+    return await callProvider(provider, messages);
+  } catch (err) {
+    if (!/^HTTP (429|503)\b/.test(err.message)) throw err;
+    await new Promise(r => setTimeout(r, 1500));
+    return callProvider(provider, messages);
+  }
+}
+
 // Essaie chaque fournisseur configuré dans l'ordre jusqu'à ce que l'un
 // réponde ; ne lève une erreur que si TOUS échouent (ou aucun n'est
 // configuré) — l'appelant (chat/routes.js) bascule alors sur le coach local.
@@ -71,7 +83,7 @@ export async function chatWithFallback(messages, providers = TEXT_AI_PROVIDERS) 
   for (const provider of withKey) {
     const stats = ensureStats(provider.id);
     try {
-      const content = await callProvider(provider, messages);
+      const content = await callWithRetry(provider, messages);
       stats.requestsToday++;
       stats.lastUsedAt = new Date().toISOString();
       return { content, providerUsed: provider.name };

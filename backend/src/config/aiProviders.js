@@ -1,4 +1,4 @@
-import { GEMINI_MODEL } from './geminiModel.js';
+import { GEMINI_MODEL, GEMINI_FALLBACK_MODEL } from './geminiModel.js';
 // Configuration centrale : un seul endroit à modifier pour changer de
 // fournisseur, de modèle, de priorité, ou activer/désactiver.
 // Ne JAMAIS coder de nom de modèle ailleurs que dans ce fichier + les
@@ -31,6 +31,17 @@ export const AI_PROVIDERS = [
     vision: true,
     active: true,
     model: GEMINI_MODEL,
+    envKey: 'GEMINI_API_KEY'
+  },
+  {
+    // Même clé, modèle plus léger : pris quand le principal est saturé (503).
+    key: 'gemini-lite',
+    label: 'Google Gemini (Lite)',
+    priority: 3,
+    free: true,
+    vision: true,
+    active: true,
+    model: GEMINI_FALLBACK_MODEL,
     envKey: 'GEMINI_API_KEY'
   }
   // Hugging Face : prévu (voir ROADMAP.md), pas encore branché dans cette

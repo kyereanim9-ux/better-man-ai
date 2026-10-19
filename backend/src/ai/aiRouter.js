@@ -12,7 +12,7 @@ function ensureStats(key) {
   return providerStats[key];
 }
 
-const HANDLERS = { openrouter: chatWithImageOpenRouter, gemini: chatWithImageGemini };
+const HANDLERS = { openrouter: chatWithImageOpenRouter, gemini: chatWithImageGemini, 'gemini-lite': chatWithImageGemini };
 
 // systemPrompt: texte de catégorie. messages: [{role:'user'|'assistant', content}].
 // imageDataUrl: attachée uniquement au premier tour utilisateur.
