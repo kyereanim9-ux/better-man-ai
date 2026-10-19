@@ -161,11 +161,13 @@ document.getElementById('forgot-form').addEventListener('submit', async (e) => {
   const status = document.getElementById('forgot-status');
   const btn = e.target.querySelector('button[type=submit]');
   btn.disabled = true;
+  status.className = 'meta';
   status.textContent = 'Envoi…';
   try {
     const data = await api('/auth/forgot', { method: 'POST', body: { email: document.getElementById('forgot-email').value } });
-    status.textContent = data.message;
+    status.textContent = '✅ ' + data.message;
   } catch (err) {
+    status.className = 'error';
     status.textContent = err.message;
   } finally {
     btn.disabled = false;
