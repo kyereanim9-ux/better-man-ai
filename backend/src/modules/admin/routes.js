@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { requireAuth, requireAdmin } from '../../middleware/auth.js';
 import { db, purgeUserData } from '../../db.js';
+import { createResetLink, RESET_TTL_MIN } from '../auth/passwordReset.js';
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -24,6 +25,17 @@ router.patch('/users/:id', async (req, res) => {
   if (role === 'user' || role === 'admin') user.role = role;
   await db.write();
   res.json({ id: user.id, email: user.email, active: user.active, role: user.role });
+});
+
+// Lien « nouveau mot de passe » à transmettre soi-même à la personne
+// (utile si l'envoi d'emails n'est pas configuré).
+router.post('/users/:id/reset-link', async (req, res) => {
+  await db.read();
+  const user = db.data.users.find(u => u.id === req.params.id);
+  if (!user) return res.status(404).json({ error: 'Utilisateur introuvable.' });
+  const link = createResetLink(user.id, { ignoreLimit: true });
+  await db.write();
+  res.json({ link, expiresInMinutes: RESET_TTL_MIN });
 });
 
 // Suppression du compte ET de toutes ses données privées associées.

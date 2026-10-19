@@ -54,6 +54,24 @@
       <input type="password" id="login-password" placeholder="Mot de passe" required />
       <button type="submit">Se connecter</button>
       <p class="error" id="login-error"></p>
+      <button type="button" class="link-btn auth-link" id="forgot-link">Mot de passe oublié ?</button>
+    </form>
+
+    <form id="forgot-form" class="hidden">
+      <p class="meta">Indique l'email de ton compte : tu recevras un lien pour choisir un nouveau mot de passe.</p>
+      <input type="email" id="forgot-email" placeholder="Email" required />
+      <button type="submit">Recevoir le lien</button>
+      <p class="meta" id="forgot-status"></p>
+      <button type="button" class="link-btn auth-link" data-auth-back>← Retour à la connexion</button>
+    </form>
+
+    <form id="reset-form" class="hidden">
+      <p class="meta" id="reset-intro">Choisis ton nouveau mot de passe.</p>
+      <input type="password" id="reset-password" placeholder="Nouveau mot de passe (8 caractères min.)" minlength="8" required autocomplete="new-password" />
+      <input type="password" id="reset-password2" placeholder="Confirme le mot de passe" minlength="8" required autocomplete="new-password" />
+      <button type="submit">Enregistrer le nouveau mot de passe</button>
+      <p class="error" id="reset-error"></p>
+      <button type="button" class="link-btn auth-link" data-auth-back>← Retour à la connexion</button>
     </form>
 
     <form id="register-form" class="hidden">
