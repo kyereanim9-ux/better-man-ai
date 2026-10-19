@@ -1,3 +1,4 @@
+import { GEMINI_MODEL } from './geminiModel.js';
 // Configuration centrale : un seul endroit à modifier pour changer de
 // fournisseur, de modèle, de priorité, ou activer/désactiver.
 // Ne JAMAIS coder de nom de modèle ailleurs que dans ce fichier + les
@@ -29,7 +30,7 @@ export const AI_PROVIDERS = [
     free: true,
     vision: true,
     active: true,
-    model: 'gemini-1.5-flash',
+    model: GEMINI_MODEL,
     envKey: 'GEMINI_API_KEY'
   }
   // Hugging Face : prévu (voir ROADMAP.md), pas encore branché dans cette

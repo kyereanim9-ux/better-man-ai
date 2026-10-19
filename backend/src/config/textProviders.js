@@ -1,4 +1,5 @@
 import { CLAUDE_MODEL } from '../ai/providers/claude.js';
+import { GEMINI_MODEL } from './geminiModel.js';
 
 /**
  * Fournisseurs LLM texte gratuits, dans l'ordre de priorité — distinct de
@@ -34,7 +35,7 @@ export const TEXT_AI_PROVIDERS = [
     id: 'gemini',
     name: 'Google Gemini',
     baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
-    model: 'gemini-2.5-flash',
+    model: GEMINI_MODEL,
     apiKeyEnvVar: 'GEMINI_API_KEY'
   },
   {
