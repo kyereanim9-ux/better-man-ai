@@ -134,6 +134,7 @@
       <button data-view="communication" class="nav-btn">🗣️ Communication</button>
       <button data-view="pepites" class="nav-btn">✨ Pépites</button>
       <button data-view="study" class="nav-btn">📝 Révisions</button>
+      <button data-view="games" class="nav-btn">🎮 Jeux bibliques</button>
       <button data-view="ideas" class="nav-btn">💡 Mes idées</button>
       <button data-view="domains" class="nav-btn">📊 Domaines</button>
       <button data-view="progress" class="nav-btn">📈 Progression</button>
@@ -532,6 +533,36 @@
       </div>
 
       <div id="study-detail" class="hidden"></div>
+    </div>
+
+    <div class="view hidden" id="view-games">
+      <h2>🎮 Jeux bibliques</h2>
+      <div id="games-home">
+        <p class="meta">Choisis sur quoi jouer, puis un jeu. Chaque partie est enregistrée, et tu peux défier les autres utilisateurs.</p>
+        <div class="card-block">
+          <h3>Jouer sur…</h3>
+          <div class="games-source">
+            <select id="games-source">
+              <option value="bible">Toute la Bible</option>
+              <option value="book">Un livre</option>
+              <option value="chapter">Un chapitre (et des versets)</option>
+              <option value="mine">Mes versets en mémorisation</option>
+              <option value="study">Une liste de Révisions</option>
+            </select>
+            <div id="games-book-row" class="hidden"><select id="games-book"></select></div>
+            <div id="games-chapter-row" class="hidden games-chapter-row">
+              <label class="meta">Chapitre <input type="number" id="games-chapter" min="1" value="1" inputmode="numeric" /></label>
+              <label class="meta">Du verset <input type="number" id="games-from" min="1" placeholder="tous" inputmode="numeric" /></label>
+              <label class="meta">au verset <input type="number" id="games-to" min="1" placeholder="" inputmode="numeric" /></label>
+            </div>
+            <div id="games-study-row" class="hidden"><select id="games-study"></select></div>
+          </div>
+          <p class="meta">Le Quiz, « Qui a dit ? » et « Qui suis-je ? » utilisent des questions préparées, quel que soit ce choix.</p>
+        </div>
+        <div id="games-grid"></div>
+        <div class="card-block"><h3>🏆 Défis entre utilisateurs</h3><div id="games-challenges" class="meta">Chargement…</div></div>
+      </div>
+      <div id="game-area" class="hidden"></div>
     </div>
 
     <div class="view hidden" id="view-pepites">
@@ -1143,6 +1174,7 @@
 
 </div>
 
-<script src="app.js?v=20261018-1"></script>
+<script src="app.js?v=20261020-1"></script>
+<script src="games.js?v=20261020-1"></script>
 </body>
 </html>

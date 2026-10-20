@@ -9,6 +9,18 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.13.0',
+    date: '2026-10-20',
+    title: 'Jeux bibliques',
+    features: [
+      "Nouvelle rubrique 🎮 Jeux bibliques : on choisit sur quoi jouer (toute la Bible, un livre, un chapitre, des versets précis, mes versets ou une liste de Révisions)",
+      "12 jeux : remettre dans l'ordre, versets à trous, trouver la référence, Memory, pendu, mots cachés, anagrammes, vrai ou faux, quiz biblique, « Qui a dit ? », « Qui suis-je ? » et l'aventure de la Bible pour les enfants",
+      "Scores, records et classement ; défis entre utilisateurs (même partie pour tous, visible par tous)"
+    ],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.12.1',
     date: '2026-10-20',
     title: '8 nouvelles pépites',
