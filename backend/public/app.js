@@ -429,6 +429,8 @@ function switchView(view) {
   if (view === 'ideas') loadIdeas();
   if (view === 'pepites') loadPepites();
   if (view === 'study') loadStudy();
+  if (view === 'games') loadGames();
+  else if (typeof gClearTimers === 'function') gClearTimers();
   else stopStudyAudio();
   if (view === 'profile-setup') loadOnboarding();
   if (view === 'whats-new') loadWhatsNew();
@@ -463,6 +465,7 @@ const CATEGORIES = {
   'cat-apprendre': [
     { view: 'pepites', icon: '✨', name: 'Pépites', desc: 'Une idée puissante en 1 minute' },
     { view: 'study', icon: '📝', name: 'Révisions', desc: 'Apprends pour tes tests, seul ou en groupe' },
+    { view: 'games', icon: '🎮', name: 'Jeux bibliques', desc: 'Quiz, pendu, mots cachés, défis…' },
     { view: 'bible', icon: '📖', name: 'Bible', desc: 'Lire, mémoriser, appliquer' },
     { view: 'library', icon: '📚', name: 'Bibliothèque', desc: 'Tes livres et lectures' },
     { view: 'teach', icon: '🎓', name: 'Teach Me', desc: 'Apprends un sujet en 5 niveaux' },

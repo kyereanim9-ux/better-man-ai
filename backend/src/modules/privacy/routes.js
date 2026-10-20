@@ -51,6 +51,8 @@ router.get('/export', async (req, res) => {
     studySets: db.data.studySets.filter(x => x.ownerId === uid),
     studyMembers: db.data.studyMembers.filter(m => m.userId === uid),
     studyProgress: db.data.studyProgress.filter(p => p.userId === uid),
+    gameScores: db.data.gameScores.filter(s => s.userId === uid),
+    gameChallenges: db.data.gameChallenges.filter(c => c.userId === uid),
     notificationPrefs: user.notifPrefs || null,
     pushSubscriptions: db.data.pushSubscriptions.filter(s => s.userId === uid).map(({ endpoint, userAgent, createdAt }) => ({ endpoint, userAgent, createdAt }))
   };

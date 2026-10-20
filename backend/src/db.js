@@ -45,6 +45,8 @@ const defaultData = {
   studySets: [],             // { id, ownerId, title, description, examDate, shareCode, items: [{ id, q, a }], createdAt, updatedAt }
   studyMembers: [],          // { id, userId, setId, joinedAt } — membres d'une liste partagée
   studyProgress: [],         // { id, userId, setId, itemId, box, due, right, wrong, tip, lastAt }
+  gameScores: [],            // { id, userId, game, score, max, label, challengeId, createdAt }
+  gameChallenges: [],        // { id, game, label, userId, config: { source…, seed }, createdAt } — visibles par tous
   passwordResets: [],        // { id, userId, tokenHash, createdAt, expiresAt, usedAt } — liens « mot de passe oublié »
   appConfig: {}              // réglages globaux générés par l'app (ex : clés VAPID des notifications)
 };
@@ -201,6 +203,8 @@ export function purgeUserData(userId) {
   db.data.bibleReadingPlans = db.data.bibleReadingPlans.filter(p => p.userId !== userId);
   db.data.bibleFavorites = db.data.bibleFavorites.filter(f => f.userId !== userId);
   db.data.passwordResets = db.data.passwordResets.filter(r => r.userId !== userId);
+  db.data.gameScores = db.data.gameScores.filter(s => s.userId !== userId);
+  db.data.gameChallenges = db.data.gameChallenges.filter(c => c.userId !== userId);
   // Listes de révision créées par l'utilisateur : supprimées pour tout le groupe.
   const ownedSets = new Set(db.data.studySets.filter(x => x.ownerId === userId).map(x => x.id));
   db.data.studySets = db.data.studySets.filter(x => x.ownerId !== userId);

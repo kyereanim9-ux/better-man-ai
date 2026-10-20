@@ -124,6 +124,42 @@ export function randomVerse(bookIndex = null) {
   return { ref: refLabel(e.b, e.c + 1, e.v + 1), text: load().books[e.b].chapters[e.c][e.v] };
 }
 
+// Versets d'une portée (toute la Bible, un livre, un chapitre, une plage de
+// versets), tirés au hasard avec le générateur fourni (rng() → [0, 1[) pour
+// que deux joueurs d'un même défi reçoivent exactement les mêmes versets.
+export function pickVerses({ book = null, chapter = null, from = null, to = null, count = 20, rng = Math.random } = {}) {
+  let pool;
+  if (book !== null && chapter !== null) {
+    const verses = load().books[book]?.chapters[chapter - 1];
+    if (!verses) return [];
+    const start = from ? Math.max(1, from) : 1;
+    const end = Math.min(verses.length, to || (from ? from : verses.length));
+    pool = [];
+    for (let v = start; v <= end; v++) pool.push({ b: book, c: chapter - 1, v: v - 1 });
+  } else {
+    pool = book === null ? index() : index().filter(e => e.b === book);
+  }
+  // Petite portée : tout, dans l'ordre ; grande portée : tirage sans doublon
+  // (échanges de Fisher-Yates sur une table d'indices, toujours fini).
+  let picked;
+  if (pool.length <= count) picked = pool;
+  else {
+    const swap = new Map();
+    picked = [];
+    for (let i = 0; i < count; i++) {
+      const j = i + Math.floor(rng() * (pool.length - i));
+      const vi = swap.has(i) ? swap.get(i) : i;
+      const vj = swap.has(j) ? swap.get(j) : j;
+      swap.set(j, vi);
+      picked.push(pool[vj]);
+    }
+  }
+  return picked.map(e => ({
+    ref: refLabel(e.b, e.c + 1, e.v + 1), text: load().books[e.b].chapters[e.c][e.v],
+    book: load().books[e.b].name, b: e.b, c: e.c + 1, v: e.v + 1
+  }));
+}
+
 // --- Plans de lecture : liste ordonnée de chapitres répartie sur N jours ---
 function chaptersOf(fromBook, toBook) {
   const list = [];

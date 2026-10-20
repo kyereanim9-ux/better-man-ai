@@ -489,6 +489,24 @@ fournisseurs via `/api/chat/text-provider-status`.
 
 ---
 
+## 18 bis. Jeux bibliques (v0.13)
+
+Rubrique **🎮 Jeux bibliques** (menu Apprendre). On choisit d'abord sur quoi
+jouer : toute la Bible, un livre, un chapitre (avec une plage de versets
+facultative), ses versets en mémorisation ou une liste de Révisions.
+
+- **Mémoriser les Écritures** : remettre dans l'ordre, versets à trous,
+  trouver la référence, Memory (référence ↔ verset).
+- **Jeux de lettres** : pendu, mots cachés (grille 10×10), anagrammes.
+- **Quiz** : vrai ou faux (un mot du verset a-t-il été changé ?), quiz
+  biblique, « Qui a dit ? », « Qui suis-je ? ». Les questions préparées sont
+  dans `backend/src/modules/games/data/content.json` ; chaque citation est
+  vérifiée sur la Louis Segond 1910.
+- **Enfants** : l'aventure de la Bible, un parcours de 8 étapes faciles.
+- **Scores et défis** : record personnel, classement par jeu ; « Défier les
+  autres » crée une partie identique pour tous (même graine), visible par
+  tous les utilisateurs avec son classement.
+
 ## 19. Déploiement en ligne (Vercel + Neon)
 
 L'app tourne sur **Vercel** : https://better-man-ai.vercel.app (aussi
