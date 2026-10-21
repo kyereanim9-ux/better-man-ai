@@ -130,7 +130,15 @@ async function ensureVapid() {
 // Envoie à tous les appareils d'un utilisateur ; retire les abonnements expirés.
 export async function sendPushToUser(uid, payload) {
   await ensureVapid();
-  const subs = db.data.pushSubscriptions.filter(s => s.userId === uid);
+  // Un seul envoi par appareil : si un même navigateur (même userAgent) a
+  // plusieurs abonnements (ancienne adresse de l'app, réinstallation…), seul
+  // le plus récent reçoit la notification.
+  const latest = new Map();
+  for (const s of db.data.pushSubscriptions.filter(x => x.userId === uid)) {
+    const key = s.userAgent || s.endpoint;
+    if (!latest.has(key) || String(s.createdAt) > String(latest.get(key).createdAt)) latest.set(key, s);
+  }
+  const subs = [...latest.values()];
   let sent = 0;
   const expired = new Set();
   for (const s of subs) {

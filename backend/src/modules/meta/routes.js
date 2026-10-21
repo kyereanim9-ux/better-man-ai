@@ -9,6 +9,14 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.13.2',
+    date: '2026-10-21',
+    title: 'Plus de notifications en double',
+    features: [],
+    fixes: ["Un téléphone inscrit deux fois aux notifications (ancienne et nouvelle adresse de l'app) recevait chaque rappel en double : un seul envoi par appareil désormais"],
+    improvements: []
+  },
+  {
     version: '0.13.1',
     date: '2026-10-21',
     title: '8 nouvelles pépites',
