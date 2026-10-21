@@ -9,6 +9,14 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.13.1',
+    date: '2026-10-21',
+    title: '8 nouvelles pépites',
+    features: ["8 nouvelles pépites : Paternité (2), Amitié (2), Travail (2) et Gestion du temps (2)"],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.13.0',
     date: '2026-10-20',
     title: 'Jeux bibliques',
