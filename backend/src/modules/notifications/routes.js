@@ -56,12 +56,16 @@ router.post('/subscribe', async (req, res) => {
     return res.status(400).json({ error: 'Abonnement invalide.' });
   }
   await db.read();
-  // Le même appareil se réabonne : on remplace l'ancien enregistrement.
-  db.data.pushSubscriptions = db.data.pushSubscriptions.filter(s => s.endpoint !== sub.endpoint);
+  // Le même appareil se réabonne : on remplace l'ancien enregistrement, y
+  // compris celui créé depuis une autre adresse de l'app (même personne, même
+  // navigateur), sinon chaque rappel arriverait en double sur le téléphone.
+  const userAgent = String(req.get('user-agent') || '').slice(0, 200);
+  db.data.pushSubscriptions = db.data.pushSubscriptions.filter(s =>
+    s.endpoint !== sub.endpoint && !(s.userId === req.user.id && userAgent && s.userAgent === userAgent));
   db.data.pushSubscriptions.push({
     id: nanoid(), userId: req.user.id, endpoint: sub.endpoint,
     keys: { p256dh: sub.keys.p256dh, auth: sub.keys.auth },
-    userAgent: String(req.get('user-agent') || '').slice(0, 200), createdAt: new Date().toISOString()
+    userAgent, createdAt: new Date().toISOString()
   });
   const user = currentUser(req);
   if (req.body.tz && !user.notifPrefs) user.notifPrefs = sanitizePrefs({ tz: req.body.tz }, getPrefs(user));
