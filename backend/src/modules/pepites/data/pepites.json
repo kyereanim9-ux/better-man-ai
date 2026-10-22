@@ -3162,5 +3162,85 @@
   "source": "Inspiré de : Make Time — Jake Knapp et John Zeratsky",
   "action": "Demain matin, écris ton temps fort de la journée et bloque une heure précise dans ton agenda pour lui.",
   "addedAt": "2026-10-21"
+ },
+ {
+  "id": "p344",
+  "domain": "relationnel",
+  "theme": "Paternité",
+  "title": "La voix d'un père",
+  "text": "« Écoutez, mes fils, l'instruction d'un père, et soyez attentifs, pour connaître la sagesse. » Un père transmet sa sagesse en parlant à ses enfants de ce qu'il a appris, y compris de ses erreurs.",
+  "source": "Bible — Proverbes 4:1",
+  "action": "Raconte cette semaine à ton enfant (ou à un jeune) une leçon que la vie t'a apprise, avec l'erreur qui te l'a enseignée.",
+  "addedAt": "2026-10-22"
+ },
+ {
+  "id": "p345",
+  "domain": "relationnel",
+  "theme": "Paternité",
+  "title": "Être là : les 4 S",
+  "text": "Ce qui aide le plus un enfant à bien grandir, c'est un parent qui se montre présent : il le protège (sécurité), le comprend (être vu), le console (apaisé) et, avec le temps, l'enfant se sent en confiance (sécurisé).",
+  "source": "Inspiré de : The Power of Showing Up — Daniel J. Siegel et Tina Payne Bryson",
+  "action": "Quand ton enfant est contrarié, commence par te mettre à sa hauteur et nommer ce qu'il ressent, avant de corriger quoi que ce soit.",
+  "addedAt": "2026-10-22"
+ },
+ {
+  "id": "p346",
+  "domain": "relationnel",
+  "theme": "Écouter sans juger",
+  "title": "Écouter avant de répondre",
+  "text": "« Celui qui répond avant d'avoir écouté fait un acte de folie et s'attire la confusion. » Préparer sa réponse pendant que l'autre parle, c'est ne l'écouter qu'à moitié.",
+  "source": "Bible — Proverbes 18:13",
+  "action": "Dans ta prochaine conversation importante, attends que l'autre ait vraiment fini, puis compte jusqu'à deux avant de répondre.",
+  "addedAt": "2026-10-22"
+ },
+ {
+  "id": "p347",
+  "domain": "communication",
+  "theme": "Parler à tout le monde",
+  "title": "Le mot juste au bon moment",
+  "text": "« Comme des pommes d'or sur des ciselures d'argent, ainsi est une parole dite à propos. » Un encouragement ou un conseil donné au bon moment peut marquer quelqu'un pour longtemps.",
+  "source": "Bible — Proverbes 25:11",
+  "action": "Repère aujourd'hui une personne qui traverse un moment important et envoie-lui une phrase d'encouragement précise.",
+  "addedAt": "2026-10-22"
+ },
+ {
+  "id": "p348",
+  "domain": "emotionnel",
+  "theme": "Santé mentale",
+  "title": "Parler à son âme",
+  "text": "« Pourquoi t'abats-tu, mon âme, et gémis-tu au dedans de moi ? Espère en Dieu. » Le psalmiste ne se contente pas d'écouter sa tristesse : il lui répond, et se rappelle ce qui le soutient.",
+  "source": "Bible — Psaume 42:6",
+  "action": "Quand une pensée sombre revient, écris-la, puis écris en dessous une vérité ou un souvenir qui te redonne espoir.",
+  "addedAt": "2026-10-22"
+ },
+ {
+  "id": "p349",
+  "domain": "mental",
+  "theme": "Organiser ses pensées",
+  "title": "Réfléchir avant de foncer",
+  "text": "« Les projets de l'homme diligent ne mènent qu'à l'abondance, mais celui qui agit avec précipitation n'arrive qu'à la disette. » Prendre le temps de penser son plan fait gagner du temps ensuite.",
+  "source": "Bible — Proverbes 21:5",
+  "action": "Avant ta prochaine décision importante, prends 10 minutes pour écrire l'objectif, les étapes et ce qui pourrait mal tourner.",
+  "addedAt": "2026-10-22"
+ },
+ {
+  "id": "p350",
+  "domain": "physique",
+  "theme": "Prendre soin de son corps",
+  "title": "La joie, un bon remède",
+  "text": "« Un cœur joyeux est un bon remède, mais un esprit abattu dessèche les os. » Le moral et le corps sont liés : rire, être reconnaissant et passer du bon temps fait aussi du bien à la santé.",
+  "source": "Bible — Proverbes 17:22",
+  "action": "Prévois cette semaine un moment qui te fait vraiment rire ou te détend (ami, sport, sortie) et garde-le comme un rendez-vous.",
+  "addedAt": "2026-10-22"
+ },
+ {
+  "id": "p351",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "L'amour est patient",
+  "text": "« La charité est patiente, elle est pleine de bonté… elle ne s'irrite point, elle ne soupçonne point le mal. » Dans le couple, l'amour se voit surtout dans la patience et la bienveillance des jours ordinaires.",
+  "source": "Bible — 1 Corinthiens 13:4-5",
+  "action": "Choisis une qualité de ce passage (patience, bonté, ne pas s'irriter) et pratique-la volontairement envers ton conjoint pendant une journée.",
+  "addedAt": "2026-10-22"
  }
 ]
