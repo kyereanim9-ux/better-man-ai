@@ -3722,5 +3722,85 @@
   "source": "Bible — Psaume 127:2",
   "action": "Fixe une heure de coucher pour cette semaine et respecte-la cinq soirs sur sept, téléphone hors de la chambre.",
   "addedAt": "2026-10-28"
+ },
+ {
+  "id": "p400",
+  "domain": "emotionnel",
+  "theme": "Pour les hommes",
+  "title": "Combattre pour les siens",
+  "text": "Face à la peur, Néhémie lance : « Ne les craignez pas ! … combattez pour vos frères, pour vos fils et vos filles, pour vos femmes et pour vos maisons ! » La force d'un homme prend tout son sens quand elle protège et défend ceux qu'il aime.",
+  "source": "Bible — Néhémie 4:14",
+  "action": "Identifie une « bataille » concrète pour ta famille (un conflit à apaiser, une dépense à maîtriser, un enfant à soutenir) et engage-toi cette semaine sur une première action.",
+  "addedAt": "2026-10-29"
+ },
+ {
+  "id": "p401",
+  "domain": "relationnel",
+  "theme": "Soutenir les femmes",
+  "title": "Elles ont raison",
+  "text": "Les filles de Tselophchad osent réclamer l'héritage de leur père, ce que la coutume leur refusait. La réponse est nette : « Les filles de Tselophchad ont raison. » Soutenir les femmes, c'est aussi reconnaître quand leur demande est juste et l'appuyer.",
+  "source": "Bible — Nombres 27:7",
+  "action": "La prochaine fois qu'une femme autour de toi soulève une injustice (au travail, en famille), prends sa parole au sérieux et appuie-la publiquement si elle a raison.",
+  "addedAt": "2026-10-29"
+ },
+ {
+  "id": "p402",
+  "domain": "relationnel",
+  "theme": "Amitié",
+  "title": "Honorer une amitié au-delà du temps",
+  "text": "Des années après la mort de Jonathan, David cherche son fils pour lui dire : « Ne crains point, car je veux te faire du bien à cause de Jonathan, ton père. » Une vraie amitié laisse une fidélité qui continue de porter du fruit.",
+  "source": "Bible — 2 Samuel 9:7",
+  "action": "Pense à un ami perdu de vue ou disparu : fais un geste pour un de ses proches (un message, une visite, un service).",
+  "addedAt": "2026-10-29"
+ },
+ {
+  "id": "p403",
+  "domain": "relationnel",
+  "theme": "Paternité",
+  "title": "La fierté d'un enfant",
+  "text": "« Les enfants des enfants sont la couronne des vieillards, et les pères sont la gloire de leurs enfants. » Un enfant a besoin de pouvoir être fier de son père : par sa parole tenue, sa droiture et sa présence.",
+  "source": "Bible — Proverbes 17:6",
+  "action": "Demande à ton enfant (ou repense à ton propre père) : de quoi es-tu fier chez moi ? Note la réponse et nourris ce point-là.",
+  "addedAt": "2026-10-29"
+ },
+ {
+  "id": "p404",
+  "domain": "professionnel",
+  "theme": "Travail",
+  "title": "Connaître ses brebis",
+  "text": "« Connais bien chacune de tes brebis, donne tes soins à tes troupeaux. » Au travail, rien ne remplace une connaissance précise de ce dont on a la charge : ses dossiers, ses chiffres, ses clients, son équipe.",
+  "source": "Bible — Proverbes 27:23",
+  "action": "Choisis une chose dont tu es responsable et dont tu ne connais pas bien l'état réel ; prends 30 minutes cette semaine pour faire le point dessus.",
+  "addedAt": "2026-10-29"
+ },
+ {
+  "id": "p405",
+  "domain": "discipline",
+  "theme": "Gestion du temps",
+  "title": "N'attends pas le temps parfait",
+  "text": "« Celui qui observe le vent ne sèmera point, et celui qui regarde les nuages ne moissonnera point. » Attendre les conditions idéales est souvent une forme élégante de procrastination.",
+  "source": "Bible — Ecclésiaste 11:4",
+  "action": "Choisis un projet que tu reportes « au bon moment » et fixe une date de démarrage dans les sept jours, même si tout n'est pas parfait.",
+  "addedAt": "2026-10-29"
+ },
+ {
+  "id": "p406",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Quitter pour s'attacher",
+  "text": "« L'homme quittera son père et sa mère, et s'attachera à sa femme, et ils deviendront une seule chair. » Fonder un couple, c'est faire passer ce lien en premier, même face à sa famille d'origine, sans pour autant la rejeter.",
+  "source": "Bible — Genèse 2:24",
+  "action": "Vérifie avec ton/ta partenaire s'il y a un domaine où ta famille d'origine prend trop de place dans vos décisions, et convenez ensemble d'une limite claire.",
+  "addedAt": "2026-10-29"
+ },
+ {
+  "id": "p407",
+  "domain": "emotionnel",
+  "theme": "Santé mentale",
+  "title": "Crier le cœur abattu",
+  "text": "« Du bout de la terre je crie à toi, le cœur abattu ; conduis-moi sur le rocher que je ne puis atteindre ! » La Bible n'interdit pas d'être à bout ; elle montre qu'on peut le dire tel quel et demander un appui plus solide que soi.",
+  "source": "Bible — Psaume 61:3",
+  "action": "Quand tu te sens à bout, dis-le avec des mots simples, dans la prière et à une personne proche, au lieu de faire semblant que tout va bien.",
+  "addedAt": "2026-10-29"
  }
 ]
