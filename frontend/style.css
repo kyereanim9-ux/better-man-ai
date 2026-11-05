@@ -662,3 +662,44 @@ body { min-height: 100vh; background-attachment: fixed; }
 .adv-path { display: flex; align-items: center; flex-wrap: wrap; gap: 2px; margin: 4px 0 10px; font-size: 22px; }
 .adv-line { flex: 1; min-width: 6px; height: 3px; background: var(--border); border-radius: 2px; }
 .adv-step.done { filter: drop-shadow(0 0 4px var(--warning)); }
+
+/* --- Expression orale --- */
+.spk-warn { border-color: var(--warning); background: var(--warning-soft); }
+.spk-langs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.spk-chip { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); box-shadow: none; padding: 7px 11px; font-size: 13.5px; border-radius: 999px; }
+.spk-chip.on { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
+.spk-level { display: flex; align-items: center; gap: 8px; }
+.spk-level select { width: auto; }
+.spk-tabs { display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; }
+.spk-tabs button { flex: 0 0 auto; background: transparent; color: var(--text); border: 1px solid var(--border); box-shadow: none; border-radius: 999px; padding: 8px 14px; }
+.spk-tabs button.on { background: var(--text); color: var(--bg); border-color: var(--text); }
+.spk-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+.spk-voice { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.spk-voice input { width: auto; }
+.spk-line { font-size: 1.25rem; line-height: 1.6; margin: 12px 0; font-weight: 600; }
+.spk-marked { font-weight: 600; }
+.spk-ok { color: var(--success); }
+.spk-miss { color: var(--danger); text-decoration: underline wavy; text-underline-offset: 4px; }
+.spk-heard { min-height: 1.4em; font-style: italic; }
+.spk-scorebox { display: flex; align-items: center; gap: 14px; padding: 12px; border-radius: var(--radius-sm); background: var(--accent-soft); }
+.spk-big { font-size: 2.2rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.spk-tips { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+.spk-stats { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--muted); margin-bottom: 10px; font-variant-numeric: tabular-nums; }
+.spk-stats b { color: var(--text); }
+.spk-chat { display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; padding: 2px; }
+.spk-msg { max-width: 85%; padding: 10px 13px; border-radius: 14px; line-height: 1.45; overflow-wrap: anywhere; }
+.spk-msg.assistant { align-self: flex-start; background: var(--panel-2); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+.spk-msg.user { align-self: flex-end; background: var(--accent); color: var(--accent-contrast); border-bottom-right-radius: 4px; }
+.spk-replay { background: transparent; border: none; box-shadow: none; padding: 0 0 0 4px; font-size: 14px; }
+.spk-typing { color: var(--muted); }
+.spk-live { min-height: 1.4em; font-style: italic; margin: 8px 0 0; }
+.spk-mic-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.spk-mic { flex: 0 0 auto; width: 64px; height: 64px; border-radius: 50%; font-size: 26px; padding: 0; }
+.spk-mic.on { background: var(--danger); animation: spk-pulse 1.2s ease-in-out infinite; }
+@keyframes spk-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 108, 108, .5); } 50% { box-shadow: 0 0 0 12px rgba(255, 108, 108, 0); } }
+@media (prefers-reduced-motion: reduce) { .spk-mic.on { animation: none; } }
+.spk-text-form { flex: 1; display: flex; gap: 6px; margin: 0 !important; min-width: 0; }
+.spk-text-form input { flex: 1; min-width: 0; }
+.spk-feedback { margin-top: 14px; padding: 14px; border-radius: var(--radius-sm); background: var(--panel-2); border: 1px solid var(--border); line-height: 1.55; }
+.spk-pill { font-weight: 800; font-variant-numeric: tabular-nums; }
+#view-speaking button.secondary { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); box-shadow: none; }

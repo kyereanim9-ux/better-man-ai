@@ -9,6 +9,20 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.14.0',
+    date: '2026-11-05',
+    title: 'Expression orale au micro, en 10 langues',
+    features: [
+      "Nouvelle section 🎙️ Expression orale : parle au micro en français, anglais, espagnol, coréen, allemand, italien, portugais, japonais, chinois ou arabe",
+      "Conversations avec un partenaire IA qui te répond à voix haute : discussion libre, rencontre, séduction (flirt), premier rendez-vous, entretien d'embauche, café, désaccord, présenter une idée",
+      "Bilan du coach à la fin : note, points forts, points à améliorer, corrections de langue, mots parasites et débit",
+      "Articulation : virelangues dans chaque langue, le micro vérifie chaque mot et montre en rouge ceux à retravailler",
+      "Espagnol ajouté aux langues de la voix et des réponses IA"
+    ],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.13.16',
     date: '2026-11-04',
     title: '8 nouvelles pépites',
