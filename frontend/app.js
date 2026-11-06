@@ -287,8 +287,8 @@ document.querySelectorAll('[data-accent-choice]').forEach(b => {
 initAppearance();
 
 // --- Langue (voix + contenu IA) ---
-const LANG_BCP47 = { fr: 'fr-FR', en: 'en-US', ko: 'ko-KR' };
-const LANG_NAMES = { fr: 'français', en: 'anglais', ko: 'coréen' };
+const LANG_BCP47 = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', ko: 'ko-KR' };
+const LANG_NAMES = { fr: 'français', en: 'anglais', es: 'espagnol', ko: 'coréen' };
 function getAppLang() { return localStorage.getItem('bm_lang') || 'fr'; }
 function getAppLangBCP47() { return LANG_BCP47[getAppLang()] || 'fr-FR'; }
 function applyLang(lang) {
@@ -371,6 +371,7 @@ function showMain() {
   document.getElementById('pd-role').textContent = state.user.role === 'admin' ? 'Administrateur' : 'Membre';
   document.getElementById('pd-admin').classList.toggle('hidden', state.user.role !== 'admin');
   document.getElementById('nav-admin').classList.toggle('hidden', state.user.role !== 'admin');
+  document.getElementById('nav-speaking').classList.toggle('hidden', state.user.role !== 'admin');
 
   // Notification touchée : ouvrir directement la bonne section (?view=bible...).
   const viewParam = new URLSearchParams(location.search).get('view');
@@ -399,6 +400,7 @@ function switchView(view) {
     if (typeof ideaRecorder !== 'undefined' && ideaRecorder) stopIdeaRecording(false);
     if (typeof ideaDictation !== 'undefined' && ideaDictation) ideaDictation.stop();
   }
+  if (view !== 'speaking' && typeof spkStop === 'function') spkStop();
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
   document.querySelectorAll('.bn-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view && !b.dataset.scrollMission));
   document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
@@ -430,6 +432,7 @@ function switchView(view) {
   if (view === 'pepites') loadPepites();
   if (view === 'study') loadStudy();
   if (view === 'games') loadGames();
+  if (view === 'speaking') loadSpeaking();
   else if (typeof gClearTimers === 'function') gClearTimers();
   else stopStudyAudio();
   if (view === 'profile-setup') loadOnboarding();
@@ -459,6 +462,7 @@ const CATEGORIES = {
     { view: 'situation', icon: '🆘', name: 'Situation', desc: 'Analyse un moment précis' },
     { view: 'relationships', icon: '❤️', name: 'Relations', desc: 'Un espace par relation importante' },
     { view: 'communication', icon: '💬', name: 'Communication', desc: 'Mieux te faire comprendre' },
+    { view: 'speaking', icon: '🎙️', name: 'Expression orale', desc: 'Parle au micro : articulation, conversations, séduction', adminOnly: true },
     { view: 'adaptation', icon: '⚙️', name: 'Adaptation', desc: 'Ajuste ton rythme' },
     { view: 'domains', icon: '🧠', name: 'Domaines', desc: 'Vue d\'ensemble de ta vie' }
   ],
@@ -493,7 +497,8 @@ function renderCategories(domainScores) {
   for (const [gridId, items] of Object.entries(CATEGORIES)) {
     const el = document.getElementById(gridId);
     if (!el) continue;
-    const visibleItems = items.filter(it => !hiddenSections.includes(it.view));
+    // adminOnly : section en test, visible seulement par l'administrateur.
+    const visibleItems = items.filter(it => !hiddenSections.includes(it.view) && (!it.adminOnly || state.user?.role === 'admin'));
     const block = el.closest('.category-block');
     if (block) block.style.display = visibleItems.length ? '' : 'none';
     el.innerHTML = visibleItems.map(it => {
@@ -4838,7 +4843,7 @@ function renderSettingsHome() {
   else fallback.textContent = (user.name || '?').trim().slice(0, 1).toUpperCase();
   const summary = (key, text) => { const el = document.querySelector(`[data-settings-summary="${key}"]`); if (el) el.textContent = text; };
   summary('appearance', `${(localStorage.getItem('bm_theme') || 'dark') === 'dark' ? 'Sombre' : 'Clair'} · ${ACCENT_NAMES[localStorage.getItem('bm_accent') || 'bleu'] || ''}`);
-  summary('language', { fr: 'Français', en: 'English', ko: '한국어' }[getAppLang()] || 'Français');
+  summary('language', { fr: 'Français', en: 'English', es: 'Español', ko: '한국어' }[getAppLang()] || 'Français');
   summary('lock', localStorage.getItem('bm_lock_pin') ? 'Activé sur cet appareil' : 'Désactivé');
   const hidden = getHiddenSections();
   summary('menu', hidden.length ? `${hidden.length} section${hidden.length > 1 ? 's' : ''} masquée${hidden.length > 1 ? 's' : ''}` : 'Toutes les sections affichées');

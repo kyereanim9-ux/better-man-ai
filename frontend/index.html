@@ -132,6 +132,7 @@
       <button data-view="style" class="nav-btn">👔 Style</button>
       <button data-view="adaptation" class="nav-btn">⚙️ Adaptation</button>
       <button data-view="communication" class="nav-btn">🗣️ Communication</button>
+      <button data-view="speaking" class="nav-btn hidden" id="nav-speaking">🎙️ Expression orale</button>
       <button data-view="pepites" class="nav-btn">✨ Pépites</button>
       <button data-view="study" class="nav-btn">📝 Révisions</button>
       <button data-view="games" class="nav-btn">🎮 Jeux bibliques</button>
@@ -748,6 +749,13 @@
       </div>
     </div>
 
+    <!-- EXPRESSION ORALE -->
+    <div class="view hidden" id="view-speaking">
+      <h2>🎙️ Expression orale</h2>
+      <p class="meta">Parle à voix haute avec le micro : articulation, conversations, entretiens et séduction, en 10 langues.</p>
+      <div id="speaking-root"></div>
+    </div>
+
     <!-- FINANCE -->
     <div class="view hidden" id="view-finance">
       <h2>💰 Finance</h2>
@@ -1113,6 +1121,7 @@
         <div class="theme-toggle-row" id="lang-toggle-row">
           <button type="button" data-lang-choice="fr">🇫🇷 Français</button>
           <button type="button" data-lang-choice="en">🇬🇧 English</button>
+          <button type="button" data-lang-choice="es">🇪🇸 Español</button>
           <button type="button" data-lang-choice="ko">🇰🇷 한국어</button>
         </div>
         <p class="meta">Ne traduit pas les menus de l'app, seulement la voix et le contenu généré par l'IA.</p>
@@ -1176,5 +1185,6 @@
 
 <script src="app.js?v=20261020-1"></script>
 <script src="games.js?v=20261020-1"></script>
+<script src="speaking.js?v=20261105-1"></script>
 </body>
 </html>
