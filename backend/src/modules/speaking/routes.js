@@ -1,9 +1,11 @@
 import { Router } from 'express';
-import { requireAuth } from '../../middleware/auth.js';
+import { requireAuth, requireAdmin } from '../../middleware/auth.js';
 import { chatWithFallback } from '../../ai/textChatRouter.js';
 
 const router = Router();
 router.use(requireAuth);
+// En test : réservé à l'administrateur. Retirer requireAdmin pour l'ouvrir à tous.
+router.use(requireAdmin);
 
 // --- Expression orale : conversations d'entraînement en plusieurs langues ---
 // L'historique vit côté navigateur (rien n'est stocké ici) : chaque tour envoie

@@ -371,6 +371,7 @@ function showMain() {
   document.getElementById('pd-role').textContent = state.user.role === 'admin' ? 'Administrateur' : 'Membre';
   document.getElementById('pd-admin').classList.toggle('hidden', state.user.role !== 'admin');
   document.getElementById('nav-admin').classList.toggle('hidden', state.user.role !== 'admin');
+  document.getElementById('nav-speaking').classList.toggle('hidden', state.user.role !== 'admin');
 
   // Notification touchée : ouvrir directement la bonne section (?view=bible...).
   const viewParam = new URLSearchParams(location.search).get('view');
@@ -461,7 +462,7 @@ const CATEGORIES = {
     { view: 'situation', icon: '🆘', name: 'Situation', desc: 'Analyse un moment précis' },
     { view: 'relationships', icon: '❤️', name: 'Relations', desc: 'Un espace par relation importante' },
     { view: 'communication', icon: '💬', name: 'Communication', desc: 'Mieux te faire comprendre' },
-    { view: 'speaking', icon: '🎙️', name: 'Expression orale', desc: 'Parle au micro : articulation, conversations, séduction' },
+    { view: 'speaking', icon: '🎙️', name: 'Expression orale', desc: 'Parle au micro : articulation, conversations, séduction', adminOnly: true },
     { view: 'adaptation', icon: '⚙️', name: 'Adaptation', desc: 'Ajuste ton rythme' },
     { view: 'domains', icon: '🧠', name: 'Domaines', desc: 'Vue d\'ensemble de ta vie' }
   ],
@@ -496,7 +497,8 @@ function renderCategories(domainScores) {
   for (const [gridId, items] of Object.entries(CATEGORIES)) {
     const el = document.getElementById(gridId);
     if (!el) continue;
-    const visibleItems = items.filter(it => !hiddenSections.includes(it.view));
+    // adminOnly : section en test, visible seulement par l'administrateur.
+    const visibleItems = items.filter(it => !hiddenSections.includes(it.view) && (!it.adminOnly || state.user?.role === 'admin'));
     const block = el.closest('.category-block');
     if (block) block.style.display = visibleItems.length ? '' : 'none';
     el.innerHTML = visibleItems.map(it => {
