@@ -90,3 +90,4 @@ you could not verify something.
 ## Skills in this repo
 
 - `3d` (`.claude/skills/3d/`): any 3D model, scene, render or viewer.
+- `animate` (`.claude/skills/animate/`): `/animate <idea>` writes the story and prompts for an animated short film.
