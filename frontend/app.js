@@ -22,7 +22,10 @@ async function api(path, options = {}) {
     body: options.body ? JSON.stringify(options.body) : undefined
   });
   const data = await res.json().catch(() => ({}));
-  if (res.status === 401) {
+  // Un 401 sur la connexion elle-même veut dire "mauvais email ou mot de passe",
+  // pas une session expirée : on laisse passer le vrai message du serveur.
+  const isAuthAttempt = path.startsWith('/auth/');
+  if (res.status === 401 && !isAuthAttempt) {
     // Session invalide ou expirée : avant, ça laissait la page bloquée sur
     // "Chargement..." indéfiniment sans aucune explication. Maintenant, on
     // reconnecte clairement l'utilisateur au lieu de le laisser deviner.
