@@ -11,8 +11,8 @@ const VERSIONS = [
   {
     version: '0.13.31',
     date: '2026-11-24',
-    title: 'Nouvelle pépite : l\'effet Benjamin Franklin',
-    features: ["Nouvelle pépite Amitié : l'effet Benjamin Franklin (demander un petit service pour créer du lien)"],
+    title: 'Nouveau thème : Comprendre les gens',
+    features: ["Nouveau thème de pépites « Comprendre les gens » : des astuces tirées de livres et d'études de psychologie, avec une petite histoire et une action concrète", "4 premières pépites : l'effet Benjamin Franklin, le miroir qui fait parler, l'effet de la petite gaffe et le pied dans la porte"],
     fixes: [],
     improvements: []
   },
