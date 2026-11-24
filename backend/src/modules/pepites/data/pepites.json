@@ -5402,5 +5402,45 @@
   "source": "Bible — Luc 21:34",
   "action": "Choisis un soir de la semaine sans excès (repas léger, sans alcool, sans écran tard) et observe comment tu te sens le lendemain matin.",
   "addedAt": "2026-11-24"
+ },
+ {
+  "id": "p568",
+  "domain": "social",
+  "theme": "Comprendre les gens",
+  "title": "L'effet Benjamin Franklin",
+  "text": "Benjamin Franklin avait un rival qui le détestait. Plutôt que de chercher à lui plaire, il lui a demandé de lui prêter un livre rare dont cet homme était fier ; ils sont devenus amis. Notre cerveau observe ce que nous faisons puis s'invente une raison : quand quelqu'un nous rend service, il se dit « je dois bien l'apprécier ». À l'inverse, multiplier les cadeaux et les faveurs pour être aimé marche rarement.",
+  "source": "Inspiré de : You Are Not So Smart — David McRaney ; Autobiographie — Benjamin Franklin",
+  "action": "Avec une personne avec qui le courant passe mal, arrête les faveurs et demande-lui plutôt un petit service lié à ce dont elle est fière (un conseil, un coup de main), puis remercie-la sincèrement.",
+  "addedAt": "2026-11-24"
+ },
+ {
+  "id": "p569",
+  "domain": "social",
+  "theme": "Comprendre les gens",
+  "title": "Le miroir qui fait parler",
+  "text": "Un négociateur du FBI raconte qu'en face d'un preneur d'otages, il se contentait souvent de répéter les trois derniers mots de son interlocuteur, sur un ton calme et interrogatif. Résultat : l'autre développait, se détendait et donnait plus d'informations. Se sentir entendu pousse naturellement à en dire plus.",
+  "source": "Inspiré de : Never Split the Difference (Ne coupez jamais la poire en deux) — Chris Voss",
+  "action": "Dans ta prochaine conversation, quand l'autre finit une phrase importante, répète simplement ses derniers mots avec un ton de question (« … trop de pression ? ») et laisse-le continuer.",
+  "addedAt": "2026-11-24"
+ },
+ {
+  "id": "p570",
+  "domain": "social",
+  "theme": "Comprendre les gens",
+  "title": "L'effet de la petite gaffe",
+  "text": "Dans une expérience célèbre, des étudiants écoutaient un candidat brillant à un quiz. Quand il renversait son café à la fin, ils l'appréciaient davantage. Chez quelqu'un de compétent, une petite maladresse le rend plus humain et plus proche. Vouloir paraître parfait crée souvent de la distance.",
+  "source": "Inspiré des recherches d'Elliot Aronson sur l'« effet pratfall » (1966)",
+  "action": "La prochaine fois que tu fais une petite erreur devant les autres, n'essaie pas de la cacher : reconnais-la avec le sourire et continue.",
+  "addedAt": "2026-11-24"
+ },
+ {
+  "id": "p571",
+  "domain": "social",
+  "theme": "Comprendre les gens",
+  "title": "Le pied dans la porte",
+  "text": "Des chercheurs ont demandé à des habitants de poser un grand panneau de prévention routière dans leur jardin : très peu ont accepté. Mais ceux à qui on avait d'abord demandé de coller un tout petit autocollant ont dit oui bien plus souvent. Une fois qu'on a dit oui à une petite chose, on se voit comme quelqu'un qui s'engage pour cette cause.",
+  "source": "Inspiré de : Influence et manipulation — Robert Cialdini",
+  "action": "Pour faire avancer quelqu'un (ou toi-même) vers un grand changement, commence par demander un tout petit premier pas facile à accepter, puis construis à partir de là.",
+  "addedAt": "2026-11-24"
  }
 ]

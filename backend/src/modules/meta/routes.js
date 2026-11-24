@@ -9,6 +9,14 @@ router.use(requireAuth);
 // c'est ce que l'écran "What's New" affiche à l'utilisateur.
 const VERSIONS = [
   {
+    version: '0.13.31',
+    date: '2026-11-24',
+    title: 'Nouveau thème : Comprendre les gens',
+    features: ["Nouveau thème de pépites « Comprendre les gens » : des astuces tirées de livres et d'études de psychologie, avec une petite histoire et une action concrète", "4 premières pépites : l'effet Benjamin Franklin, le miroir qui fait parler, l'effet de la petite gaffe et le pied dans la porte"],
+    fixes: [],
+    improvements: []
+  },
+  {
     version: '0.13.30',
     date: '2026-11-24',
     title: '8 nouvelles pépites',
