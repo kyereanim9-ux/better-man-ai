@@ -5442,5 +5442,85 @@
   "source": "Inspiré de : Influence et manipulation — Robert Cialdini",
   "action": "Pour faire avancer quelqu'un (ou toi-même) vers un grand changement, commence par demander un tout petit premier pas facile à accepter, puis construis à partir de là.",
   "addedAt": "2026-11-24"
+ },
+ {
+  "id": "p572",
+  "domain": "social",
+  "theme": "Comprendre les gens",
+  "title": "Ce n'est pas forcément contre toi",
+  "text": "Quand quelqu'un te coupe la route, tu penses : « quel égoïste ». Quand c'est toi, tu sais que tu étais en retard pour un rendez-vous important. On explique les erreurs des autres par leur caractère, et les nôtres par les circonstances. Ce réflexe crée beaucoup de conflits inutiles.",
+  "source": "Inspiré des recherches de Lee Ross sur l'« erreur fondamentale d'attribution » (1977)",
+  "action": "La prochaine fois que quelqu'un t'agace, cherche au moins une explication liée à sa situation (fatigue, stress, mauvaise nouvelle) avant de juger sa personne.",
+  "addedAt": "2026-11-24"
+ },
+ {
+  "id": "p573",
+  "domain": "social",
+  "theme": "Comprendre les gens",
+  "title": "Le pouvoir du « parce que »",
+  "text": "Dans une expérience, une chercheuse demandait à passer devant les gens à la photocopieuse. Avec une simple demande, environ 60 % acceptaient. En ajoutant « parce que je dois faire des copies », presque tous disaient oui, alors que la raison n'apprenait rien. Donner une raison, même simple, rend une demande beaucoup plus acceptable.",
+  "source": "Inspiré des recherches d'Ellen Langer (1978), citées dans Influence et manipulation — Robert Cialdini",
+  "action": "Pour ta prochaine demande (à ton équipe, tes enfants, ton/ta partenaire), ajoute toujours une vraie raison : « Peux-tu… parce que… ».",
+  "addedAt": "2026-11-24"
+ },
+ {
+  "id": "p574",
+  "domain": "relationnel",
+  "theme": "Couple",
+  "title": "Soigner la fin",
+  "text": "Les psychologues ont observé qu'on se souvient d'un moment surtout par son moment le plus fort et par sa fin. Une belle soirée qui se termine par une dispute laisse un mauvais souvenir ; une journée ordinaire qui finit par un moment tendre laisse une bonne impression.",
+  "source": "Inspiré de : Système 1 / Système 2 — Daniel Kahneman (la règle du « pic et de la fin »)",
+  "action": "Ce soir, termine la journée avec ton/ta partenaire par un moment positif volontaire : un merci, un câlin, un mot gentil avant de dormir.",
+  "addedAt": "2026-11-24"
+ },
+ {
+  "id": "p575",
+  "domain": "professionnel",
+  "theme": "Travail",
+  "title": "L'effet IKEA",
+  "text": "Des chercheurs ont montré que les gens accordent plus de valeur à un objet qu'ils ont monté eux-mêmes, même maladroitement, qu'à un objet identique déjà monté. On s'attache à ce qu'on a contribué à construire. Au travail, une équipe défend mieux un projet auquel elle a participé.",
+  "source": "Inspiré des recherches de Michael Norton, Daniel Mochon et Dan Ariely sur l'« effet IKEA » (2011)",
+  "action": "Pour ton prochain projet, laisse chaque personne concernée construire une partie du plan au lieu de lui présenter une solution déjà toute faite.",
+  "addedAt": "2026-11-24"
+ },
+ {
+  "id": "p576",
+  "domain": "emotionnel",
+  "theme": "Pour les hommes",
+  "title": "Tomber sept fois, se relever huit",
+  "text": "« Car sept fois le juste tombe, et il se relève. » Le juste n'est pas celui qui ne tombe jamais, mais celui qui se relève à chaque fois. La chute ne définit pas un homme ; ce qu'il fait ensuite, si.",
+  "source": "Bible — Proverbes 24:16",
+  "action": "Pense à un domaine où tu es retombé récemment (une habitude, une promesse) et reprends aujourd'hui, sans te juger, avec un premier petit pas.",
+  "addedAt": "2026-11-24"
+ },
+ {
+  "id": "p577",
+  "domain": "relationnel",
+  "theme": "Soutenir les femmes",
+  "title": "Phœbé, recommandée par Paul",
+  "text": "Paul recommande Phœbé, diaconesse de l'Église de Cenchrées, et demande qu'on « l'assiste dans les choses où elle aurait besoin de vous, car elle a donné aide à plusieurs et à moi-même ». Il met en avant publiquement le service d'une femme et demande qu'on la soutienne.",
+  "source": "Bible — Romains 16:1-2",
+  "action": "Recommande cette semaine une femme dont tu connais la valeur (pour un poste, un service, une responsabilité) et dis clairement pourquoi tu lui fais confiance.",
+  "addedAt": "2026-11-24"
+ },
+ {
+  "id": "p578",
+  "domain": "relationnel",
+  "theme": "Amitié",
+  "title": "Des amis qui redonnent courage",
+  "text": "Arrivant prisonnier vers Rome, Paul voit des frères venir à sa rencontre : « Paul, en les voyant, rendit grâces à Dieu, et prit courage. » Parfois, la simple présence d'amis sur le chemin suffit à redonner de la force.",
+  "source": "Bible — Actes 28:15",
+  "action": "Pense à un ami qui traverse une étape difficile (hôpital, déménagement, procès, deuil) et va le voir en personne cette semaine, même pour peu de temps.",
+  "addedAt": "2026-11-24"
+ },
+ {
+  "id": "p579",
+  "domain": "relationnel",
+  "theme": "Paternité",
+  "title": "L'amour d'un père, même blessé",
+  "text": "Quand il apprend la mort de son fils Absalom, qui s'était pourtant révolté contre lui, David pleure : « Mon fils Absalom ! mon fils, mon fils Absalom ! Que ne suis-je mort à ta place ! » L'amour d'un père ne s'éteint pas, même quand l'enfant l'a profondément blessé.",
+  "source": "Bible — 2 Samuel 18:33",
+  "action": "Si la relation avec un de tes enfants est tendue, fais-lui savoir cette semaine, par un mot ou un message, que ton amour pour lui ne dépend pas de ses choix.",
+  "addedAt": "2026-11-24"
  }
 ]
