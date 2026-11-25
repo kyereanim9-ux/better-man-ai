@@ -5522,5 +5522,85 @@
   "source": "Bible — 2 Samuel 18:33",
   "action": "Si la relation avec un de tes enfants est tendue, fais-lui savoir cette semaine, par un mot ou un message, que ton amour pour lui ne dépend pas de ses choix.",
   "addedAt": "2026-11-24"
+ },
+ {
+  "id": "p580",
+  "domain": "social",
+  "theme": "Comprendre les gens",
+  "title": "Plus on se voit, plus on s'apprécie",
+  "text": "Dans une expérience, des étudiantes assistaient plus ou moins souvent à un cours, sans parler à personne. En fin de semestre, les autres étudiants les trouvaient plus sympathiques… simplement si elles étaient venues plus souvent. On s'attache à ce qui nous devient familier.",
+  "source": "Inspiré des recherches de Robert Zajonc sur l'« effet de simple exposition » (1968)",
+  "action": "Pour créer un lien avec quelqu'un (collègue, voisin, membre de l'église), cherche à le croiser régulièrement : même lieu, même heure, un simple bonjour chaque fois.",
+  "addedAt": "2026-11-25"
+ },
+ {
+  "id": "p581",
+  "domain": "social",
+  "theme": "Comprendre les gens",
+  "title": "L'effet de halo",
+  "text": "Un psychologue a remarqué que des officiers notaient mieux en intelligence et en loyauté les soldats qu'ils trouvaient beaux et bien tenus. Une seule qualité visible colore tout le reste du jugement. On fait pareil avec les autres… et ils font pareil avec nous.",
+  "source": "Inspiré des recherches d'Edward Thorndike sur l'« effet de halo » (1920)",
+  "action": "Avant de juger quelqu'un sur une première impression (tenue, accent, sourire), cherche une information concrète sur ce qu'il fait vraiment. Et soigne les premières minutes de tes rendez-vous importants.",
+  "addedAt": "2026-11-25"
+ },
+ {
+  "id": "p582",
+  "domain": "emotionnel",
+  "theme": "Confiance en soi",
+  "title": "Se parler comme à un ami",
+  "text": "Des chercheurs ont demandé à des gens de préparer un discours stressant. Ceux qui se parlaient à eux-mêmes avec leur prénom (« Marc, tu peux le faire ») étaient moins anxieux et réussissaient mieux que ceux qui disaient « je ». Prendre un peu de distance avec soi aide à se conseiller avec plus de calme.",
+  "source": "Inspiré de : Chatter (Ce que la voix intérieure dit de nous) — Ethan Kross",
+  "action": "La prochaine fois que tu doutes de toi, parle-toi en utilisant ton prénom, comme tu parlerais à un ami : « [Ton prénom], qu'est-ce que tu ferais à la place d'un ami ? »",
+  "addedAt": "2026-11-25"
+ },
+ {
+  "id": "p583",
+  "domain": "emotionnel",
+  "theme": "Santé mentale",
+  "title": "Nommer l'émotion pour l'apaiser",
+  "text": "Des chercheurs ont observé au scanner que le simple fait de mettre un mot sur une émotion (« je suis en colère », « j'ai peur ») diminue l'activité de la zone du cerveau liée à l'alarme. Mettre des mots sur ce qu'on ressent aide le cerveau à reprendre la main.",
+  "source": "Inspiré des recherches de Matthew Lieberman sur l'« étiquetage affectif » (2007)",
+  "action": "Quand une émotion forte monte, arrête-toi et dis (ou écris) en une phrase précise ce que tu ressens : « Là, je me sens… parce que… ».",
+  "addedAt": "2026-11-25"
+ },
+ {
+  "id": "p584",
+  "domain": "spirituel",
+  "theme": "Bible",
+  "title": "Bâtir sur le roc",
+  "text": "Jésus compare celui qui « entend ces paroles… et les met en pratique » à un homme qui a bâti sa maison sur le roc : quand les tempêtes sont venues, « elle n'est point tombée ». Ce n'est pas la connaissance de la Bible qui protège, mais le fait de la vivre.",
+  "source": "Bible — Matthieu 7:24-25",
+  "action": "Choisis un seul enseignement de Jésus que tu connais bien (pardonner, ne pas s'inquiéter, aimer son prochain) et mets-le en pratique concrètement cette semaine.",
+  "addedAt": "2026-11-25"
+ },
+ {
+  "id": "p585",
+  "domain": "relationnel",
+  "theme": "Famille",
+  "title": "Les pierres du souvenir",
+  "text": "Après la traversée du Jourdain, Josué fait dresser des pierres pour que, « lorsque vos enfants demanderont un jour : Que signifient pour vous ces pierres ? », les parents racontent ce que Dieu a fait. Une famille a besoin de souvenirs visibles qui portent son histoire.",
+  "source": "Bible — Josué 4:6-7",
+  "action": "Crée un « mémorial » familial cette semaine : une photo, un objet ou un carnet qui rappelle un moment où Dieu a aidé ta famille, et raconte son histoire à tes enfants.",
+  "addedAt": "2026-11-25"
+ },
+ {
+  "id": "p586",
+  "domain": "discipline",
+  "theme": "Gestion du temps",
+  "title": "Chaque chose en son temps",
+  "text": "« Il fait toute chose bonne en son temps. » Ce qu'on attend n'arrive pas toujours au rythme qu'on voudrait ; accepter qu'il y ait un bon moment pour chaque chose évite de s'épuiser à vouloir tout forcer maintenant.",
+  "source": "Bible — Ecclésiaste 3:11",
+  "action": "Repère une chose que tu essaies de forcer trop vite (un projet, une relation, un changement) et décide de lui laisser du temps, en faisant seulement le prochain petit pas.",
+  "addedAt": "2026-11-25"
+ },
+ {
+  "id": "p587",
+  "domain": "spirituel",
+  "theme": "Foi",
+  "title": "Ne crains pas, crois seulement",
+  "text": "On vient annoncer à Jaïrus que sa fille est morte. Jésus, « sans tenir compte de ces paroles », lui dit : « Ne crains pas, crois seulement. » Quand les nouvelles sont mauvaises, la foi choisit d'écouter la voix de Jésus plutôt que celle de la peur.",
+  "source": "Bible — Marc 5:36",
+  "action": "Face à une mauvaise nouvelle cette semaine, avant de paniquer, répète lentement ces mots : « Ne crains pas, crois seulement », puis prie avant d'agir.",
+  "addedAt": "2026-11-25"
  }
 ]
