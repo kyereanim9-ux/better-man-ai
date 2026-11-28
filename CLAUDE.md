@@ -90,5 +90,6 @@ you could not verify something.
 ## Skills in this repo
 
 - `3d` (`.claude/skills/3d/`): any 3D model, scene, render or viewer.
+- `trader` (`.claude/skills/trader/`): `/trader` analyse un marché et prépare un plan de trade avec gestion du risque ; ne passe jamais d'ordre réel seul.
 - `animate` (`.claude/skills/animate/`): `/animate <idea>` writes the story and prompts for an animated short film.
 - `hyperframes` plugin (enabled in `.claude/settings.json`): animated videos from HTML, with voice-over and sound effects. Local French voice needs `pip install kokoro-onnx soundfile`.
